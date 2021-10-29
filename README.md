@@ -11,6 +11,7 @@ that contains all CWL descriptions of the MGnify pipeline version 5.1.
 
 The following comes from the initial repo and describes how to get the databases required.
 
+---
 
 # pipeline-v5
 
@@ -18,9 +19,11 @@ This repository contains all CWL descriptions of the MGnify pipeline version 5.0
 
 ## Documentation
 
-https://emg-docs.readthedocs.io/en/latest/analysis.html#overview
+For a thorough read-the-docs, click [here](https://emg-docs.readthedocs.io/en/latest/analysis.html#overview). 
 
-### We kindly recommend use our resource https://www.ebi.ac.uk/metagenomics/ for data processing.
+---
+
+We kindly recommend use the [MGnify resource](https://www.ebi.ac.uk/metagenomics/) for data processing.
 
 If you want to run pipeline locally, we recommend you use our pre-build docker containers. 
 
