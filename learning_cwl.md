@@ -59,6 +59,58 @@ A workflow platform may choose to only implement the Command Line Tool Descripti
 
 
 
+## [Document context](https://www.commonwl.org/v1.0/SchemaSalad.html#Document_model)
+
+The implicit context consists of the vocabulary defined by the schema and the base URI. By default, the base URI must be the URI that was used to load the document. It may be overridden by an explicit context.
+
+If a document consists of a root object, this object may contain the fields `$base`, `$namespaces`, `$schemas`, and `$graph`:
 
 
 
+
+
+### Requirements & hints
+
+A process `requirement` modifies the semantics or runtime environment of a process. 
+If an implementation cannot satisfy all requirements, or a requirement is listed which is not recognized by the implementation, it is a fatal error and the implementation must not attempt to run the process, unless overridden at user option.
+
+A `hint` is similar to a requirement; however, it is not an error if an implementation cannot satisfy all hints. 
+The implementation may report a warning if a hint cannot be satisfied.
+
+
+Often tool descriptions will be written for a specific version of a software. 
+To make it easier for others to use your descriptions, you can include a `SoftwareRequirement` field in the `hints` section. 
+This may also help to avoid confusion about which version of a tool the description was written for.
+Here is an example: 
+
+```cwl
+hints:
+  SoftwareRequirement:
+    packages:
+      interproscan:
+        specs: [ "https://identifiers.org/rrid/RRID:SCR_005829" ]
+        version: [ "5.21-60" ]
+```
+
+
+**Do not confuse with `requirements`**.
+`requirements` are 
+
+requirements:
+  ResourceRequirement:
+    ramMin: 10240
+    coresMin: 3
+  SchemaDefRequirement:
+    types:
+      - $import: InterProScan-apps.yml
+
+
+      
+Optionally, implementations may allow requirements to be specified in the input object document as an array of requirements under the field name `cwl:requirements`. 
+If implementations allow this, then such requirements should be combined with any requirements present in the corresponding Process as if they were specified there.
+
+**Requirements specified in a parent Workflow are inherited by step processes if they are valid for that step**. If the substep is a `CommandLineTool` only the `InlineJavascriptRequirement`, `SchemaDefRequirement`, `DockerRequirement`, `SoftwareRequirement`, `InitialWorkDirRequirement`, `EnvVarRequirement`, `ShellCommandRequirement`, `ResourceRequirement` are valid.
+
+*As good practice, it is best to have process requirements be self-contained, such that each process can run successfully by itself.*
+
+**`Requirements` override `hints`**. If a process implementation provides a process requirement in hints which is also provided in requirements by an enclosing workflow or workflow step, the enclosing requirements takes precedence.
