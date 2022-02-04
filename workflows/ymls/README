@@ -1,0 +1,5 @@
+ATTENTENTION
+
+Right now the paths of the input files are absolute.
+
+The workflow doesn't work with relative paths.
