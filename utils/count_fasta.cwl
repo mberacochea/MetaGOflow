@@ -25,15 +25,12 @@ inputs:
   number:
     type: int
 
-baseCommand: []
+baseCommand: [grep]
 
 arguments:
-    - grep
     - -c
     - '^>'
     - $(inputs.sequences)
-    - '|'
-    - cat
 
 stdout: count
 
@@ -54,3 +51,6 @@ s:license: "https://www.apache.org/licenses/LICENSE-2.0"
 s:copyrightHolder:
     - name: "EMBL - European Bioinformatics Institute"
     - url: "https://www.ebi.ac.uk/"
+s:contributor: 
+    - givenName: "Gianlucadt"
+    - familyName: "De Moro"
