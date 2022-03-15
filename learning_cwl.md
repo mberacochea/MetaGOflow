@@ -69,6 +69,14 @@ If a document consists of a root object, this object may contain the fields `$ba
 
 
 
+## Runtime environment (!)
+
+Output files produced by tool execution must be written to the designated output directory. The initial current working directory when executing the tool must be the designated output directory.
+
+
+
+
+
 ### Requirements & hints
 
 A process `requirement` modifies the semantics or runtime environment of a process. 
@@ -114,3 +122,39 @@ If implementations allow this, then such requirements should be combined with an
 *As good practice, it is best to have process requirements be self-contained, such that each process can run successfully by itself.*
 
 **`Requirements` override `hints`**. If a process implementation provides a process requirement in hints which is also provided in requirements by an enclosing workflow or workflow step, the enclosing requirements takes precedence.
+
+> When a tool runs under CWL, the starting working directory is the designated output directory.
+
+
+
+## Important links to guide you 
+
+A few rather important links to get to know the CWL framework: 
+
+- [Runtime environment](https://www.commonwl.org/v1.0/CommandLineTool.html#Runtime_environment)
+- [Writing workflows](https://www.commonwl.org/user_guide/21-1st-workflow/index.html)
+- [Best practicies](https://doc.arvados.org/v1.3/user/cwl/cwl-style.html)
+
+
+
+
+Tutorials: 
+
+- [Getting started with CWL](https://docs.dockstore.org/en/1.11.0/getting-started/getting-started-with-cwl.html)
+
+
+
+
+
+
+
+```cwl=
+outputs:
+  compiled_class:
+    type: File
+    outputSource: compile/classfile
+```
+The `outputs` section describes the outputs of the workflow. 
+This is a **list** of output parameters where each parameter consists of an identifier and a data type. 
+The `outputSource` connects the output parameter `classfile` of the `compile` step to the workflow output parameter `compiled_class`.
+
