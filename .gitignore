@@ -1,3 +1,8 @@
+ref_dbs
+utils/add_header/ENA*
+utils/add_header/*.tsv
+utils/add_header/*.gz
+utils/add_header/get_ENA_data.sh
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
