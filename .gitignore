@@ -1,4 +1,4 @@
-ref_dbs
+ref-dbs
 utils/add_header/ENA*
 utils/add_header/*.tsv
 utils/add_header/*.gz

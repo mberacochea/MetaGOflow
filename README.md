@@ -60,27 +60,32 @@ cd pipeline-v5
 
 #### Download necessary dbs
 
-We have 3 pipelines (amplicon, assembly and wgs) in one repository. You can download dbs for single or multiple analysis types.
+You can download databases for the EOSC-Life GOs workflow by running the
+`download_dbs.sh` script.
+You need to do this only **once**, before start using the workflow. 
+<!-- has 3 arguments: -m (amplicon), -a (assembly), -w (raw reads / WGS). -->
 
-Script **download_dbs.sh** has 3 arguments: -m (amplicon), -a (assembly), -w (raw reads / WGS).
 
-To download only amplicon databases do ```-m True -a False -w False```.
-
-```bash
+<!-- ```bash
 mkdir ref-dbs && cd ref-dbs
 bash ../Installation/download_dbs.sh -a True -m True -w True  # for all types
 cd ..
-```
+``` -->
+
 
 #### Create yml-file
-Set DIRECTORY as path to the same directory where you downloaded all databases (ref-dbs).
+
+Every time you are about to run the EOSC-Life GOs workflow, 
+you first need to run the `init.sh` script. 
+
+
+<!-- Set DIRECTORY as path to the same directory where you downloaded all databases (ref-dbs).
 
 TYPE: assembly/wgs/amplicon
 
 ```bash
 python3 Installation/create_yml.py --dir <DIRECTORY> --type <TYPE> 
-# example: python3 Installation/create_yml.py --dir ref-dbs --type assembly
-```
+``` -->
 
 If you need to generate several YML-files, run this script several times with different TYPEs.
 
