@@ -126,6 +126,43 @@ If implementations allow this, then such requirements should be combined with an
 > When a tool runs under CWL, the starting working directory is the designated output directory.
 
 
+### Test your tool
+
+Once you have built your `.cwl` and your `.yml` files, you need to figure out whether your `tool` is working ok. 
+To do that, run the step your `tool` implements and keep track of its exact output. 
+Then, you may build a second `.yml` file (we will call it `tools-tests.yml`) which is like that: 
+
+```yaml=
+- job: tools/my_tool/my_tool_test.yml
+  tool: ../../tools/tool/my_tool.cwl
+  short_name: my_tool.cwl
+  doc: "TOOL"
+  output:
+    tool_output:
+      location: Any
+      basename: toul_output
+      class: Directory
+      listing:
+      - class: File
+      ..
+      ..
+      ..
+
+```
+
+For a more complete example, you may see [here](https://github.com/mberacochea/microbetag/blob/78140c451ff7034a3bbc6ac1ec34efe9d0b8b742/tests/cwl/tools-tests.yml).
+
+
+
+`cwltest` does:
+- runs the cwl file with the .yml input file
+- compares the output values
+
+
+
+```cwl=
+
+```
 
 ## Important links to guide you 
 
@@ -141,11 +178,6 @@ A few rather important links to get to know the CWL framework:
 Tutorials: 
 
 - [Getting started with CWL](https://docs.dockstore.org/en/1.11.0/getting-started/getting-started-with-cwl.html)
-
-
-
-
-
 
 
 ```cwl=
