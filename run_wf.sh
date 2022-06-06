@@ -2,7 +2,10 @@
 
 # default values #
 SCRIPT_PATH=$(realpath "$0")
-PIPELINE_DIR=$(dirname "${SCRIPT_PATH%/*/*}")
+PIPELINE_DIR=$(dirname "${SCRIPT_PATH}")
+echo $SCRIPT_PATH
+echo $PIPELINE_DIR
+exit 0
 MEMORY=1G
 NUM_CORES=2
 LIMIT_QUEUE=100
@@ -146,18 +149,28 @@ export RENAMED_YML=${RUN_DIR}/"${NAME}".yml
 
 echo "Writing yaml file"
 
-python3 rna_prediction_yml.py \
+
+echo "${YML}" 
+echo "${RENAMED_YML}" 
+echo "${TYPE}" 
+echo "${SINGLE}"  
+echo "${FORWARD_READS}" 
+echo "${REVERSE_READS}" 
+echo "${DB_DIR}"
+
+
+
+python3 create_yml.py \
   -y "${YML}" \
   -o "${RENAMED_YML}" \
   -a "raw-reads" \
   -t "${TYPE}" \
   -s "${SINGLE}" \
-  -f "${FORWARD_READS}" \
-  -r "${REVERSE_READS}" \
+  -f "${PIPELINE_DIR}/${FORWARD_READS}" \
+  -r "${PIPELINE_DIR}/${REVERSE_READS}" \
   -d "${DB_DIR}"
 
 echo "run_qc: ${QC}" >>"${RENAMED_YML}"
-
 
 # ----------------------------- running pipeline ----------------------------- #
 
