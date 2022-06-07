@@ -173,16 +173,18 @@ echo "run_qc: ${QC}" >>"${RENAMED_YML}"
 
 # IMPORTANT! 
 # To work with slurm, add "--batchSystem slurm" and "--disableChaining" in the TOIL_PARMS object
-# Remember to have the `--singularity` flag. 
 TOIL_PARAMS+=(
-  --preserve-entire-environment
+  # --singularity
+  # --preserve-entire-environment
+  # --batchSystem slurm
+  --maxCores 8
   --logFile "${LOG_DIR}/${NAME}.log"
   --jobStore "${JOB_TOIL_FOLDER}/${NAME}"
   --outdir "${OUT_DIR_FINAL}"
-  --disableCaching
+  # --disableCaching
   --defaultMemory "${MEMORY}"
   --defaultCores "${NUM_CORES}"
-  --retryCount 0
+  --retryCount 2
   --logDebug
   "$CWL"
   "$RENAMED_YML"

@@ -5,7 +5,7 @@ class: CommandLineTool
 requirements:
   InlineJavascriptRequirement: {}
   ResourceRequirement:
-    coresMin: 16
+    coresMin: 8
     ramMin: 200
 
 inputs:
@@ -15,7 +15,7 @@ inputs:
       position: 1
 
 baseCommand: [ pigz ]
-arguments: ["-p", "16", "-c"]
+arguments: ["-p", "8", "-c"]
 
 stdout: $(inputs.uncompressed_file.basename).gz
 

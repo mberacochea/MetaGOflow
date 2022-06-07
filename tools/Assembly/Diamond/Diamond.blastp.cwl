@@ -12,7 +12,7 @@ requirements:
   - class: ResourceRequirement
     ramMin: 15000
     tmpdirMin: 20000
-    coresMin: 16
+    coresMin: 8
   - class: InlineJavascriptRequirement
 
 hints:

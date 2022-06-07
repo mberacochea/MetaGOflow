@@ -5,7 +5,7 @@ class: CommandLineTool
 requirements:
   InlineJavascriptRequirement: {}
   ResourceRequirement:
-    coresMax: 16
+    coresMax: 8
     ramMin: 200
 
 # hints:
