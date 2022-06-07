@@ -44,6 +44,7 @@ inputs:
 
 outputs:
 
+  # pre-qc step output
   qc-statistics:
     type: Directory?
     outputSource: before-qc/qc-statistics
@@ -63,7 +64,7 @@ outputs:
     type: File?
     outputSource: before-qc/fastp_filtering_json
 
-
+  # after-qc step output
   sequence-categorisation_folder:
     type: Directory?
     outputSource: after-qc/sequence_categorisation_folder

@@ -190,3 +190,14 @@ The `outputs` section describes the outputs of the workflow.
 This is a **list** of output parameters where each parameter consists of an identifier and a data type. 
 The `outputSource` connects the output parameter `classfile` of the `compile` step to the workflow output parameter `compiled_class`.
 
+
+
+
+## Toil 
+
+Note!  Toil checks if the docker image specified by TOIL_APPLIANCE_SELF  exists  prior  to
+    launching  by  using  the  docker  v2  schema.   This should be valid for any major docker
+    repository, but there is  an  option  to  override  this  if  desired  using  the  option:
+    `--forceDockerAppliance`.
+
+

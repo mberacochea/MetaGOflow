@@ -164,3 +164,16 @@ If you have problems pulling the docker containers, you can re-build them with:
 ```bash
 bash docker/docker_build.sh
 ```
+
+
+## How to run 
+
+currently working: 
+
+```
+ cwltool --singularity --outdir RUN_DIRECTORY/results/cwltool-results  workflows/gos_wf.cwl RUN_DIRECTORY/TEST.yml 
+```
+
+> In case you are using Docker, it is strongly recommended to avoid installing it through `snap`
+
+

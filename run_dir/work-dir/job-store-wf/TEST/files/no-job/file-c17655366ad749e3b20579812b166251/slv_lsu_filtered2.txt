@@ -1,1 +1,0 @@
-/home/haris/Documents/coding/github_repos/eosc_life_go/pipeline-v5/ref-dbs/silva_lsu/slv_lsu_filtered2.txt

@@ -136,7 +136,7 @@ rfam_models:
 
 rfam_model_clans:
   class: File
-  path: rRNA.claninfo
+  path: Rfam/rRNA.claninfo
   checksum: 4dffaadeaac92821c19bd0e5a152f370
 
 other_ncRNA_models:

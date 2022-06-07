@@ -67,6 +67,9 @@ tar xfv silva_lsu-20200130.tar.gz --directory=silva_lsu --strip-components 1
 
 echo "Downloading the rfam_models"
 
+mkdir Rfam
+cd Rfam
+
 mkdir ribosomal
 
 wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/rfam_models/ribosomal_models/RF*.cm \

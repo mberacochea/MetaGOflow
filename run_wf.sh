@@ -3,11 +3,8 @@
 # default values #
 SCRIPT_PATH=$(realpath "$0")
 PIPELINE_DIR=$(dirname "${SCRIPT_PATH}")
-echo $SCRIPT_PATH
-echo $PIPELINE_DIR
-exit 0
-MEMORY=1G
-NUM_CORES=2
+MEMORY=10G
+NUM_CORES=1
 LIMIT_QUEUE=100
 YML="${PIPELINE_DIR}/Installation/templates/default.yml"
 DB_DIR="${PIPELINE_DIR}/ref-dbs/"
@@ -174,22 +171,37 @@ echo "run_qc: ${QC}" >>"${RENAMED_YML}"
 
 # ----------------------------- running pipeline ----------------------------- #
 
+# IMPORTANT! 
+# To work with slurm, add "--batchSystem slurm" and "--disableChaining" in the TOIL_PARMS object
+# Remember to have the `--singularity` flag. 
 TOIL_PARAMS+=(
   --preserve-entire-environment
   --logFile "${LOG_DIR}/${NAME}.log"
   --jobStore "${JOB_TOIL_FOLDER}/${NAME}"
   --outdir "${OUT_DIR_FINAL}"
-  --disableChaining
-  --disableProgress
   --disableCaching
   --defaultMemory "${MEMORY}"
   --defaultCores "${NUM_CORES}"
-  --batchSystem slurm
   --retryCount 0
+  --logDebug
   "$CWL"
   "$RENAMED_YML"
 )
 
+# Toir parameters documentation 
+# --disableChaining                Disables  chaining  of jobs (chaining uses one job's resource allocation for its successor job if possible).
+# --preserve-entire-environment    Need to propagate the env vars for Singularity, etc., into the HPC jobs
+# --disableProgress                Disables the progress bar shown when standard error is a terminal.
+# --retryCount                     Number of times to retry a failing job before giving up and labeling job failed. default=1
+# --disableCaching                 Disables caching in the file store. This flag must be set to use a batch  system that does not support caching such as Grid Engine, Parasol, LSF, or Slurm.
+
+
+
 echo "toil-cwl-runner" "${TOIL_PARAMS[@]}"
+
+# toil-cwl-runner --singularity --preserve-entire-environment --logFile RUN_DIRECTORY3//log-dir/TEST/TEST.log 
+#  --jobStore RUN_DIRECTORY3//work-dir/job-store-wf/TEST --outdir RUN_DIRECTORY3//results/TEST --disableProgress --disableCaching 
+#  --defaultMemory 10G --defaultCores 2 --retryCount 0 --logDebug /home/haris/Documents/coding/github_repos/eosc_life_go/pipeline-v5/workflows/gos_wf.cwl 
+# RUN_DIRECTORY3//TEST.yml
 
 toil-cwl-runner "${TOIL_PARAMS[@]}"
