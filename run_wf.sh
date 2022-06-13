@@ -8,6 +8,7 @@ NUM_CORES=1
 LIMIT_QUEUE=100
 YML="${PIPELINE_DIR}/Installation/templates/default.yml"
 DB_DIR="${PIPELINE_DIR}/ref-dbs/"
+ASSEMBLY="false"
 
 _usage() {
   echo "
@@ -22,8 +23,8 @@ Script arguments.
   -y                  template yml file. (optional, default ../templates/rna_prediction_template.yml})
   -f                  Forward reads fasta file path.
   -r                  Reverse reads fasta file path.
-  -s                  Single reads fasta file path.
   -q                  Run qc ('true' or 'false').
+  -a                  Assemble samples to get contigs at the study level, i.e. the clean reads are merged in a single sample and then assembled.  (optional, default ${ASSEMBLY})
   -n                  Name of run and prefix to output files.
   -d                  Path to run directory.
   -p                  Path to database directory. (optional, default ../ref-dbs)
@@ -41,10 +42,7 @@ while getopts :y:f:r:s:q:c:d:m:n:l:p:h option; do
     echo "presented paired-end reverse path"
     REVERSE_READS=${OPTARG}
     ;;
-  s)
-    echo "presented single-end path"
-    SINGLE=${OPTARG}
-    ;;
+  a) ASSEMBLY=${OPTARG} ;;
   q) QC=${OPTARG} ;;
   c) NUM_CORES=${OPTARG} ;;
   d) RUN_DIR=${OPTARG} ;;
@@ -113,12 +111,7 @@ _check_mandatory "$NAME" "-n"
 _check_mandatory "$RUN_DIR" "-d"
 _check_reads "$FORWARD_READS" "$REVERSE_READS" "$SINGLE"
 
-#get format from input
-if [ -n "$SINGLE" ]; then
-  TYPE="single"
-else
-  TYPE="paired"
-fi
+
 
 # ----------------------------- environment & variables ----------------------------- #
 
@@ -137,8 +130,9 @@ export TMPDIR=${RUN_DIR}/tmp
 export OUT_DIR=${RUN_DIR}
 export LOG_DIR=${OUT_DIR}/log-dir/${NAME}
 export OUT_DIR_FINAL=${OUT_DIR}/results/${NAME}
+export PROV_DIR=${OUT_DIR}/prov 
 
-mkdir -p "${LOG_DIR}" "${OUT_DIR_FINAL}" "${JOB_TOIL_FOLDER}" "${TMPDIR}"
+mkdir -p "${LOG_DIR}" "${OUT_DIR_FINAL}" "${JOB_TOIL_FOLDER}" "${TMPDIR}" # "${PROV_DIR}"
 
 export RENAMED_YML=${RUN_DIR}/"${NAME}".yml
 
@@ -146,28 +140,17 @@ export RENAMED_YML=${RUN_DIR}/"${NAME}".yml
 
 echo "Writing yaml file"
 
-
-echo "${YML}" 
-echo "${RENAMED_YML}" 
-echo "${TYPE}" 
-echo "${SINGLE}"  
-echo "${FORWARD_READS}" 
-echo "${REVERSE_READS}" 
-echo "${DB_DIR}"
-
-
-
 python3 create_yml.py \
   -y "${YML}" \
   -o "${RENAMED_YML}" \
-  -a "raw-reads" \
-  -t "${TYPE}" \
-  -s "${SINGLE}" \
   -f "${PIPELINE_DIR}/${FORWARD_READS}" \
   -r "${PIPELINE_DIR}/${REVERSE_READS}" \
-  -d "${DB_DIR}"
+  -d "${DB_DIR}" 
 
-echo "run_qc: ${QC}" >>"${RENAMED_YML}"
+
+echo "run_qc: ${QC}" >> "${RENAMED_YML}"
+echo "assembly: ${ASSEMBLY}" >> "${RENAMED_YML}"
+
 
 # ----------------------------- running pipeline ----------------------------- #
 
@@ -178,6 +161,7 @@ TOIL_PARAMS+=(
   # --preserve-entire-environment
   # --batchSystem slurm
   --maxCores 8
+  # --provenance "${PROV_DIR}"
   --logFile "${LOG_DIR}/${NAME}.log"
   --jobStore "${JOB_TOIL_FOLDER}/${NAME}"
   --outdir "${OUT_DIR_FINAL}"
@@ -200,10 +184,5 @@ TOIL_PARAMS+=(
 
 
 echo "toil-cwl-runner" "${TOIL_PARAMS[@]}"
-
-# toil-cwl-runner --singularity --preserve-entire-environment --logFile RUN_DIRECTORY3//log-dir/TEST/TEST.log 
-#  --jobStore RUN_DIRECTORY3//work-dir/job-store-wf/TEST --outdir RUN_DIRECTORY3//results/TEST --disableProgress --disableCaching 
-#  --defaultMemory 10G --defaultCores 2 --retryCount 0 --logDebug /home/haris/Documents/coding/github_repos/eosc_life_go/pipeline-v5/workflows/gos_wf.cwl 
-# RUN_DIRECTORY3//TEST.yml
 
 toil-cwl-runner "${TOIL_PARAMS[@]}"

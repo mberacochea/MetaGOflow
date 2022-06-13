@@ -47,45 +47,45 @@ outputs:
   # pre-qc step output
   qc-statistics:
     type: Directory?
-    outputSource: before-qc/qc-statistics
+    outputSource: quality-control/qc-statistics
   qc_summary:
     type: File?
-    outputSource: before-qc/qc_summary
+    outputSource: quality-control/qc_summary
   qc-status:
     type: File?
-    outputSource: before-qc/qc-status
+    outputSource: quality-control/qc-status
   hashsum_paired:
     type: File[]?
-    outputSource: before-qc/input_files_hashsum_paired
+    outputSource: quality-control/input_files_hashsum_paired
   hashsum_single:
     type: File?
-    outputSource: before-qc/input_files_hashsum_single
+    outputSource: quality-control/input_files_hashsum_single
   fastp_filtering_json_report:
     type: File?
-    outputSource: before-qc/fastp_filtering_json
+    outputSource: quality-control/fastp_filtering_json
 
-  # after-qc step output
+  # rna-prediction step output
   sequence-categorisation_folder:
     type: Directory?
-    outputSource: after-qc/sequence_categorisation_folder
+    outputSource: rna-prediction/sequence_categorisation_folder
   taxonomy-summary_folder:
     type: Directory?
-    outputSource: after-qc/taxonomy-summary_folder
+    outputSource: rna-prediction/taxonomy-summary_folder
   rna-count:
     type: File?
-    outputSource: after-qc/rna-count
+    outputSource: rna-prediction/rna-count
 
   chunking_nucleotides:
     type: File[]?
-    outputSource: after-qc/chunking_nucleotides
+    outputSource: rna-prediction/chunking_nucleotides
 
   no_tax_flag_file:
     type: File?
-    outputSource: after-qc/optional_tax_file_flag
+    outputSource: rna-prediction/optional_tax_file_flag
 
 steps:
 
-  before-qc:
+  quality-control:
     run: conditionals/raw-reads/raw-reads-1-qc-cond.cwl
     in:
       single_reads: single_reads
@@ -102,10 +102,10 @@ steps:
       - input_files_hashsum_single
       - fastp_filtering_json
 
-  after-qc:
+  rna-prediction:
     run: conditionals/raw-reads/raw-reads-2-rna-only.cwl
     in:
-      filtered_fasta: before-qc/filtered_fasta
+      filtered_fasta: quality-control/filtered_fasta
       ssu_db: ssu_db
       lsu_db: lsu_db
       ssu_tax: ssu_tax
@@ -126,6 +126,18 @@ steps:
       - compressed_files
       - chunking_nucleotides
       - optional_tax_file_flag
+
+
+  # assembly: 
+  #   run: conditionals/assembly/megahit_paired.cwl
+  #   when: $(inputs.assembly != false)
+  #   in: 
+  #     min-contig-len: { default: 500 }
+
+
+
+
+
 
 $namespaces:
  edam: http://edamontology.org/
