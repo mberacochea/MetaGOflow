@@ -1,29 +1,18 @@
 #!/usr/bin/env cwl-runner
 
-cwlVersion: v1.0
+cwlVersion: v1.2
 class: CommandLineTool
 
 hints:
   - class: DockerRequirement
     dockerPull: microbiomeinformatics/pipeline-v5.trimmomatic:v0.36
 
-#hints:
-#  - class: SoftwareRequirement
-#    packages:
-#      trimmomatic:
-#        version:
-#          - 0.36--6
-#  - class: DockerRequirement
-#    dockerPull: 'quay.io/biocontainers/trimmomatic:0.36--6'
-
-#  - $import: trimmomatic-docker.yml
-
 requirements:
- ResourceRequirement:
-   ramMin: 10240
-   coresMin: 8
- InlineJavascriptRequirement: {}
- ShellCommandRequirement: {}
+  ResourceRequirement:
+    ramMin: 10240
+    coresMin: 8
+  InlineJavascriptRequirement: {}
+  ShellCommandRequirement: {}
 
 baseCommand: [ trimmomatic ]
 
@@ -35,6 +24,7 @@ inputs:
       separate: false
       position: 4
     label: 'quality score format'
+    default: '33'
     doc: >
       Either PHRED "33" or "64" specifies the base quality encoding. Default: 64
 
@@ -54,11 +44,12 @@ inputs:
       position: 13
       prefix: 'HEADCROP:'
       separate: false
+    default: 0
     label: 'read head trimming'
     doc: >
       Removes the specified number of bases, regardless of quality, from the
       beginning of the read.
-      The numbser specified is the number of bases to keep, from the start of
+      The number specified is the number of bases to keep, from the start of
       the read.
 
   tophred33:
@@ -77,6 +68,7 @@ inputs:
       position: 100
       prefix: 'MINLEN:'
       separate: false
+    default: 50
     label: 'minimum length read filter'
     doc: >
       This module removes reads that fall below the specified minimal length.
@@ -99,6 +91,7 @@ inputs:
       position: 14
       prefix: 'LEADING:'
       separate: false
+    default: 1
     label: 'read tail trimming'
     doc: >
       Remove low quality bases from the beginning. As long as a base has a
@@ -111,6 +104,7 @@ inputs:
       position: 15
       prefix: 'SLIDINGWINDOW:'
       separate: false
+    default: '10:15'
     label: 'read filtering sliding window'
     doc: >
       Perform a sliding window trimming, cutting once the average quality
@@ -185,6 +179,7 @@ inputs:
       position: 14
       prefix: 'TRAILING:'
       separate: false
+    default: 10
     label: 'read tail quality filtering'
     doc: >
       Remove low quality bases from the end. As long as a base has a value
@@ -217,11 +212,12 @@ inputs:
       removal of incorrect bases. A low value of this parameter (<0.2) favours
       longer reads, while a high value (>0.8) favours read correctness.
 
-  end_mode:
+  end_mode: 
     type: string  #trimmomatic-end_mode.yaml#end_mode
     inputBinding:
       position: 3
     label: 'read -end mode format'
+    default: "PE"
     doc: >
       Single End (SE) or Paired End (PE) mode
 
@@ -256,26 +252,12 @@ outputs:
     format: edam:format_1930  # fastq
     outputBinding:
       glob: $(inputs.reads2.nameroot).trimmed.fastq
-#      glob: |
-#        ${ if (inputs.reads2 ) {
-#             return inputs.reads2.nameroot + '.trimmed.fastq';
-#           } else {
-#             return null;
-#           }
-#         }
 
   reads2_trimmed_unpaired:
     type: File?
     format: edam:format_1930  # fastq
     outputBinding:
       glob: $(inputs.reads2.nameroot).trimmed.unpaired.fastq
-#      glob: |
-#        ${ if (inputs.reads2 ) {
-#             return inputs.reads2.nameroot + '.trimmed.unpaired.fastq';
-#           } else {
-#             return null;
-#           }
-#         }
 
 arguments:
 - valueFrom: trim.log
