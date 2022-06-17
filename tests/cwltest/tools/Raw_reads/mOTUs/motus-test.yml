@@ -1,5 +1,0 @@
-reads:
-  class: File
-  path: test-input/unpaired.fq
-  format: http://edamontology.org/format_1930
-

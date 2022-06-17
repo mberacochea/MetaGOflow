@@ -1,4 +1,0 @@
-infile:
-  class: File
-  path: ../../input_files/empty_file
-type_fasta: n

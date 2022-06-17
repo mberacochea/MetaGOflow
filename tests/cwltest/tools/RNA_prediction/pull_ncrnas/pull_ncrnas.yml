@@ -1,6 +1,0 @@
-hits:
-  class: File
-  path: test-input/test.deoverlapped
-
-model:
-  - 'cyano_tmRNA.RF01851'

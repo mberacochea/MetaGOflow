@@ -1,5 +1,0 @@
-initial_file:
-  class: File
-  path: ../../input_files/empty_file
-
-out_file_name: filename-test

@@ -1,5 +1,0 @@
-infernal_matches:
-  class: File
-  path: test-input/test-cmsearch.txt
-  format: http://edamontology.org/format_3475
-name: test-cmsearch.txt

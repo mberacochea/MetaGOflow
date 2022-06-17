@@ -1,8 +1,0 @@
-input:
-  class: File
-  path: test-input/test.get_subunits
-pattern_SSU: "SSU_rRNA"
-pattern_LSU: "LSU_rRNA"
-pattern_5S: "mtPerm-5S"
-pattern_5.8S: "5_8S_rRNA"
-prefix: 'prefix_'

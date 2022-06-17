@@ -1,5 +1,0 @@
-input_table:
-  class: File
-  path: test-input/test.txt
-output_name: output-table
-header: 'column1\tcolumn2\tcolumn3'
