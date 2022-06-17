@@ -1,5 +1,5 @@
 #!/usr/bin/env cwl-runner
-cwlVersion: v1.0
+cwlVersion: v1.2
 class: CommandLineTool
 
 # For Megahit version 1.2.9
@@ -15,25 +15,27 @@ requirements:
 baseCommand: [ megahit ]
 
 arguments:
+
   - valueFrom: $(runtime.tmpdir)
     prefix: --tmp-dir
+
   - valueFrom: $(runtime.cores)
     prefix: --num-cpu-threads
-  - valueFrom: $(runtime.outdir)
-    prefix: -o
 
 inputs:
-  #arrays allow for co-assembly
+
   memory:
     type: int?
     label: memory to run assembly
     inputBinding:
         prefix: -m
+
   min-contig-len:
     type: int?
     default: 500
     inputBinding:
       prefix: "--min-contig-len"
+
   forward_reads:
     type:
       - File?
@@ -42,6 +44,7 @@ inputs:
     inputBinding:
       prefix: "-1"
       itemSeparator: ","
+
   reverse_reads:
     type:
       - File?
@@ -51,25 +54,22 @@ inputs:
       prefix: "-2"
       itemSeparator: ","
 
-
-
 outputs:
   contigs:
     type: File
     format: edam:format_1929  # FASTA
     outputBinding:
-      glob: final.contigs.fa
+      glob: megahit_out/final.contigs.fa
   log:
     type: File
     format: iana:text/plain
     outputBinding:
-      glob: log
+      glob: megahit_out/log
 
   options:
     type: File
     outputBinding:
-      glob: options.json
-
+      glob: megahit_out/options.json
 
 
 $namespaces:

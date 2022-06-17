@@ -17,7 +17,7 @@ inputs:
     run_qc:
       type: boolean
       default: true
-    single_reads: File?
+
     forward_reads: File?
     reverse_reads: File?
 
