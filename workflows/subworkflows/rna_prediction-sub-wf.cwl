@@ -81,13 +81,14 @@ outputs:
 
 steps:
 
+  # easel
   index_reads:
     run: ../../tools/RNA_prediction/easel/esl-sfetch-index.cwl
     in:
       sequences: input_sequences
     out: [ sequences_with_index ]
 
-# cmsearch -> concatinate -> deoverlap
+  # cmsearch -> concatinate -> deoverlap
   find_ribosomal_ncRNAs:
     run: cmsearch/cmsearch-condition.cwl
     in:
@@ -97,7 +98,7 @@ steps:
       clan_info: ncRNA_ribosomal_model_clans
     out: [ concatenate_matches, deoverlapped_matches ]
 
-# extract coordinates for everything
+  # extract coordinates for everything
   extract_coords:
     run: ../../tools/RNA_prediction/extract-coords/extract-coords.cwl
     in:
@@ -107,7 +108,7 @@ steps:
         valueFrom: $(self.basename)
     out: [ matched_seqs_with_coords ]
 
-# extract coords of SSU ans LSU for ITS
+  # extract coords of SSU ans LSU for ITS
   extract_subunits_coords:
     run: ../../tools/RNA_prediction/get_subunits_coords/get_subunits_coords.cwl
     in:
@@ -116,7 +117,7 @@ steps:
       pattern_LSU: pattern_LSU
     out: [SSU_seqs, LSU_seqs, counts]
 
-# extract sequences
+  # extract sequences
   extract_sequences:
     run: ../../tools/RNA_prediction/easel/esl-sfetch-manyseqs.cwl
     in:
@@ -124,7 +125,7 @@ steps:
       names_contain_subseq_coords: extract_coords/matched_seqs_with_coords
     out: [ sequences ]
 
-# separate to SSU, LSU, 5S, 5.8S and models (6)
+  # separate to SSU, LSU, 5S, 5.8S and models (6)
   extract_subunits:
     run: ../../tools/RNA_prediction/get_subunits_fasta/get_subunits.cwl
     in:
@@ -142,7 +143,7 @@ steps:
       number: { default: 1 }
     out: [ count ]
 
-# classify SSU
+  # classify SSU
   classify_SSUs:
     when: $(inputs.fasta_count > 0)
     run: classify-otu-visualise.cwl
@@ -164,7 +165,7 @@ steps:
       number: { default: 1 }
     out: [ count ]
 
-# classify LSU
+  # classify LSU
   classify_LSUs:
     when: $(inputs.fasta_count > 0)
     run: classify-otu-visualise.cwl
@@ -179,14 +180,13 @@ steps:
       file_for_prefix: input_sequences
     out: [ out_dir, number_lines_mapseq ]
 
-# gzip and chunk sequence-categorisation
+  # gzip and chunk sequence-categorisation
   gzip_files:
     run: ../../utils/pigz/gzip.cwl
     scatter: uncompressed_file
     in:
       uncompressed_file: extract_subunits/fastas
     out: [compressed_file]
-
 
 $namespaces:
  edam: http://edamontology.org/

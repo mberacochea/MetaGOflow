@@ -37,10 +37,7 @@ arguments:
  - valueFrom: |
      ${ return inputs.namefile.nameroot.split('_')[0] + '_MERGED.fastq.gz' }
    prefix: "-s"
- # - "-3"
- # - forward_discarded.fastq.gz
- # - "-4"
- # - reverse_discarded.fastq.gz
+
 
 outputs:
   merged_reads:

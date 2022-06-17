@@ -14,55 +14,134 @@ doc: |
   do the RNA annotation of them.
 
 inputs:
-    run_qc:
-      type: boolean
-      default: true
 
-    forward_reads: File?
-    reverse_reads: File?
+  # global
+  forward_reads: File?
+  reverse_reads: File?
 
-    qc_min_length: int
 
-    ssu_db: {type: File, secondaryFiles: [.mscluster] }
-    lsu_db: {type: File, secondaryFiles: [.mscluster] }
-    ssu_tax: [string, File]
-    lsu_tax: [string, File]
-    ssu_otus: [string, File]
-    lsu_otus: [string, File]
+  # qc-rna-predict
+  run_qc:
+    type: boolean
+    default: true
 
-    rfam_models:
-      type:
-        - type: array
-          items: [string, File]
-    rfam_model_clans: [string, File]
-    other_ncRNA_models: string[]
+  qc_min_length: int
 
-    ssu_label: string
-    lsu_label: string
-    5s_pattern: string
-    5.8s_pattern: string
+
+  # rna prediction 
+  ssu_db: {type: File, secondaryFiles: [.mscluster] }
+  lsu_db: {type: File, secondaryFiles: [.mscluster] }
+  ssu_tax: [string, File]
+  lsu_tax: [string, File]
+  ssu_otus: [string, File]
+  lsu_otus: [string, File]
+  rfam_models:
+    type:
+      - type: array
+        items: [string, File]
+  rfam_model_clans: [string, File]
+  other_ncRNA_models: string[]
+  ssu_label: string
+  lsu_label: string
+  5s_pattern: string
+  5.8s_pattern: string
+
+
+  # for assembly step 
+  #   min-contig-len: { default: 100 }
+
+
+
+
+
+
+steps:
+
+  qc-rna-predict:
+
+    run: conditionals/raw-reads-1-qc-cond.cwl
+
+    in:
+      forward_reads: forward_reads
+      reverse_reads: reverse_reads
+      qc_min_length: qc_min_length
+      run_qc: run_qc
+
+    out:
+      - qc-statistics
+      - qc_summary
+      - qc-status
+      - filtered_fasta
+      - input_files_hashsum_paired
+      - input_files_hashsum_single
+      - fastp_filtering_json
+
+  rna-prediction:
+
+    run: conditionals/raw-reads-2-rna-only.cwl
+
+    in:
+      filtered_fasta: qc-rna-predict/filtered_fasta
+      ssu_db: ssu_db
+      lsu_db: lsu_db
+      ssu_tax: ssu_tax
+      lsu_tax: lsu_tax
+      ssu_otus: ssu_otus
+      lsu_otus: lsu_otus
+      rfam_models: rfam_models
+      rfam_model_clans: rfam_model_clans
+      other_ncRNA_models: other_ncRNA_models
+      ssu_label: ssu_label
+      lsu_label: lsu_label
+      5s_pattern: 5s_pattern
+      5.8s_pattern: 5.8s_pattern
+
+    out:
+      - sequence_categorisation_folder
+      - taxonomy-summary_folder
+      - rna-count
+      - compressed_files
+      - chunking_nucleotides
+      - optional_tax_file_flag
+
+  # qc-paired:
+
+
+
+  # assembly: 
+  #   run: conditionals/assembly/megahit_paired.cwl
+  #   when: $(inputs.assembly != false)
+  #   in: 
+  #     min-contig-len: { default: 500 }
+
+
+
+
+
 
 outputs:
-
   # pre-qc step output
   qc-statistics:
     type: Directory?
-    outputSource: quality-control/qc-statistics
+    outputSource: qc-rna-predict/qc-statistics
   qc_summary:
     type: File?
-    outputSource: quality-control/qc_summary
+    outputSource: qc-rna-predict/qc_summary
   qc-status:
     type: File?
-    outputSource: quality-control/qc-status
+    outputSource: qc-rna-predict/qc-status
   hashsum_paired:
     type: File[]?
-    outputSource: quality-control/input_files_hashsum_paired
+    outputSource: qc-rna-predict/input_files_hashsum_paired
   hashsum_single:
     type: File?
-    outputSource: quality-control/input_files_hashsum_single
+    outputSource: qc-rna-predict/input_files_hashsum_single
   fastp_filtering_json_report:
     type: File?
-    outputSource: quality-control/fastp_filtering_json
+    outputSource: qc-rna-predict/fastp_filtering_json
+  filtered_fasta:
+    type: File?
+    outputSource: qc-rna-predict/filtered_fasta
 
   # rna-prediction step output
   sequence-categorisation_folder:
@@ -82,58 +161,6 @@ outputs:
   no_tax_flag_file:
     type: File?
     outputSource: rna-prediction/optional_tax_file_flag
-
-steps:
-
-  quality-control:
-    run: conditionals/raw-reads/raw-reads-1-qc-cond.cwl
-    in:
-      single_reads: single_reads
-      forward_reads: forward_reads
-      reverse_reads: reverse_reads
-      qc_min_length: qc_min_length
-      run_qc: run_qc
-    out:
-      - qc-statistics
-      - qc_summary
-      - qc-status
-      - filtered_fasta
-      - input_files_hashsum_paired
-      - input_files_hashsum_single
-      - fastp_filtering_json
-
-  rna-prediction:
-    run: conditionals/raw-reads/raw-reads-2-rna-only.cwl
-    in:
-      filtered_fasta: quality-control/filtered_fasta
-      ssu_db: ssu_db
-      lsu_db: lsu_db
-      ssu_tax: ssu_tax
-      lsu_tax: lsu_tax
-      ssu_otus: ssu_otus
-      lsu_otus: lsu_otus
-      rfam_models: rfam_models
-      rfam_model_clans: rfam_model_clans
-      other_ncRNA_models: other_ncRNA_models
-      ssu_label: ssu_label
-      lsu_label: lsu_label
-      5s_pattern: 5s_pattern
-      5.8s_pattern: 5.8s_pattern
-    out:
-      - sequence_categorisation_folder
-      - taxonomy-summary_folder
-      - rna-count
-      - compressed_files
-      - chunking_nucleotides
-      - optional_tax_file_flag
-
-
-  # assembly: 
-  #   run: conditionals/assembly/megahit_paired.cwl
-  #   when: $(inputs.assembly != false)
-  #   in: 
-  #     min-contig-len: { default: 500 }
-
 
 
 
