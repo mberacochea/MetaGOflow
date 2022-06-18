@@ -9,6 +9,8 @@ reverse_reads:
   path: ../../test_input/wgs-paired-SRR1620013_2.fastq.gz
   format: http://edamontology.org/format_1930
 
+# to make a separate dir for forward and reverse read
+paired_reads_names: ["SRR1620013_1", "SRR1620013_2"]
 
 
 # # Trimmomatic
@@ -20,3 +22,7 @@ reverse_reads:
 # trailing: 1
 # slidingwindow: '10:15'
 threads: 2
+
+
+# # QC-PARIED
+# qc_min_length: 100

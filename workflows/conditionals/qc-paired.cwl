@@ -12,7 +12,14 @@ requirements:
 inputs:
     forward_reads: File?
     reverse_reads: File?
-    # qc_min_length: int
+    qc_min_length: 
+      type: int
+      default: 100
+    paired_reads_names: string[]
+    #   default: 
+    #     valueFrom: 
+    #       $(inputs.forward_reads.nameroot)
+    #       $(inputs.reverse_reads.nameroot)
 
 steps:
 
@@ -36,7 +43,6 @@ steps:
       paired_reads_length_filter: { default: 70 }
     out: [ count_forward_submitted_reads, fastp_report ]
 
-
   # << Trim and Reformat >>
   trim_quality_control:
     doc: |
@@ -52,8 +58,8 @@ steps:
       end_mode: { default: PE }
       minlen: { default: 100 }
       slidingwindow: { default: '4:15' }
-    out: [ both_paired ]
-# reads1_trimmed_paired, reads2_trimmed_paired,
+    out: [ both_paired ]   # reads1_trimmed_paired, reads2_trimmed_paired,
+  
   #fastq
   clean_fasta_headers:
     run: ../../utils/clean_fasta_headers.cwl
@@ -62,7 +68,7 @@ steps:
       sequences: trim_quality_control/both_paired
     out: [ sequences_with_cleaned_headers ]
 
-  #fasta
+  #fasta - output called *.unclean
   convert_trimmed_reads_to_fasta:
     run: ../../utils/fastq_to_fasta/fastq_to_fasta.cwl
     scatter: fastq
@@ -70,42 +76,45 @@ steps:
       fastq: clean_fasta_headers/sequences_with_cleaned_headers
     out: [ fasta ]
 
-  # # << QC filtering >>
-  # length_filter:
-  #   run: ../../tools/qc-filtering/qc-filtering.cwl
-  #   scatter: seq_file
-  #   in:
-  #     seq_file: convert_trimmed_reads_to_fasta/fasta
-  #     submitted_seq_count: overlap_reads/count_forward_submitted_reads
-  #     stats_file_name: {default: 'qc_summary'}
-  #     min_length: qc_min_length
-  #     input_file_format: { default: 'fasta' }
-  #   out: [ filtered_file, stats_summary_file ]
+  # << QC filtering >>
+  length_filter:
+    run: ../../tools/qc-filtering/qc-filtering.cwl
+    scatter: seq_file
+    in:
+      seq_file: convert_trimmed_reads_to_fasta/fasta
+      submitted_seq_count: overlap_reads/count_forward_submitted_reads
+      stats_file_name: {default: 'qc_summary' }
+      min_length: qc_min_length 
+      input_file_format: { default: 'fasta' }
+    out: [ filtered_file, stats_summary_file ]  
+       
 
-  # count_processed_reads:
-  #   run: ../../utils/count_fasta.cwl
-  #   scatter: sequences
-  #   in:
-  #     sequences: length_filter/filtered_file
-  #     number: { default: 1 }
-  #   out: [ count ]
+  count_processed_reads:
+    run: ../../utils/count_fasta.cwl
+    scatter: sequences
+    in:
+      sequences: length_filter/filtered_file
+      number: { default: 1 }
+    out: [ count ]
 
-  # # << QC FLAG >>
-  # QC-FLAG:
-  #   run: ../../utils/qc-flag.cwl
-  #   scatter: qc_count
-  #   in:
-  #       qc_count: count_processed_reads/count
-  #   out: [ qc-flag ]
+  # << QC FLAG >>
+  QC-FLAG:
+    run: ../../utils/qc-flag.cwl
+    scatter: qc_count
+    in:
+        qc_count: count_processed_reads/count
+    out: [ qc-flag ]
 
-  # # << QC >>
-  # qc_stats:
-  #   run: ../../tools/qc-stats/qc-stats.cwl
-  #   scatter: [QCed_reads, sequence_count]
-  #   in:
-  #       QCed_reads: length_filter/filtered_file
-  #       sequence_count: count_processed_reads/count
-  #   out: [ output_dir, summary_out ]
+  # << QC >>
+  qc_stats:
+    run: ../../tools/qc-stats/qc-stats.cwl
+    scatter: [QCed_reads, sequence_count, out_dir_name]
+    scatterMethod: dotproduct
+    in:
+        QCed_reads: length_filter/filtered_file
+        sequence_count: count_processed_reads/count
+        out_dir_name: paired_reads_names
+    out: [ output_dir, summary_out ]
 
 
 
@@ -117,7 +126,6 @@ outputs:
     type: File[]?
     outputSource: hashsum_paired/hashsum
     pickValue: all_non_null
-
 
   fastp_filtering_json:
     type: File?
@@ -132,22 +140,25 @@ outputs:
     type: File[]?
     outputSource: convert_trimmed_reads_to_fasta/fasta
 
-  # qc-statistics:
-  #   type: Directory
-  #   outputSource: qc_stats/output_dir
-  # qc_summary:
-  #   type: File
-  #   outputSource: length_filter/stats_summary_file
+  qc-statistics:
+    type: Directory[]
+    outputSource: qc_stats/output_dir
+
+  qc_summary:
+    type: File[]
+    outputSource: length_filter/stats_summary_file
+
+  filtered_fasta:
+    type: File[]?
+    outputSource: length_filter/filtered_file
+
   # qc-status:
   #   type: File
   #   outputSource: QC-FLAG/qc-flag
 
-  # filtered_fasta:
-  #   type: File
-  #   outputSource: length_filter/filtered_file
-  # motus_input:
-  #   type: File
-  #   outputSource: clean_fasta_headers/sequences_with_cleaned_headers
+  motus_input:
+    type: File[]?
+    outputSource: clean_fasta_headers/sequences_with_cleaned_headers
 
 
 
