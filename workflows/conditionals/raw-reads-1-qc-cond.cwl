@@ -187,8 +187,6 @@ steps:
     run: ../../utils/fastq_to_fasta/fastq_to_fasta.cwl
     when: $(inputs.run_qc == false)
     in:
-      run_qc: run_qc
-      qc: run_qc
       fastq: clean_fasta_headers_noqc/sequences_with_cleaned_headers
     out: [ fasta ]
 

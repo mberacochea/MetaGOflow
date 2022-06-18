@@ -1,5 +1,5 @@
 #!/usr/bin/env cwl-runner
-cwlVersion: v1.0
+cwlVersion: v1.2
 class: CommandLineTool
 
 label: Replaces problematic characters from FASTA headers with dashes
@@ -25,7 +25,6 @@ stdout: $(inputs.sequences.nameroot).unfiltered_fasta
 outputs:
   sequences_with_cleaned_headers:
     type: stdout
-    # format: $(inputs.sequences.format)
 
 hints:
   - class: DockerRequirement

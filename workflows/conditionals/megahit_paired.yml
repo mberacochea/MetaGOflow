@@ -1,17 +1,17 @@
-memory: 150
+memory: 550
 min-contig-len: 300
-reads1:
+forward_reads:
   class: File
   path: ../../test_input/wgs-paired-SRR1620013_1.fastq.gz
   format: http://edamontology.org/format_1930
-reads2:
+reverse_reads:
   class: File
   path: ../../test_input/wgs-paired-SRR1620013_2.fastq.gz
   format: http://edamontology.org/format_1930
 
 
 
-# Trimmomatic
+# # Trimmomatic
 # end_mode: PE
 # phred: '33'
 # headcrop: 1
@@ -19,4 +19,4 @@ reads2:
 # leading: 1
 # trailing: 1
 # slidingwindow: '10:15'
-# threads: 2
+threads: 2

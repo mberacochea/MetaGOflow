@@ -1,6 +1,6 @@
 #!/usr/bin/env cwl-runner
 class: Workflow
-cwlVersion: v1.2.0-dev2
+cwlVersion: v1.2
 
 requirements:
   SubworkflowFeatureRequirement: {}
@@ -12,22 +12,14 @@ requirements:
 inputs:
     forward_reads: File?
     reverse_reads: File?
-    single_reads: File?
     paired_reads_length_filter: int
 
 outputs:
-  unzipped_single_reads:
-    type: File
-    outputSource:
-      - unzip_merged_reads/unzipped_file
-      - unzip_single_reads/unzipped_file
-    pickValue: first_non_null
 
   count_forward_submitted_reads:
     type: int
     outputSource:
       - count_submitted_reads/count
-      - count_submitted_reads_single/count
     pickValue: first_non_null
 
   fastp_report:
@@ -36,24 +28,18 @@ outputs:
 
 steps:
 
-# ----- PAIRED-END PART -----
-
-# << unzipping paired reads >>
+  # << unzipping paired reads >>
   count_submitted_reads:
     run: ../../utils/count_lines/count_lines.cwl
-    when: $(inputs.single == undefined)
     in:
-      single: single_reads
       sequences: forward_reads
       number: { default: 4 }
     out: [ count ]
 
-# filter paired-end reads (for single do nothing)
+  # filter paired-end reads (for single do nothing)
   filter_paired:
     run: ../../utils/fastp/fastp.cwl
-    when: $(inputs.single == undefined)
     in:
-      single: single_reads
       fastq1: forward_reads
       fastq2: reverse_reads
       min_length_required: paired_reads_length_filter
@@ -63,46 +49,7 @@ steps:
       threads: {default: 8}
     out: [ out_fastq1, out_fastq2, json_report ]  # unzipped
 
-# << SeqPrep only for paired reads >>
-  overlap_reads:
-    label: Paired-end overlapping reads are merged
-    run: ../../tools/SeqPrep/seqprep.cwl
-    when: $(inputs.single == undefined)
-    in:
-      single: single_reads
-      forward_reads: filter_paired/out_fastq1
-      reverse_reads: filter_paired/out_fastq2
-      namefile: forward_reads
-    out: [ merged_reads, forward_unmerged_reads, reverse_unmerged_reads ]  # compressed
 
-# << unzip merged reads >>
-  unzip_merged_reads:
-    when: $(inputs.target_reads != undefined)
-    run: ../../utils/multiple-gunzip.cwl
-    in:
-      target_reads: overlap_reads/merged_reads
-      reads: { default: true }
-    out: [ unzipped_file ]
-
-# ----- SINGLE-END PART -----
-
-# << unzipping single reads >>
-  unzip_single_reads:
-    run: ../../utils/multiple-gunzip.cwl
-    when: $(inputs.target_reads != undefined)
-    in:
-      target_reads: single_reads
-      reads: { default: true }
-    out: [ unzipped_file ]
-
-  count_submitted_reads_single:
-    run: ../../utils/count_lines/count_lines.cwl
-    when: $(inputs.target_reads != undefined)
-    in:
-      target_reads: single_reads
-      sequences: unzip_single_reads/unzipped_file
-      number: { default: 4 }
-    out: [ count ]
 
 
 $namespaces:

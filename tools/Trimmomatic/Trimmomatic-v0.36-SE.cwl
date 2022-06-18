@@ -251,33 +251,7 @@ arguments:
   prefix: -threads
 - valueFrom: $(inputs.reads1.nameroot).trimmed
   position: 7
-#- valueFrom: |
-#    ${
-#      if (inputs.end_mode == "PE" && inputs.reads2) {
-#        return inputs.reads1.nameroot + '.trimmed.unpaired.fastq';
-#      } else {
-#        return null;
-#      }
-#    }
-#  position: 8
-#- valueFrom: |
-#    ${
-#      if (inputs.end_mode == "PE" && inputs.reads2) {
-#        return inputs.reads2.nameroot + '.trimmed.fastq';
-#      } else {
-#        return null;
-#      }
-#    }
-#  position: 9
-#- valueFrom: |
-#    ${
-#      if (inputs.end_mode == "PE" && inputs.reads2) {
-#        return inputs.reads2.nameroot + '.trimmed.unpaired.fastq';
-#      } else {
-#        return null;
-#      }
-#    }
-#  position: 10
+
 
 doc: >
   Trimmomatic is a fast, multithreaded command line tool that can be used to trim and crop

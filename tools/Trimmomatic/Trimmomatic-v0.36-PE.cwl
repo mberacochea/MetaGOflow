@@ -222,7 +222,7 @@ inputs:
       Single End (SE) or Paired End (PE) mode
 
 outputs:
-  reads1_trimmed:
+  reads1_trimmed_paired:
     type: File
     format: edam:format_1930  # fastq
     outputBinding:
@@ -258,6 +258,13 @@ outputs:
     format: edam:format_1930  # fastq
     outputBinding:
       glob: $(inputs.reads2.nameroot).trimmed.unpaired.fastq
+
+  both_paired: 
+    type: File[]?
+    format: edam:format_1930
+    outputBinding: 
+      glob: [$(inputs.reads1.nameroot).trimmed.fastq, $(inputs.reads2.nameroot).trimmed.fastq]
+
 
 arguments:
 - valueFrom: trim.log
