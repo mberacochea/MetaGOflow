@@ -18,6 +18,7 @@ inputs:
   # global
   forward_reads: File?
   reverse_reads: File?
+  paired_reads_names: string[]
 
 
   # qc-rna-predict
@@ -57,55 +58,65 @@ inputs:
 
 steps:
 
-  qc-rna-predict:
+  # qc-rna-predict:
 
-    run: conditionals/raw-reads-1-qc-cond.cwl
+  #   run: conditionals/raw-reads-1-qc-cond.cwl
 
-    in:
+  #   in:
+  #     forward_reads: forward_reads
+  #     reverse_reads: reverse_reads
+  #     qc_min_length: qc_min_length
+  #     run_qc: run_qc
+
+  #   out:
+  #     - qc-statistics
+  #     - qc_summary
+  #     - qc-status
+  #     - filtered_fasta
+  #     - input_files_hashsum_paired
+  #     - input_files_hashsum_single
+  #     - fastp_filtering_json
+
+  # rna-prediction:
+
+  #   run: conditionals/raw-reads-2-rna-only.cwl
+
+  #   in:
+  #     filtered_fasta: qc-rna-predict/filtered_fasta
+  #     ssu_db: ssu_db
+  #     lsu_db: lsu_db
+  #     ssu_tax: ssu_tax
+  #     lsu_tax: lsu_tax
+  #     ssu_otus: ssu_otus
+  #     lsu_otus: lsu_otus
+  #     rfam_models: rfam_models
+  #     rfam_model_clans: rfam_model_clans
+  #     other_ncRNA_models: other_ncRNA_models
+  #     ssu_label: ssu_label
+  #     lsu_label: lsu_label
+  #     5s_pattern: 5s_pattern
+  #     5.8s_pattern: 5.8s_pattern
+
+  #   out:
+  #     - sequence_categorisation_folder
+  #     - taxonomy-summary_folder
+  #     - rna-count
+  #     - compressed_files
+  #     - chunking_nucleotides
+  #     - optional_tax_file_flag
+
+  qc-paired:
+
+    run: conditionals/qc-paired.cwl
+
+    in: 
       forward_reads: forward_reads
       reverse_reads: reverse_reads
-      qc_min_length: qc_min_length
-      run_qc: run_qc
+      paired_reads_names: paired_reads_names
+      # qc_min_length: 
 
-    out:
-      - qc-statistics
-      - qc_summary
-      - qc-status
-      - filtered_fasta
-      - input_files_hashsum_paired
-      - input_files_hashsum_single
-      - fastp_filtering_json
-
-  rna-prediction:
-
-    run: conditionals/raw-reads-2-rna-only.cwl
-
-    in:
-      filtered_fasta: qc-rna-predict/filtered_fasta
-      ssu_db: ssu_db
-      lsu_db: lsu_db
-      ssu_tax: ssu_tax
-      lsu_tax: lsu_tax
-      ssu_otus: ssu_otus
-      lsu_otus: lsu_otus
-      rfam_models: rfam_models
-      rfam_model_clans: rfam_model_clans
-      other_ncRNA_models: other_ncRNA_models
-      ssu_label: ssu_label
-      lsu_label: lsu_label
-      5s_pattern: 5s_pattern
-      5.8s_pattern: 5.8s_pattern
-
-    out:
-      - sequence_categorisation_folder
-      - taxonomy-summary_folder
-      - rna-count
-      - compressed_files
-      - chunking_nucleotides
-      - optional_tax_file_flag
-
-  # qc-paired:
-
+    out: 
+      - trimmed_seqs
 
 
   # assembly: 
@@ -120,48 +131,52 @@ steps:
 
 
 outputs:
-  # pre-qc step output
-  qc-statistics:
-    type: Directory?
-    outputSource: qc-rna-predict/qc-statistics
-  qc_summary:
-    type: File?
-    outputSource: qc-rna-predict/qc_summary
-  qc-status:
-    type: File?
-    outputSource: qc-rna-predict/qc-status
-  hashsum_paired:
-    type: File[]?
-    outputSource: qc-rna-predict/input_files_hashsum_paired
-  hashsum_single:
-    type: File?
-    outputSource: qc-rna-predict/input_files_hashsum_single
-  fastp_filtering_json_report:
-    type: File?
-    outputSource: qc-rna-predict/fastp_filtering_json
-  filtered_fasta:
-    type: File?
-    outputSource: qc-rna-predict/filtered_fasta
+  # # pre-qc step output
+  # qc-statistics:
+  #   type: Directory?
+  #   outputSource: qc-rna-predict/qc-statistics
+  # qc_summary:
+  #   type: File?
+  #   outputSource: qc-rna-predict/qc_summary
+  # qc-status:
+  #   type: File?
+  #   outputSource: qc-rna-predict/qc-status
+  # hashsum_paired:
+  #   type: File[]?
+  #   outputSource: qc-rna-predict/input_files_hashsum_paired
+  # hashsum_single:
+  #   type: File?
+  #   outputSource: qc-rna-predict/input_files_hashsum_single
+  # fastp_filtering_json_report:
+  #   type: File?
+  #   outputSource: qc-rna-predict/fastp_filtering_json
+  # filtered_fasta:
+  #   type: File?
+  #   outputSource: qc-rna-predict/filtered_fasta
 
-  # rna-prediction step output
-  sequence-categorisation_folder:
-    type: Directory?
-    outputSource: rna-prediction/sequence_categorisation_folder
-  taxonomy-summary_folder:
-    type: Directory?
-    outputSource: rna-prediction/taxonomy-summary_folder
-  rna-count:
-    type: File?
-    outputSource: rna-prediction/rna-count
+  # # rna-prediction step output
+  # sequence-categorisation_folder:
+  #   type: Directory?
+  #   outputSource: rna-prediction/sequence_categorisation_folder
+  # taxonomy-summary_folder:
+  #   type: Directory?
+  #   outputSource: rna-prediction/taxonomy-summary_folder
+  # rna-count:
+  #   type: File?
+  #   outputSource: rna-prediction/rna-count
 
-  chunking_nucleotides:
-    type: File[]?
-    outputSource: rna-prediction/chunking_nucleotides
+  # chunking_nucleotides:
+  #   type: File[]?
+  #   outputSource: rna-prediction/chunking_nucleotides
 
-  no_tax_flag_file:
-    type: File?
-    outputSource: rna-prediction/optional_tax_file_flag
+  # no_tax_flag_file:
+  #   type: File?
+  #   outputSource: rna-prediction/optional_tax_file_flag
 
+  # paired-end qc
+  paired-trimmed-files:
+    type: File[]
+    outputSource: qc-paired/trimmed_seqs
 
 
 

@@ -151,7 +151,6 @@ python3 create_yml.py \
 echo "run_qc: ${QC}" >> "${RENAMED_YML}"
 echo "assembly: ${ASSEMBLY}" >> "${RENAMED_YML}"
 
-
 # ----------------------------- running pipeline ----------------------------- #
 
 # IMPORTANT! 

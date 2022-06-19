@@ -16,10 +16,6 @@ inputs:
       type: int
       default: 100
     paired_reads_names: string[]
-    #   default: 
-    #     valueFrom: 
-    #       $(inputs.forward_reads.nameroot)
-    #       $(inputs.reverse_reads.nameroot)
 
 steps:
 
@@ -58,8 +54,8 @@ steps:
       end_mode: { default: PE }
       minlen: { default: 100 }
       slidingwindow: { default: '4:15' }
-    out: [ both_paired ]   # reads1_trimmed_paired, reads2_trimmed_paired,
-  
+    out: [ reads1_trimmed_paired, reads2_trimmed_paired, both_paired ]    
+
   #fastq
   clean_fasta_headers:
     run: ../../utils/clean_fasta_headers.cwl
@@ -131,7 +127,6 @@ outputs:
     type: File?
     outputSource: overlap_reads/fastp_report
 
-
   trimmed_seqs: 
     type: File[]?
     outputSource: trim_quality_control/both_paired
@@ -151,10 +146,6 @@ outputs:
   filtered_fasta:
     type: File[]?
     outputSource: length_filter/filtered_file
-
-  # qc-status:
-  #   type: File
-  #   outputSource: QC-FLAG/qc-flag
 
   motus_input:
     type: File[]?

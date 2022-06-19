@@ -73,6 +73,10 @@ if __name__ == "__main__":
     # load template yml file and append database path
     template_yml = db_dir(args.db_dir, args.yml)
 
+    paired_reads = [args.fr.split("/")[-1].split(".fastq.gz")[0], args.rr.split("/")[-1].split(".fastq.gz")[0]]
+    paired_reads_names = '"' + paired_reads[0] + '", "' + paired_reads[1] + '"'
+    print("paired_reads: ", paired_reads)
+    print("paired_reads_names: ", paired_reads_names)
 
     with open(args.output, "w") as output_yml:
         
@@ -91,6 +95,11 @@ if __name__ == "__main__":
             "path": args.rr,
         }
 
+        # template_yml["paired_reads_names"] = "[" + paired_reads_names + "]"
+    
+
         yaml.dump(template_yml, output_yml)
+
+        output_yml.write("paired_reads_names: " + "[" + paired_reads_names + "]" + "\n")
 
         print("<--------- the .yml is now done")

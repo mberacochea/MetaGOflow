@@ -1,6 +1,6 @@
 #!/usr/bin/env cwl-runner
 class: Workflow
-cwlVersion: v1.2.0-dev4
+cwlVersion: v1.2
 
 requirements:
   SubworkflowFeatureRequirement: {}
@@ -44,7 +44,7 @@ outputs:
 
 steps:
 
-# << FUNCTIONAL ANNOTATION: hmmscan, IPS, eggNOG >>
+  # << FUNCTIONAL ANNOTATION: hmmscan, IPS, eggNOG >>
   functional_annotation:
     run: ../functional-annotation/functional-annotation.cwl
     in:
@@ -63,7 +63,7 @@ steps:
       InterProScan_outputFormat: InterProScan_outputFormat
     out: [ hmm_result, ips_result ]
 
-# GO SUMMARY; PFAM; summaries and stats IPS, HMMScan, Pfam; add header; chunking TSV
+  # GO SUMMARY; PFAM; summaries and stats IPS, HMMScan, Pfam; add header; chunking TSV
   post_processing:
     run: ../functional-annotation/post-proccessing-go-pfam-stats-subwf.cwl
     in:
