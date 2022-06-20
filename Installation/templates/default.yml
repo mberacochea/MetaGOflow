@@ -6,6 +6,8 @@ qc_min_length: 100
 
 # RNA PREDICTION
 
+run_qc_rna_predict: true
+
 ssu_label: SSU_rRNA
 lsu_label: LSU_rRNA
 5.8s_pattern: 5_8S_rRNA
@@ -161,3 +163,11 @@ other_ncRNA_models:
 - RNase_P.RF01577
 - tmRNA.RF00023
 - tRNA-Sec.RF01852
+
+# ASSEMBLY 
+assembly: true 
+
+min-contig-len: 50
+
+memory: 550
+

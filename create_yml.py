@@ -64,7 +64,18 @@ if __name__ == "__main__":
         help="Path to database directory",
         required=False,
     )
-
+    parser.add_argument(
+        "-q",
+        "--qc_rna_predct",
+        help="Quality control step for the case of rna prediction",
+        required=False,
+    )
+    parser.add_argument(
+        "-a",
+        "--assembly",
+        help="Assembly of the pre-processed reads using MEGAHIT",
+        required=False,
+    )
     args = parser.parse_args()
 
 
@@ -95,11 +106,16 @@ if __name__ == "__main__":
             "path": args.rr,
         }
 
-        # template_yml["paired_reads_names"] = "[" + paired_reads_names + "]"
-    
+        if args.qc_rna_predct == "false": 
+            template_yml["run_qc_rna_predict"] = False
+        else:
+            template_yml["run_qc_rna_predict"] = True
+
+        if args.assembly == "false":
+            template_yml["assembly"] = False
+        else:
+            template_yml["assembly"] = True
 
         yaml.dump(template_yml, output_yml)
-
-        output_yml.write("paired_reads_names: " + "[" + paired_reads_names + "]" + "\n")
 
         print("<--------- the .yml is now done")

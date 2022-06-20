@@ -59,7 +59,8 @@ steps:
   # << calculate hashsum >>
   hashsum_paired:
     run: ../../utils/generate_checksum/generate_checksum.cwl
-    when: $(inputs.single == undefined)
+    when: 
+      $(inputs.single == undefined)
     scatter: input_file
     in:
       single: single_reads
@@ -70,7 +71,8 @@ steps:
 
   hashsum_single:
     run: ../../utils/generate_checksum/generate_checksum.cwl
-    when: $(inputs.single != undefined)
+    when: 
+      $(inputs.single != undefined)
     in:
       single: single_reads
       input_file: single_reads
@@ -96,8 +98,13 @@ steps:
     doc: |
       Low quality trimming (low quality ends and sequences with < quality scores
       less than 15 over a 4 nucleotide wide window are removed)
-    when: $(inputs.run_qc == true)
-    run: ../../tools/Trimmomatic/Trimmomatic-v0.36-SE.cwl
+
+    run: 
+      ../../tools/Trimmomatic/Trimmomatic-v0.36-SE.cwl
+
+    when: 
+      $(inputs.run_qc == true)
+
     in:
       run_qc: run_qc
       reads1: overlap_reads/unzipped_single_reads
@@ -112,7 +119,8 @@ steps:
   #fastq
   clean_fasta_headers:
     run: ../../utils/clean_fasta_headers.cwl
-    when: $(inputs.run_qc == true)
+    when: 
+      $(inputs.run_qc == true)
     in:
       run_qc: run_qc
       sequences: trim_quality_control/reads1_trimmed
@@ -121,10 +129,11 @@ steps:
   #fasta
   convert_trimmed_reads_to_fasta:
     run: ../../utils/fastq_to_fasta/fastq_to_fasta.cwl
-    when: $(inputs.run_qc == true)
+    when: 
+      $(inputs.run_qc == true)
     in:
-      run_qc: run_qc
-      qc: run_qc
+      # run_qc: run_qc
+      # qc: run_qc
       fastq: clean_fasta_headers/sequences_with_cleaned_headers
     out: [ fasta ]
 
@@ -132,7 +141,8 @@ steps:
   # << QC filtering >>
   length_filter:
     run: ../../tools/qc-filtering/qc-filtering.cwl
-    when: $(inputs.run_qc == true)
+    when: 
+      $(inputs.run_qc == true)
     in:
       run_qc: run_qc
       seq_file: convert_trimmed_reads_to_fasta/fasta
@@ -154,7 +164,8 @@ steps:
   # << QC FLAG >>
   QC-FLAG:
     run: ../../utils/qc-flag.cwl
-    when: $(inputs.run_qc == true)
+    when: 
+      $(inputs.run_qc == true)
     in:
       run_qc: run_qc
       qc_count: count_processed_reads/count
@@ -163,7 +174,8 @@ steps:
   # << QC >>
   qc_stats:
     run: ../../tools/qc-stats/qc-stats.cwl
-    when: $(inputs.run_qc == true)
+    when: 
+      $(inputs.run_qc == true)
     in:
       run_qc: run_qc
       QCed_reads: length_filter/filtered_file

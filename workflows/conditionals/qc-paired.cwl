@@ -15,7 +15,6 @@ inputs:
     qc_min_length: 
       type: int
       default: 100
-    paired_reads_names: string[]
 
 steps:
 
@@ -54,7 +53,7 @@ steps:
       end_mode: { default: PE }
       minlen: { default: 100 }
       slidingwindow: { default: '4:15' }
-    out: [ reads1_trimmed_paired, reads2_trimmed_paired, both_paired ]    
+    out: [ reads1_trimmed_paired, reads2_trimmed_paired, both_paired ]
 
   #fastq
   clean_fasta_headers:
@@ -109,7 +108,8 @@ steps:
     in:
         QCed_reads: length_filter/filtered_file
         sequence_count: count_processed_reads/count
-        out_dir_name: paired_reads_names
+        out_dir_name:
+          valueFrom: $(inputs.QCed_reads.basename)
     out: [ output_dir, summary_out ]
 
 
@@ -126,6 +126,14 @@ outputs:
   fastp_filtering_json:
     type: File?
     outputSource: overlap_reads/fastp_report
+
+  trimmed_fr: 
+    type: File?
+    outputSource: trim_quality_control/reads1_trimmed_paired
+
+  trimmed_rr: 
+    type: File?
+    outputSource: trim_quality_control/reads2_trimmed_paired
 
   trimmed_seqs: 
     type: File[]?

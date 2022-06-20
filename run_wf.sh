@@ -8,7 +8,7 @@ NUM_CORES=1
 LIMIT_QUEUE=100
 YML="${PIPELINE_DIR}/Installation/templates/default.yml"
 DB_DIR="${PIPELINE_DIR}/ref-dbs/"
-ASSEMBLY="false"
+# ASSEMBLY="false"
 
 _usage() {
   echo "
@@ -23,7 +23,7 @@ Script arguments.
   -y                  template yml file. (optional, default ../templates/rna_prediction_template.yml})
   -f                  Forward reads fasta file path.
   -r                  Reverse reads fasta file path.
-  -q                  Run qc ('true' or 'false').
+  -q                  Run RNA prediction  ('true' or 'false').
   -a                  Assemble samples to get contigs at the study level, i.e. the clean reads are merged in a single sample and then assembled.  (optional, default ${ASSEMBLY})
   -n                  Name of run and prefix to output files.
   -d                  Path to run directory.
@@ -31,7 +31,7 @@ Script arguments.
 "
 }
 
-while getopts :y:f:r:s:q:c:d:m:n:l:p:h option; do
+while getopts :y:f:r:a:q:c:d:m:n:l:p:h option; do
   case "${option}" in
   y) YML=${OPTARG} ;;
   f)
@@ -84,13 +84,10 @@ _check_mandatory() {
 _check_reads() {
   #check forward and reverse reads both present
   #check if single reads then no other readsgiven
-  if [ -z "$3" ]; then
-    if [ -z "$1" ] || [ -z "$2" ]; then
-      echo "Error"
-      echo "Only provide one format: paired or single reads"
-      exit 1
-    fi
-  fi
+
+  #  BASH SYNTAX: 
+  # to check if a variable has value: 
+  # [ -z "$var" ] && echo "Empty"
 
   if [ -z "$1" ] && [ -n "$2" ]; then
     echo "Error"
@@ -106,10 +103,9 @@ _check_reads() {
 
 }
 
-_check_mandatory "$QC" "-q"
 _check_mandatory "$NAME" "-n"
 _check_mandatory "$RUN_DIR" "-d"
-_check_reads "$FORWARD_READS" "$REVERSE_READS" "$SINGLE"
+_check_reads "$FORWARD_READS" "$REVERSE_READS" 
 
 
 
@@ -145,11 +141,9 @@ python3 create_yml.py \
   -o "${RENAMED_YML}" \
   -f "${PIPELINE_DIR}/${FORWARD_READS}" \
   -r "${PIPELINE_DIR}/${REVERSE_READS}" \
-  -d "${DB_DIR}" 
-
-
-echo "run_qc: ${QC}" >> "${RENAMED_YML}"
-echo "assembly: ${ASSEMBLY}" >> "${RENAMED_YML}"
+  -d "${DB_DIR}" \
+  -q "${QC}" \
+  -a "${ASSEMBLY}"
 
 # ----------------------------- running pipeline ----------------------------- #
 
@@ -159,12 +153,12 @@ TOIL_PARAMS+=(
   # --singularity
   # --preserve-entire-environment
   # --batchSystem slurm
-  --maxCores 8
   # --provenance "${PROV_DIR}"
+  # --disableCaching
   --logFile "${LOG_DIR}/${NAME}.log"
   --jobStore "${JOB_TOIL_FOLDER}/${NAME}"
   --outdir "${OUT_DIR_FINAL}"
-  # --disableCaching
+  --maxCores 8
   --defaultMemory "${MEMORY}"
   --defaultCores "${NUM_CORES}"
   --retryCount 2
@@ -179,7 +173,6 @@ TOIL_PARAMS+=(
 # --disableProgress                Disables the progress bar shown when standard error is a terminal.
 # --retryCount                     Number of times to retry a failing job before giving up and labeling job failed. default=1
 # --disableCaching                 Disables caching in the file store. This flag must be set to use a batch  system that does not support caching such as Grid Engine, Parasol, LSF, or Slurm.
-
 
 
 echo "toil-cwl-runner" "${TOIL_PARAMS[@]}"

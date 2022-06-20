@@ -15,21 +15,17 @@ doc: |
 
 inputs:
 
-  # global
+  # Global
   forward_reads: File?
   reverse_reads: File?
-  paired_reads_names: string[]
 
 
-  # qc-rna-predict
-  run_qc:
+  # QC-rna-predict
+  run_qc_rna_predict: 
     type: boolean
-    default: true
-
   qc_min_length: int
 
-
-  # rna prediction 
+  # RNA prediction 
   ssu_db: {type: File, secondaryFiles: [.mscluster] }
   lsu_db: {type: File, secondaryFiles: [.mscluster] }
   ssu_tax: [string, File]
@@ -49,8 +45,10 @@ inputs:
 
 
   # for assembly step 
-  #   min-contig-len: { default: 100 }
-
+  min-contig-len: int
+  assembly: 
+    type: boolean
+  memory: int
 
 
 
@@ -58,72 +56,111 @@ inputs:
 
 steps:
 
-  # qc-rna-predict:
+  qc-rna-predict:
 
-  #   run: conditionals/raw-reads-1-qc-cond.cwl
+    doc: 
+      The rna prediction step is based on pre-processed and merged reads. 
+      This step aims at the pre-processing and merging the raw reads so its output can be used 
+      for the rna prediction step. 
 
-  #   in:
-  #     forward_reads: forward_reads
-  #     reverse_reads: reverse_reads
-  #     qc_min_length: qc_min_length
-  #     run_qc: run_qc
+    when: 
+      $(inputs.run_qc_rna_predict == true)
 
-  #   out:
-  #     - qc-statistics
-  #     - qc_summary
-  #     - qc-status
-  #     - filtered_fasta
-  #     - input_files_hashsum_paired
-  #     - input_files_hashsum_single
-  #     - fastp_filtering_json
+    run: 
+      conditionals/raw-reads-1-qc-cond.cwl
 
-  # rna-prediction:
+    in:
+      forward_reads: forward_reads
+      reverse_reads: reverse_reads
+      qc_min_length: qc_min_length
+      run_qc: run_qc_rna_predict
 
-  #   run: conditionals/raw-reads-2-rna-only.cwl
+    out:
+      - qc-statistics
+      - qc_summary
+      - qc-status
+      - filtered_fasta
+      - input_files_hashsum_paired
+      - input_files_hashsum_single
+      - fastp_filtering_json
 
-  #   in:
-  #     filtered_fasta: qc-rna-predict/filtered_fasta
-  #     ssu_db: ssu_db
-  #     lsu_db: lsu_db
-  #     ssu_tax: ssu_tax
-  #     lsu_tax: lsu_tax
-  #     ssu_otus: ssu_otus
-  #     lsu_otus: lsu_otus
-  #     rfam_models: rfam_models
-  #     rfam_model_clans: rfam_model_clans
-  #     other_ncRNA_models: other_ncRNA_models
-  #     ssu_label: ssu_label
-  #     lsu_label: lsu_label
-  #     5s_pattern: 5s_pattern
-  #     5.8s_pattern: 5.8s_pattern
+  rna-prediction:
 
-  #   out:
-  #     - sequence_categorisation_folder
-  #     - taxonomy-summary_folder
-  #     - rna-count
-  #     - compressed_files
-  #     - chunking_nucleotides
-  #     - optional_tax_file_flag
+    run: 
+      conditionals/raw-reads-2-rna-only.cwl
+
+    when: 
+      $(inputs.run_qc_rna_predict == true)
+
+    in:
+      filtered_fasta: qc-rna-predict/filtered_fasta
+      ssu_db: ssu_db
+      lsu_db: lsu_db
+      ssu_tax: ssu_tax
+      lsu_tax: lsu_tax
+      ssu_otus: ssu_otus
+      lsu_otus: lsu_otus
+      rfam_models: rfam_models
+      rfam_model_clans: rfam_model_clans
+      other_ncRNA_models: other_ncRNA_models
+      ssu_label: ssu_label
+      lsu_label: lsu_label
+      5s_pattern: 5s_pattern
+      5.8s_pattern: 5.8s_pattern
+
+    out:
+      - sequence_categorisation_folder
+      - taxonomy-summary_folder
+      - rna-count
+      - compressed_files
+      - chunking_nucleotides
+      - optional_tax_file_flag
 
   qc-paired:
 
-    run: conditionals/qc-paired.cwl
+    run: 
+      conditionals/qc-paired.cwl
+
+    # when: 
+    #   $(inputs.assembly == true)
 
     in: 
       forward_reads: forward_reads
       reverse_reads: reverse_reads
-      paired_reads_names: paired_reads_names
-      # qc_min_length: 
+      qc_min_length: qc_min_length
 
     out: 
+      - trimmed_fr
+      - trimmed_rr
       - trimmed_seqs
 
+  assembly: 
 
-  # assembly: 
-  #   run: conditionals/assembly/megahit_paired.cwl
-  #   when: $(inputs.assembly != false)
+    run: 
+      conditionals/megahit_paired.cwl
+
+    # when: 
+    #   $(inputs.assembly == true)
+    
+    in: 
+      min-contig-len: min-contig-len
+      memory: memory
+      forward_reads: qc-paired/trimmed_fr
+      reverse_reads: qc-paired/trimmed_rr
+
+    out: 
+      - contigs
+
+
+
+  # contigs_functional_annotation: 
+
+  #   run: 
+  #   when: 
+  #      $(inputs.assembly == true)
+
   #   in: 
-  #     min-contig-len: { default: 500 }
+
 
 
 
@@ -131,52 +168,58 @@ steps:
 
 
 outputs:
-  # # pre-qc step output
-  # qc-statistics:
-  #   type: Directory?
-  #   outputSource: qc-rna-predict/qc-statistics
-  # qc_summary:
-  #   type: File?
-  #   outputSource: qc-rna-predict/qc_summary
-  # qc-status:
-  #   type: File?
-  #   outputSource: qc-rna-predict/qc-status
-  # hashsum_paired:
-  #   type: File[]?
-  #   outputSource: qc-rna-predict/input_files_hashsum_paired
-  # hashsum_single:
-  #   type: File?
-  #   outputSource: qc-rna-predict/input_files_hashsum_single
-  # fastp_filtering_json_report:
-  #   type: File?
-  #   outputSource: qc-rna-predict/fastp_filtering_json
-  # filtered_fasta:
-  #   type: File?
-  #   outputSource: qc-rna-predict/filtered_fasta
+  # pre-qc step output
+  qc-statistics:
+    type: Directory?
+    outputSource: qc-rna-predict/qc-statistics
+  qc_summary:
+    type: File?
+    outputSource: qc-rna-predict/qc_summary
+  qc-status:
+    type: File?
+    outputSource: qc-rna-predict/qc-status
+  hashsum_paired:
+    type: File[]?
+    outputSource: qc-rna-predict/input_files_hashsum_paired
+  hashsum_single:
+    type: File?
+    outputSource: qc-rna-predict/input_files_hashsum_single
+  fastp_filtering_json_report:
+    type: File?
+    outputSource: qc-rna-predict/fastp_filtering_json
+  filtered_fasta:
+    type: File[]?
+    outputSource: qc-rna-predict/filtered_fasta
 
-  # # rna-prediction step output
-  # sequence-categorisation_folder:
-  #   type: Directory?
-  #   outputSource: rna-prediction/sequence_categorisation_folder
-  # taxonomy-summary_folder:
-  #   type: Directory?
-  #   outputSource: rna-prediction/taxonomy-summary_folder
-  # rna-count:
-  #   type: File?
-  #   outputSource: rna-prediction/rna-count
+  # rna-prediction step output
+  sequence-categorisation_folder:
+    type: Directory?
+    outputSource: rna-prediction/sequence_categorisation_folder
+  taxonomy-summary_folder:
+    type: Directory?
+    outputSource: rna-prediction/taxonomy-summary_folder
+  rna-count:
+    type: File?
+    outputSource: rna-prediction/rna-count
 
-  # chunking_nucleotides:
-  #   type: File[]?
-  #   outputSource: rna-prediction/chunking_nucleotides
+  chunking_nucleotides:
+    type: File[]?
+    outputSource: rna-prediction/chunking_nucleotides
 
-  # no_tax_flag_file:
-  #   type: File?
-  #   outputSource: rna-prediction/optional_tax_file_flag
+  no_tax_flag_file:
+    type: File?
+    outputSource: rna-prediction/optional_tax_file_flag
 
   # paired-end qc
   paired-trimmed-files:
     type: File[]
     outputSource: qc-paired/trimmed_seqs
+
+
+  # ASSEMBLY OUTPUT
+  contigs: 
+    type: File
+    outputSource: assembly/contigs
 
 
 
