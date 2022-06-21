@@ -3,12 +3,12 @@ $namespaces:
   edam: http://edamontology.org/
 
 # ASSEMBLY 
-assembly: 1
+assembly: true
 qc_min_length: 100
 
 # RNA PREDICTION
 
-run_qc_rna_predict: 1
+run_qc_rna_predict: true
 
 ssu_label: SSU_rRNA
 lsu_label: LSU_rRNA

@@ -107,10 +107,10 @@ if __name__ == "__main__":
         }
         
         if args.qc_rna_predct == "false": 
-            template_yml["run_qc_rna_predict"] = 0
+            template_yml["run_qc_rna_predict"] = False
 
         if args.assembly == "false":
-            template_yml["assembly"] = 0
+            template_yml["assembly"] = False
 
 
         yaml.dump(template_yml, output_yml)
