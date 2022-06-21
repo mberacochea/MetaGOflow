@@ -1,6 +1,15 @@
 # CWL in a nutshell (not 😜)
 
 
+## Conditionals 
+
+To run a conditional, the input parameter that is used in the 
+expression to be evaluated, needs to be part of the input of the step!! 
+Not only in the `.cwl` main params. 
+
+
+
+
 ## Data concepts
 
 An **`object`** is a data structure equivalent to the "object" type in JSON, consisting of a *unordered* set of **name/value pairs** (referred to here as **`fields`**) and where the name is a `string` and the value is a `string`, `number`, `boolean`, `array`, or `object`.

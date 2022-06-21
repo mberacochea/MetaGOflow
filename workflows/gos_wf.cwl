@@ -18,14 +18,14 @@ inputs:
   # Global
   forward_reads: File?
   reverse_reads: File?
-
-
-  # QC-rna-predict
-  run_qc_rna_predict: 
+  run_qc: 
     type: boolean
-  qc_min_length: int
+    default: true
 
   # RNA prediction 
+  run_qc_rna_predict: int
+  qc_min_length: int
+
   ssu_db: {type: File, secondaryFiles: [.mscluster] }
   lsu_db: {type: File, secondaryFiles: [.mscluster] }
   ssu_tax: [string, File]
@@ -43,57 +43,30 @@ inputs:
   5s_pattern: string
   5.8s_pattern: string
 
-
-  # for assembly step 
+  # Assembly step 
   min-contig-len: int
-  assembly: 
-    type: boolean
+  assembly: int
   memory: int
-
-
-
 
 
 steps:
 
-  qc-rna-predict:
+  rna-prediction:
 
     doc: 
       The rna prediction step is based on pre-processed and merged reads. 
       This step aims at the pre-processing and merging the raw reads so its output can be used 
       for the rna prediction step. 
 
-    when: 
-      $(inputs.run_qc_rna_predict == true)
-
-    run: 
-      conditionals/raw-reads-1-qc-cond.cwl
+    run: conditionals/raw-reads-1-qc-cond.cwl
+    when: $(inputs.run_qc_rna_predict != 0)
 
     in:
+      run_qc_rna_predict: run_qc_rna_predict
       forward_reads: forward_reads
       reverse_reads: reverse_reads
       qc_min_length: qc_min_length
-      run_qc: run_qc_rna_predict
-
-    out:
-      - qc-statistics
-      - qc_summary
-      - qc-status
-      - filtered_fasta
-      - input_files_hashsum_paired
-      - input_files_hashsum_single
-      - fastp_filtering_json
-
-  rna-prediction:
-
-    run: 
-      conditionals/raw-reads-2-rna-only.cwl
-
-    when: 
-      $(inputs.run_qc_rna_predict == true)
-
-    in:
-      filtered_fasta: qc-rna-predict/filtered_fasta
+      run_qc: run_qc
       ssu_db: ssu_db
       lsu_db: lsu_db
       ssu_tax: ssu_tax
@@ -109,117 +82,136 @@ steps:
       5.8s_pattern: 5.8s_pattern
 
     out:
-      - sequence_categorisation_folder
-      - taxonomy-summary_folder
-      - rna-count
-      - compressed_files
-      - chunking_nucleotides
-      - optional_tax_file_flag
+      - qc-statistics
+      - qc_summary
+      - qc-status
+      - filtered_fasta
+      - input_files_hashsum_paired
+      - fastp_filtering_json
+      # - sequence-categorisation_folder
+      # - taxonomy-summary_folder
+      # - rna-count
+      # - compressed_files
+      # - chunking_nucleotides
+      # - no_tax_flag_file
+
 
   qc-paired:
 
-    run: 
-      conditionals/qc-paired.cwl
+    run: conditionals/qc-paired.cwl
 
-    # when: 
-    #   $(inputs.assembly == true)
+    when: $(inputs.assembly != 0)
 
     in: 
       forward_reads: forward_reads
       reverse_reads: reverse_reads
       qc_min_length: qc_min_length
+      assembly: assembly
 
     out: 
       - trimmed_fr
       - trimmed_rr
       - trimmed_seqs
+      - qc-statistics
 
-  assembly: 
+  # assembly: 
 
-    run: 
-      conditionals/megahit_paired.cwl
+  #   run: conditionals/megahit_paired.cwl
 
-    # when: 
-    #   $(inputs.assembly == true)
+  #   when: $(inputs.assembly != false)
     
-    in: 
-      min-contig-len: min-contig-len
-      memory: memory
-      forward_reads: qc-paired/trimmed_fr
-      reverse_reads: qc-paired/trimmed_rr
+  #   in: 
+  #     min-contig-len: min-contig-len
+  #     memory: memory
+  #     forward_reads: qc-paired/trimmed_fr
+  #     reverse_reads: qc-paired/trimmed_rr
 
-    out: 
-      - contigs
+  #   out: 
+  #     - contigs
 
 
 
   # contigs_functional_annotation: 
 
   #   run: 
-  #   when: 
-  #      $(inputs.assembly == true)
+  #   when: $(inputs.assembly == true)
 
   #   in: 
 
 
 
 
-
-
-
 outputs:
+
+  # A/ RNA PREDICTION 
+  # ------------------
+
   # pre-qc step output
   qc-statistics:
     type: Directory?
-    outputSource: qc-rna-predict/qc-statistics
+    outputSource: rna-prediction/qc-statistics
+    pickValue: all_non_null
+
   qc_summary:
     type: File?
-    outputSource: qc-rna-predict/qc_summary
-  qc-status:
-    type: File?
-    outputSource: qc-rna-predict/qc-status
+    outputSource: rna-prediction/qc_summary
+    pickValue: all_non_null
+
   hashsum_paired:
     type: File[]?
-    outputSource: qc-rna-predict/input_files_hashsum_paired
-  hashsum_single:
-    type: File?
-    outputSource: qc-rna-predict/input_files_hashsum_single
+    outputSource: rna-prediction/input_files_hashsum_paired
+    pickValue: all_non_null
+
   fastp_filtering_json_report:
     type: File?
-    outputSource: qc-rna-predict/fastp_filtering_json
+    outputSource: rna-prediction/fastp_filtering_json
+    pickValue: all_non_null
+
   filtered_fasta:
     type: File[]?
-    outputSource: qc-rna-predict/filtered_fasta
+    outputSource: rna-prediction/filtered_fasta
+    pickValue: all_non_null
 
-  # rna-prediction step output
-  sequence-categorisation_folder:
-    type: Directory?
-    outputSource: rna-prediction/sequence_categorisation_folder
-  taxonomy-summary_folder:
-    type: Directory?
-    outputSource: rna-prediction/taxonomy-summary_folder
-  rna-count:
-    type: File?
-    outputSource: rna-prediction/rna-count
+  # # rna-prediction step output
+  # sequence-categorisation_folder:
+  #   type: Directory?
+  #   outputSource: rna-prediction/sequence-categorisation_folder
 
-  chunking_nucleotides:
-    type: File[]?
-    outputSource: rna-prediction/chunking_nucleotides
+  # taxonomy-summary_folder:
+  #   type: Directory?
+  #   outputSource: rna-prediction/taxonomy-summary_folder
 
-  no_tax_flag_file:
-    type: File?
-    outputSource: rna-prediction/optional_tax_file_flag
+  # rna-count:
+  #   type: File?
+  #   outputSource: rna-prediction/rna-count
+
+  # chunking_nucleotides:
+  #   type: File[]?
+  #   outputSource: rna-prediction/chunking_nucleotides
+
+  # no_tax_flag_file:
+  #   type: File?
+  #   outputSource: rna-prediction/no_tax_flag_file
+
+
+  # ASSEMBLY
+  # ---------
 
   # paired-end qc
   paired-trimmed-files:
-    type: File[]
+    type: File[]?
     outputSource: qc-paired/trimmed_seqs
+    pickValue: all_non_null
+
+  paired-stats:
+    type: Directory[]?
+    outputSource: qc-paired/qc-statistics
 
 
-  # ASSEMBLY OUTPUT
-  contigs: 
-    type: File
-    outputSource: assembly/contigs
+  # # ASSEMBLY OUTPUT
+  # contigs: 
+  #   type: File?
+  #   outputSource: assembly/contigs
 
 
 

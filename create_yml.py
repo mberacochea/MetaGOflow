@@ -105,16 +105,13 @@ if __name__ == "__main__":
             "format": "edam:format_1930",
             "path": args.rr,
         }
-
+        
         if args.qc_rna_predct == "false": 
-            template_yml["run_qc_rna_predict"] = False
-        else:
-            template_yml["run_qc_rna_predict"] = True
+            template_yml["run_qc_rna_predict"] = 0
 
         if args.assembly == "false":
-            template_yml["assembly"] = False
-        else:
-            template_yml["assembly"] = True
+            template_yml["assembly"] = 0
+
 
         yaml.dump(template_yml, output_yml)
 

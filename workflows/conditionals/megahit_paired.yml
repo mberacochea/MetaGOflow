@@ -9,8 +9,6 @@ reverse_reads:
   path: ../../test_input/wgs-paired-SRR1620013_2.fastq.gz
   format: http://edamontology.org/format_1930
 
-
-
 # # Trimmomatic
 # end_mode: PE
 # phred: '33'

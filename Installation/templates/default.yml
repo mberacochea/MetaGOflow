@@ -2,11 +2,13 @@ $namespaces:
   s: https://schema.org/
   edam: http://edamontology.org/
 
+# ASSEMBLY 
+assembly: 1
 qc_min_length: 100
 
 # RNA PREDICTION
 
-run_qc_rna_predict: true
+run_qc_rna_predict: 1
 
 ssu_label: SSU_rRNA
 lsu_label: LSU_rRNA
@@ -164,10 +166,7 @@ other_ncRNA_models:
 - tmRNA.RF00023
 - tRNA-Sec.RF01852
 
-# ASSEMBLY 
-assembly: true 
 
 min-contig-len: 50
-
 memory: 550
 

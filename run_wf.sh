@@ -114,7 +114,6 @@ _check_reads "$FORWARD_READS" "$REVERSE_READS"
 # load required environments and packages before running
 
 export TOIL_SLURM_ARGS="--array=1-${LIMIT_QUEUE}%20" #schedule 100 jobs 20 running at one time
-
 export CWL="${PIPELINE_DIR}/workflows/gos_wf.cwl"
 
 # work dir
@@ -134,16 +133,18 @@ export RENAMED_YML=${RUN_DIR}/"${NAME}".yml
 
 # ----------------------------- prepare yml file ----------------------------- #
 
+
 echo "Writing yaml file"
 
+# DO NOT leave spaces after "\" in the end of a line
 python3 create_yml.py \
   -y "${YML}" \
   -o "${RENAMED_YML}" \
   -f "${PIPELINE_DIR}/${FORWARD_READS}" \
   -r "${PIPELINE_DIR}/${REVERSE_READS}" \
   -d "${DB_DIR}" \
-  -q "${QC}" \
-  -a "${ASSEMBLY}"
+  -a "${ASSEMBLY}" \
+  -q "${QC}" 
 
 # ----------------------------- running pipeline ----------------------------- #
 
@@ -174,7 +175,5 @@ TOIL_PARAMS+=(
 # --retryCount                     Number of times to retry a failing job before giving up and labeling job failed. default=1
 # --disableCaching                 Disables caching in the file store. This flag must be set to use a batch  system that does not support caching such as Grid Engine, Parasol, LSF, or Slurm.
 
-
 echo "toil-cwl-runner" "${TOIL_PARAMS[@]}"
-
 toil-cwl-runner "${TOIL_PARAMS[@]}"

@@ -10,13 +10,32 @@ requirements:
   ScatterFeatureRequirement: {}
 
 inputs:
+
     forward_reads: File?
     reverse_reads: File?
 
-    single_reads: File?
-
     qc_min_length: int
-    run_qc: boolean
+    run_qc: 
+      type: boolean
+      default: true
+
+    # RNA prediction 
+    ssu_db: {type: File, secondaryFiles: [.mscluster] }
+    lsu_db: {type: File, secondaryFiles: [.mscluster] }
+    ssu_tax: [string, File]
+    lsu_tax: [string, File]
+    ssu_otus: [string, File]
+    lsu_otus: [string, File]
+    rfam_models:
+      type:
+        - type: array
+          items: [string, File]
+    rfam_model_clans: [string, File]
+    other_ncRNA_models: string[]
+    ssu_label: string
+    lsu_label: string
+    5s_pattern: string
+    5.8s_pattern: string
 
 
 outputs:
@@ -26,10 +45,6 @@ outputs:
     type: File[]?
     outputSource: hashsum_paired/hashsum
     pickValue: all_non_null
-
-  input_files_hashsum_single:
-    type: File?
-    outputSource: hashsum_single/hashsum
 
   fastp_filtering_json:
     type: File?
@@ -51,62 +66,62 @@ outputs:
     type: File
     outputSource:
       - length_filter/filtered_file
-      - convert_trimmed_reads_to_fasta_noqc/fasta
+      - convert_trimmed_reads_to_fasta/fasta
     pickValue: first_non_null
+
+  # # RNA PREDICTION
+  # sequence-categorisation_folder:
+  #   type: Directory?
+  #   outputSource: rna-prediction/sequence_categorisation_folder
+  # taxonomy-summary_folder:
+  #   type: Directory?
+  #   outputSource: rna-prediction/taxonomy-summary_folder
+  # rna-count:
+  #   type: File?
+  #   outputSource: rna-prediction/rna-count
+
+  # chunking_nucleotides:
+  #   type: File[]?
+  #   outputSource: rna-prediction/chunking_nucleotides
+
+  # no_tax_flag_file:
+  #   type: File?
+  #   outputSource: rna-prediction/optional_tax_file_flag
+
+  # compressed_files:
+  #   type: File[]
+  #   outputSource: rna-prediction/compressed_files
 
 steps:
 
   # << calculate hashsum >>
   hashsum_paired:
     run: ../../utils/generate_checksum/generate_checksum.cwl
-    when: 
-      $(inputs.single == undefined)
     scatter: input_file
     in:
-      single: single_reads
       input_file:
         - forward_reads
         - reverse_reads
     out: [ hashsum ]
-
-  hashsum_single:
-    run: ../../utils/generate_checksum/generate_checksum.cwl
-    when: 
-      $(inputs.single != undefined)
-    in:
-      single: single_reads
-      input_file: single_reads
-    out: [ hashsum ]
-
 
   # << SeqPrep (only for paired reads) + gunzip for paired and single>>
   overlap_reads:
     label: Paired-end overlapping reads are merged
     run: ../subworkflows/seqprep-qc-cond-subwf.cwl
     in:
-      single_reads: single_reads
       forward_reads: forward_reads
       reverse_reads: reverse_reads
       paired_reads_length_filter: { default: 70 }
       qc: run_qc
     out: [ unzipped_single_reads, count_forward_submitted_reads, fastp_report ]
 
-  # ----- QC = TRUE -----
-
   # << Trim and Reformat >>
   trim_quality_control:
     doc: |
       Low quality trimming (low quality ends and sequences with < quality scores
       less than 15 over a 4 nucleotide wide window are removed)
-
-    run: 
-      ../../tools/Trimmomatic/Trimmomatic-v0.36-SE.cwl
-
-    when: 
-      $(inputs.run_qc == true)
-
+    run: ../../tools/Trimmomatic/Trimmomatic-v0.36-SE.cwl
     in:
-      run_qc: run_qc
       reads1: overlap_reads/unzipped_single_reads
       phred: { default: '33' }
       leading: { default: 3 }
@@ -119,32 +134,21 @@ steps:
   #fastq
   clean_fasta_headers:
     run: ../../utils/clean_fasta_headers.cwl
-    when: 
-      $(inputs.run_qc == true)
     in:
-      run_qc: run_qc
       sequences: trim_quality_control/reads1_trimmed
     out: [ sequences_with_cleaned_headers ]
 
   #fasta
   convert_trimmed_reads_to_fasta:
     run: ../../utils/fastq_to_fasta/fastq_to_fasta.cwl
-    when: 
-      $(inputs.run_qc == true)
     in:
-      # run_qc: run_qc
-      # qc: run_qc
       fastq: clean_fasta_headers/sequences_with_cleaned_headers
     out: [ fasta ]
-
 
   # << QC filtering >>
   length_filter:
     run: ../../tools/qc-filtering/qc-filtering.cwl
-    when: 
-      $(inputs.run_qc == true)
     in:
-      run_qc: run_qc
       seq_file: convert_trimmed_reads_to_fasta/fasta
       submitted_seq_count: overlap_reads/count_forward_submitted_reads
       stats_file_name: {default: 'qc_summary'}
@@ -154,9 +158,7 @@ steps:
 
   count_processed_reads:
     run: ../../utils/count_fasta.cwl
-    when: $(inputs.run_qc == true)
     in:
-      run_qc: run_qc
       sequences: length_filter/filtered_file
       number: { default: 1 }
     out: [ count ]
@@ -164,44 +166,46 @@ steps:
   # << QC FLAG >>
   QC-FLAG:
     run: ../../utils/qc-flag.cwl
-    when: 
-      $(inputs.run_qc == true)
     in:
-      run_qc: run_qc
       qc_count: count_processed_reads/count
     out: [ qc-flag ]
 
   # << QC >>
   qc_stats:
     run: ../../tools/qc-stats/qc-stats.cwl
-    when: 
-      $(inputs.run_qc == true)
     in:
-      run_qc: run_qc
       QCed_reads: length_filter/filtered_file
       sequence_count: count_processed_reads/count
     out: [ output_dir, summary_out ]
 
+  # # RNA PREDICTION STEP 
+  # rna-prediction:
 
-  # ----- QC = FALSE -----
+  #   run: raw-reads-2-rna-only.cwl
 
-  #fastq
-  clean_fasta_headers_noqc:
-    run: ../../utils/clean_fasta_headers.cwl
-    when: $(inputs.run_qc == false)
-    in:
-      run_qc: run_qc
-      sequences: overlap_reads/unzipped_single_reads
-    out: [ sequences_with_cleaned_headers ]
+  #   in:
+  #     filtered_fasta: length_filter/filtered_file
+  #     ssu_db: ssu_db
+  #     lsu_db: lsu_db
+  #     ssu_tax: ssu_tax
+  #     lsu_tax: lsu_tax
+  #     ssu_otus: ssu_otus
+  #     lsu_otus: lsu_otus
+  #     rfam_models: rfam_models
+  #     rfam_model_clans: rfam_model_clans
+  #     other_ncRNA_models: other_ncRNA_models
+  #     ssu_label: ssu_label
+  #     lsu_label: lsu_label
+  #     5s_pattern: 5s_pattern
+  #     5.8s_pattern: 5.8s_pattern
 
-  #fasta
-  convert_trimmed_reads_to_fasta_noqc:
-    run: ../../utils/fastq_to_fasta/fastq_to_fasta.cwl
-    when: $(inputs.run_qc == false)
-    in:
-      fastq: clean_fasta_headers_noqc/sequences_with_cleaned_headers
-    out: [ fasta ]
-
+  #   out:
+  #     - sequence_categorisation_folder
+  #     - taxonomy-summary_folder
+  #     - rna-count
+  #     - compressed_files
+  #     - chunking_nucleotides
+  #     - optional_tax_file_flag
 
 $namespaces:
  edam: http://edamontology.org/
