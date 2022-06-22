@@ -167,6 +167,18 @@ other_ncRNA_models:
 - tRNA-Sec.RF01852
 
 
-min-contig-len: 50
+min-contig-len: 500
 memory: 550
+
+CGC_postfixes: ["_CDS.faa", "_CDS.ffn"]
+
+cgc_chunk_size: 100000
+
+
+
+
+fgs_train: illumina_10
+
+
+seq_type: "0"
 
