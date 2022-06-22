@@ -14,8 +14,9 @@ RUN_DIR=$(dirname $(which FragGeneScan))
 
 ${RUN_DIR}/FragGeneScan \
   -p 4 \
-  -t ${TRAIN} \
-  -o ${OUTNAME}  \
-  -s ${INPUT} \
-  -w ${SEQ_TYPE}
-echo $?
+  -t "${TRAIN}" \
+  -o "${OUTNAME}"  \
+  -s "${INPUT}" \
+  -w "${SEQ_TYPE}"
+
+echo "FGS has been completed"

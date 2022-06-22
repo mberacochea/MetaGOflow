@@ -1,4 +1,4 @@
-FROM alpine:3.7 as build
+FROM ubuntu:18.04 as build
 
 LABEL maintainer="Ekaterina Sakharova <kates@ebi.ac.uk>"
 ##############################################################
@@ -7,20 +7,25 @@ LABEL maintainer="Ekaterina Sakharova <kates@ebi.ac.uk>"
 # Software Version:     1.31
 # Description:          https://github.com/EBI-Metagenomics/fraggenescan
 ##############################################################
-RUN apk add --no-cache build-base git
+# RUN apk add --no-cache build-base git
+
+RUN apt-get update --fix-missing && \
+    apt-get install -y git wget make gcc && \
+    apt purge --auto-remove cmake && \
+    wget https://github.com/Kitware/CMake/releases/download/v3.21.4/cmake-3.21.4.tar.gz &&\
+    tar -xzvf cmake-3.21.4.tar.gz
 
 WORKDIR /
 
 RUN git clone https://github.com/EBI-Metagenomics/fraggenescan.git && \
     cd fraggenescan && make && make clean && make fgs
 
-FROM alpine:3.7
 
-RUN apk add --no-cache bash && \
-    mkdir /tools && mkdir /fraggenescan
+RUN mkdir tools 
 
 COPY run_FGS.sh /tools/
-COPY --from=build /fraggenescan /fraggenescan
+
+# COPY --from=build /fraggenescan /fraggenescan
 
 RUN chmod a+x /tools/*
 

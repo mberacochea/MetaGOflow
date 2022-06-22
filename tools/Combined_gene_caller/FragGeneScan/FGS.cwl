@@ -1,12 +1,12 @@
 #!/usr/bin/env cwl-runner
-cwlVersion: v1.0
+cwlVersion: v1.2
 class: CommandLineTool
 
 label: "Combined Gene Caller: FragGeneScan"
 
 hints:
   - class: DockerRequirement
-    dockerPull: microbiomeinformatics/pipeline-v5.fraggenescan:v1.31.1
+    dockerPull: local_fgs
 
 requirements:
   ResourceRequirement:
@@ -15,7 +15,8 @@ requirements:
 
 baseCommand: [ run_FGS.sh ]
 
-arguments:
+# arguments:
+# ./FragGeneScan -s SRR1620013_MERGED_FASTQ.fasta -o fgs -w 0 -t illumina_10
 
 inputs:
   input_fasta:
@@ -39,15 +40,15 @@ inputs:
     inputBinding:
       separate: true
       prefix: "-t"
-    default: "illumina_5"
+    default: "illumina_10"
 
 
-stdout: stdout.txt
-stderr: stderr.txt
+# stdout: stdout.txt
+# stderr: stderr.txt
 
 outputs:
-  stdout: stdout
-  stderr: stderr
+  # stdout: stdout
+  # stderr: stderr
 
   predicted_proteins_out:
     type: File
