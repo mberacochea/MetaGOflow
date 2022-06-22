@@ -41,7 +41,7 @@ steps:
   FGS:
     in:
       input_fasta: input_fasta
-      seq_type: { default: "1"}
+      seq_type: { default: "0"}
       train: fgs_train
       output:
         source: input_fasta

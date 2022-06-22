@@ -165,6 +165,10 @@ outputs:
     type: File?
     outputSource: no_tax_file_flag/created_file
 
+  ncRNA: 
+    type: File? 
+    outputSource: rna_prediction/ncRNA
+
 $namespaces:
  edam: http://edamontology.org/
  s: http://schema.org/

@@ -39,6 +39,7 @@ steps:
   split_seqs:
     in:
       infile: input_fasta
+      size_limit: chunk_size
       #seqs: input_fasta
       #chunk_size: chunk_size
       #number_of_output_files: { default: "False" }

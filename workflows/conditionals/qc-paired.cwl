@@ -112,9 +112,6 @@ steps:
           valueFrom: $(inputs.QCed_reads.basename)
     out: [ output_dir, summary_out ]
 
-
-
-
 outputs:
 
   # hashsum files

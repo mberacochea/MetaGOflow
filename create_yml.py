@@ -112,7 +112,7 @@ if __name__ == "__main__":
         if args.assembly == "false":
             template_yml["assembly"] = False
 
-
         yaml.dump(template_yml, output_yml)
+
 
         print("<--------- the .yml is now done")

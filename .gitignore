@@ -113,3 +113,6 @@ venv.bak/
 
 # Ignore .sif files
 *.sif
+
+# Ignore real-world test samples
+test_input/SRR*

@@ -48,10 +48,17 @@ inputs:
   assembly: boolean
   memory: int
 
+  # CGC
+  CGC_config: [string?, File?]
+  CGC_postfixes: string[]
+  cgc_chunk_size: int
+
+
 
 steps:
 
-  rna-prediction:
+  # QC FOR RNA PREDICTION
+  qc-rna-prediction:
 
     doc: 
       The rna prediction step is based on pre-processed and merged reads. 
@@ -67,6 +74,26 @@ steps:
       reverse_reads: reverse_reads
       qc_min_length: qc_min_length
       run_qc: run_qc
+
+    out:
+      - qc-statistics
+      - qc_summary
+      - qc-status
+      - input_files_hashsum_paired
+      - fastp_filtering_json
+      - filtered_fasta        # output for next step
+
+
+  # RNA PREDICTION STEP 
+  rna-prediction:
+
+    run: conditionals/raw-reads-2-rna-only.cwl
+
+    when: $(inputs.run_qc_rna_predict != false)
+
+    in:
+      run_qc_rna_predict: run_qc_rna_predict
+      filtered_fasta: qc-rna-prediction/filtered_fasta
       ssu_db: ssu_db
       lsu_db: lsu_db
       ssu_tax: ssu_tax
@@ -82,21 +109,16 @@ steps:
       5.8s_pattern: 5.8s_pattern
 
     out:
-      - qc-statistics
-      - qc_summary
-      - qc-status
-      - filtered_fasta
-      - input_files_hashsum_paired
-      - fastp_filtering_json
-      - sequence-categorisation_folder
+      - sequence_categorisation_folder
       - taxonomy-summary_folder
       - rna-count
       - compressed_files
       - chunking_nucleotides
-      - no_tax_flag_file
+      - optional_tax_file_flag
+      - ncRNA
 
-
-  qc-paired:
+  # QC FOR ASSEMBLY CASE
+  qc-assembly:
 
     run: conditionals/qc-paired.cwl
 
@@ -114,6 +136,7 @@ steps:
       - trimmed_seqs
       - qc-statistics
 
+  # ASSEMBLY USING MEGAHIT
   assembly: 
 
     run: conditionals/megahit_paired.cwl
@@ -124,21 +147,62 @@ steps:
       assembly: assembly
       min-contig-len: min-contig-len
       memory: memory
-      forward_reads: qc-paired/trimmed_fr
-      reverse_reads: qc-paired/trimmed_rr
+      forward_reads: qc-assembly/trimmed_fr
+      reverse_reads: qc-assembly/trimmed_rr
 
     out: 
       - contigs
+      - options
+
+  # COMBINED GENE CALLER
+  cgc:
+
+    when: $(inputs.assembly != false && inputs.run_qc_rna_predict != false)
+
+    in:
+      run_qc_rna_predict: run_qc_rna_predict
+      assembly: assembly
+      input_fasta: qc-rna-prediction/filtered_fasta
+      maskfile: rna-prediction/ncRNA
+      postfixes: CGC_postfixes
+      chunk_size: cgc_chunk_size
+    out: [ predicted_proteins, predicted_seq, count_faa ]
+    run: subworkflows/assembly/cgc/CGC-subwf.cwl
 
 
 
-  # contigs_functional_annotation: 
 
-  #   run: 
-  #   when: $(inputs.assembly == true)
 
-  #   in: 
+  # functional_annotation:
+  # run: ../../subworkflows/assembly/Func_ann_and_post_proccessing-subwf.cwl
+  #   in:
+  #      check_value: cgc/count_faa
 
+  #      filtered_fasta: filtered_fasta
+  #      rna_prediction_ncRNA: rna_prediction/ncRNA
+  #      cgc_results_faa: cgc/predicted_faa
+  #      protein_chunk_size_hmm: protein_chunk_size_hmm
+  #      protein_chunk_size_IPS: protein_chunk_size_IPS
+
+  #      func_ann_names_ips: func_ann_names_ips
+  #      InterProScan_databases: InterProScan_databases
+  #      InterProScan_applications: InterProScan_applications
+  #      InterProScan_outputFormat: InterProScan_outputFormat
+  #      ips_header: ips_header
+
+  #      func_ann_names_hmmer: func_ann_names_hmmer
+  #      HMM_gathering_bit_score: HMM_gathering_bit_score
+  #      HMM_omit_alignment: HMM_omit_alignment
+  #      HMM_database: HMM_database
+  #      HMM_database_dir: HMM_database_dir
+  #      hmmsearch_header: hmmsearch_header
+
+  #      go_config: go_config
+  #      ko_file: ko_file
+  #      type_analysis: { default: 'Reads' }
+  #   out:
+  #     - functional_annotation_folder
+  #     - stats
 
 
 
@@ -150,33 +214,33 @@ outputs:
   # pre-qc step output
   qc-statistics:
     type: Directory?
-    outputSource: rna-prediction/qc-statistics
+    outputSource: qc-rna-prediction/qc-statistics
     pickValue: all_non_null
 
   qc_summary:
     type: File?
-    outputSource: rna-prediction/qc_summary
+    outputSource: qc-rna-prediction/qc_summary
     pickValue: all_non_null
 
   hashsum_paired:
     type: File[]?
-    outputSource: rna-prediction/input_files_hashsum_paired
+    outputSource: qc-rna-prediction/input_files_hashsum_paired
     pickValue: all_non_null
 
   fastp_filtering_json_report:
     type: File?
-    outputSource: rna-prediction/fastp_filtering_json
+    outputSource: qc-rna-prediction/fastp_filtering_json
     pickValue: all_non_null
 
   filtered_fasta:
-    type: File[]?
-    outputSource: rna-prediction/filtered_fasta
+    type: File
+    outputSource: qc-rna-prediction/filtered_fasta
     pickValue: all_non_null
 
   # rna-prediction step output
   sequence-categorisation_folder:
     type: Directory?
-    outputSource: rna-prediction/sequence-categorisation_folder
+    outputSource: rna-prediction/sequence_categorisation_folder
 
   taxonomy-summary_folder:
     type: Directory?
@@ -192,7 +256,7 @@ outputs:
 
   no_tax_flag_file:
     type: File?
-    outputSource: rna-prediction/no_tax_flag_file
+    outputSource: rna-prediction/optional_tax_file_flag
 
   # ASSEMBLY
   # ---------
@@ -200,18 +264,35 @@ outputs:
   # paired-end qc
   paired-trimmed-files:
     type: File[]?
-    outputSource: qc-paired/trimmed_seqs
+    outputSource: qc-assembly/trimmed_seqs
     pickValue: all_non_null
 
   paired-stats:
     type: Directory[]?
-    outputSource: qc-paired/qc-statistics
-
+    outputSource: qc-assembly/qc-statistics
 
   # ASSEMBLY OUTPUT
   contigs: 
     type: File?
     outputSource: assembly/contigs
+
+
+  # FUNCTIONAL ANNOTATION
+  # ----------------------
+
+  # CGC 
+  predicted_faa:
+    type: File
+    format: edam:format_1929
+    outputSource: cgc/predicted_proteins
+  predicted_ffn:
+    type: File
+    format: edam:format_1929
+    outputSource: cgc/predicted_seq
+  count_faa:
+    type: int
+    outputSource: cgc/count_faa
+
 
 
 
@@ -224,4 +305,5 @@ $schemas:
  - https://schema.org/version/latest/schemaorg-current-http.rdf
 
 s:license: "https://www.apache.org/licenses/LICENSE-2.0"
-s:copyrightHolder: "EMBL - European Bioinformatics Institute"
+s:copyrightHolder: ""
+s:author: "Haris Zafeiropoulos"

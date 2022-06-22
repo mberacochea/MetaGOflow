@@ -19,25 +19,6 @@ inputs:
       type: boolean
       default: true
 
-    # RNA prediction 
-    ssu_db: {type: File, secondaryFiles: [.mscluster] }
-    lsu_db: {type: File, secondaryFiles: [.mscluster] }
-    ssu_tax: [string, File]
-    lsu_tax: [string, File]
-    ssu_otus: [string, File]
-    lsu_otus: [string, File]
-    rfam_models:
-      type:
-        - type: array
-          items: [string, File]
-    rfam_model_clans: [string, File]
-    other_ncRNA_models: string[]
-    ssu_label: string
-    lsu_label: string
-    5s_pattern: string
-    5.8s_pattern: string
-
-
 outputs:
 
   # hashsum files
@@ -69,28 +50,6 @@ outputs:
       - convert_trimmed_reads_to_fasta/fasta
     pickValue: first_non_null
 
-  # RNA PREDICTION
-  sequence-categorisation_folder:
-    type: Directory?
-    outputSource: rna-prediction/sequence_categorisation_folder
-  taxonomy-summary_folder:
-    type: Directory?
-    outputSource: rna-prediction/taxonomy-summary_folder
-  rna-count:
-    type: File?
-    outputSource: rna-prediction/rna-count
-
-  chunking_nucleotides:
-    type: File[]?
-    outputSource: rna-prediction/chunking_nucleotides
-
-  no_tax_flag_file:
-    type: File?
-    outputSource: rna-prediction/optional_tax_file_flag
-
-  compressed_files:
-    type: File[]
-    outputSource: rna-prediction/compressed_files
 
 steps:
 
@@ -178,34 +137,7 @@ steps:
       sequence_count: count_processed_reads/count
     out: [ output_dir, summary_out ]
 
-  # RNA PREDICTION STEP 
-  rna-prediction:
 
-    run: raw-reads-2-rna-only.cwl
-
-    in:
-      filtered_fasta: length_filter/filtered_file
-      ssu_db: ssu_db
-      lsu_db: lsu_db
-      ssu_tax: ssu_tax
-      lsu_tax: lsu_tax
-      ssu_otus: ssu_otus
-      lsu_otus: lsu_otus
-      rfam_models: rfam_models
-      rfam_model_clans: rfam_model_clans
-      other_ncRNA_models: other_ncRNA_models
-      ssu_label: ssu_label
-      lsu_label: lsu_label
-      5s_pattern: 5s_pattern
-      5.8s_pattern: 5.8s_pattern
-
-    out:
-      - sequence_categorisation_folder
-      - taxonomy-summary_folder
-      - rna-count
-      - compressed_files
-      - chunking_nucleotides
-      - optional_tax_file_flag
 
 $namespaces:
  edam: http://edamontology.org/
