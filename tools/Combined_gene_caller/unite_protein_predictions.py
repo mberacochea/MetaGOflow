@@ -422,8 +422,3 @@ if __name__ == "__main__":
     files['merged'] = [args['name'] + ext for ext in ['.out', '.ffn', '.faa']]
     output_files(merged_predictions, summary, files, 'temp-dir', faselector_exec)
 
-    # Remove intermediate files
-#    for type in files:
-#        if not type == 'merged':
-#            for fn in files[type]:
-#                os.remove(fn)
