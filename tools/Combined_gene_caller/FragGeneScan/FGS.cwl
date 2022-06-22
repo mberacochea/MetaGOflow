@@ -6,7 +6,7 @@ label: "Combined Gene Caller: FragGeneScan"
 
 hints:
   - class: DockerRequirement
-    dockerPull: local_fgs
+    dockerPull: hariszaf/pipeline-v5.fraggenescan:v1.31.1
 
 requirements:
   ResourceRequirement:

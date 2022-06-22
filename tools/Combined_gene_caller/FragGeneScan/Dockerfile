@@ -1,13 +1,12 @@
 FROM ubuntu:18.04 as build
 
-LABEL maintainer="Ekaterina Sakharova <kates@ebi.ac.uk>"
+LABEL maintainer="Haris Zafeiropoulos <haris.zafr@gmail.com>"
 ##############################################################
-# Dockerfile Version:   19.03.1
+# Dockerfile Version:   22.06.22
 # Software:             FragGeneScan
 # Software Version:     1.31
 # Description:          https://github.com/EBI-Metagenomics/fraggenescan
 ##############################################################
-# RUN apk add --no-cache build-base git
 
 RUN apt-get update --fix-missing && \
     apt-get install -y git wget make gcc && \
@@ -24,8 +23,6 @@ RUN git clone https://github.com/EBI-Metagenomics/fraggenescan.git && \
 RUN mkdir tools 
 
 COPY run_FGS.sh /tools/
-
-# COPY --from=build /fraggenescan /fraggenescan
 
 RUN chmod a+x /tools/*
 
