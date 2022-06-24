@@ -41,6 +41,7 @@ while getopts "f:h" opt; do
     esac
 done
 
+
 if ((OPTIND == 1)); then
     echo ""
     echo "ERROR: No options specified"
@@ -48,15 +49,30 @@ if ((OPTIND == 1)); then
     exit 1
 fi
 
+
+
 CWD=$(pwd)
-
-echo "${CWD}"
-
 mkdir -p "${OUTPUT}" && cd "${OUTPUT}" || exit 1
 
-echo "Downloading silva_ssu and silva_lsu"
+
+# MGnify base FTP server with related dbs
+export FTP_DBS=ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/
+
+# Versions
+IPR=5
+
+# We are now in InterPro 89.0. (Checked on June 2022)
+IPRSCAN=5.36-75.0
+
+# The integrated version is from Jul 23, 2019
+# We are now in version 2..0.15 (Checked on June 2022)
+DIAMOND_VERSION=0.9.25
+
+# Checked on June 2022: Last modified November 29, 2021
+UNIREF90_VERSION=v2019_08
 
 # download silva dbs #
+echo "Downloading silva_ssu and silva_lsu"
 mkdir silva_ssu silva_lsu
 
 wget \
@@ -65,8 +81,8 @@ wget \
 tar xfv silva_ssu-20200130.tar.gz --directory=silva_ssu --strip-components 1
 tar xfv silva_lsu-20200130.tar.gz --directory=silva_lsu --strip-components 1
 
+# download the RFam models #
 echo "Downloading the rfam_models"
-
 mkdir Rfam
 cd Rfam
 
@@ -81,10 +97,59 @@ wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/rRNA.cl
 
 # other Rfam models
 mkdir other
-
 wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/rfam_models/other_models/*.cm \
     -P other
 
-cd "${CWD}"
+cd "${CWD}"/"${OUTPUT}"
 
-echo "Done."
+# --------------------------
+# ASSEMBLY RELATED
+# --------------------------
+
+# download IPS #
+echo 'download IPS'
+wget ftp://ftp.ebi.ac.uk/pub/software/unix/iprscan/$IPR/$IPRSCAN/alt/interproscan-data-$IPRSCAN.tar.gz && \
+        tar -pxvzf interproscan-data-$IPRSCAN.tar.gz && \
+        rm -f interproscan-data-$IPRSCAN.tar.gz
+
+# kofam db
+echo 'Download db KOfam'
+mkdir db_kofam
+wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/db_kofam.hmm.h3f.gz -P db_kofam
+wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/db_kofam.hmm.h3i.gz -P db_kofam
+wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/db_kofam.hmm.h3m.gz -P db_kofam
+wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/db_kofam.hmm.h3p.gz -P db_kofam
+gunzip db_kofam/db_kofam.hmm.h3f.gz db_kofam/db_kofam.hmm.h3i.gz db_kofam/db_kofam.hmm.h3m.gz db_kofam/db_kofam.hmm.h3p.gz
+
+# ko file
+wget $FTP_DBS/kofam_ko_desc.tsv
+
+
+# eggnog 2.0.0 on diamond 0.9.24
+echo 'Download eggnog dbs'
+wget $FTP_DBS/eggnog_proteins.dmnd
+wget $FTP_DBS/eggnog.db
+mkdir eggnog && mv eggnog_proteins.dmnd eggnog.db eggnog
+
+# Diamond
+echo 'Download diamond dbs'
+wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/db_uniref90_result.txt.gz \
+    ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/uniref90_${UNIREF90_VERSION}_diamond-v${DIAMOND_VERSION}.dmnd.gz
+gunzip db_uniref90_result.txt.gz uniref90_${UNIREF90_VERSION}_diamond-v${DIAMOND_VERSION}.dmnd.gz
+mkdir diamond && mv db_uniref90_result.txt uniref90_${UNIREF90_VERSION}_diamond-v${DIAMOND_VERSION}.dmnd diamond
+
+# KEGG pathways
+echo 'Download pathways data'
+wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/graphs-20200805.pkl.gz \
+    ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/all_pathways_class.txt.gz \
+    ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/all_pathways_names.txt.gz
+gunzip graphs.pkl.gz all_pathways_class.txt.gz all_pathways_names.txt.gz
+mkdir kegg_pathways && mv graphs.pkl all_pathways_class.txt all_pathways_names.txt kegg_pathways
+
+# antismash summary - doesn't need for docker version
+echo 'Download antismash_glossary'
+wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/antismash_glossary.tsv.gz
+gunzip antismash_glossary.tsv.gz
+
+
+
