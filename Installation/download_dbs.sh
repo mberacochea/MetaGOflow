@@ -71,6 +71,11 @@ DIAMOND_VERSION=0.9.25
 # Checked on June 2022: Last modified November 29, 2021
 UNIREF90_VERSION=v2019_08
 
+
+# --------------------------
+# RNA PREDICTION RELATED
+# --------------------------
+
 # download silva dbs #
 echo "Downloading silva_ssu and silva_lsu"
 mkdir silva_ssu silva_lsu
@@ -103,7 +108,7 @@ wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/rfam_mo
 cd "${CWD}"/"${OUTPUT}"
 
 # --------------------------
-# ASSEMBLY RELATED
+# ASSEMBLY - ANNOTATION DBs
 # --------------------------
 
 # download IPS #
