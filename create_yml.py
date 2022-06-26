@@ -4,11 +4,6 @@ import argparse
 from ruamel.yaml import YAML
 import os
 
-# RAW_READS_ANALYSIS = "raw-reads"
-# ASSEMBLY_ANALYSIS = "assembly"
-# AMPLICON_ANALYSIS = "amplicon"
-
-
 db_fields = [
     "ssu_db",
     "lsu_db",

@@ -49,9 +49,45 @@ inputs:
   memory: int
 
   # CGC
-  CGC_config: [string?, File?]
+  # CGC_config: [string?, File?]
   CGC_postfixes: string[]
   cgc_chunk_size: int
+
+  # FUNCTIONAL ANNOTATION
+  protein_chunk_size_eggnog:  int
+  EggNOG_db: [string?, File?]
+  EggNOG_diamond_db: [string?, File?]
+  EggNOG_data_dir: [string, Directory]
+
+  protein_chunk_size_hmm: int
+  func_ann_names_hmmer: string
+  HMM_gathering_bit_score: boolean
+  HMM_omit_alignment: boolean
+  HMM_database: string
+  HMM_database_dir: [string, Directory?]
+  hmmsearch_header: string
+
+  protein_chunk_size_IPS: int
+  func_ann_names_ips: string
+  InterProScan_databases: [string, Directory]
+  InterProScan_applications: string[]
+  InterProScan_outputFormat: string[]
+  ips_header: string
+
+  diamond_maxTargetSeqs: int
+  diamond_databaseFile: [string, File]
+  Uniref90_db_txt: [string, File]
+  diamond_header: string
+
+  antismash_geneclusters_txt: File?
+  go_config: [string, File]
+
+  ko_file: [string, File]
+  graphs: [string, File]
+  pathways_names: [string, File]
+  pathways_classes: [string, File]
+
+  gp_flatfiles_path: [string?, Directory?]
 
 
 
@@ -159,6 +195,8 @@ steps:
 
     when: $(inputs.assembly != false && inputs.run_qc_rna_predict != false)
 
+    run: subworkflows/assembly/cgc/CGC-subwf.cwl
+
     in:
       run_qc_rna_predict: run_qc_rna_predict
       assembly: assembly
@@ -166,43 +204,65 @@ steps:
       maskfile: rna-prediction/ncRNA
       postfixes: CGC_postfixes
       chunk_size: cgc_chunk_size
+
     out: [ predicted_proteins, predicted_seq, count_faa ]
-    run: subworkflows/assembly/cgc/CGC-subwf.cwl
 
 
 
 
+  functional_annotation: 
 
-  # functional_annotation:
-  # run: ../../subworkflows/assembly/Func_ann_and_post_proccessing-subwf.cwl
-  #   in:
-  #      check_value: cgc/count_faa
+    when: $(inputs.assembly != false && inputs.run_qc_rna_predict != false)
 
-  #      filtered_fasta: filtered_fasta
-  #      rna_prediction_ncRNA: rna_prediction/ncRNA
-  #      cgc_results_faa: cgc/predicted_faa
-  #      protein_chunk_size_hmm: protein_chunk_size_hmm
-  #      protein_chunk_size_IPS: protein_chunk_size_IPS
+    run: subworkflows/assembly/Func_ann_and_post_processing-subwf.cwl
 
-  #      func_ann_names_ips: func_ann_names_ips
-  #      InterProScan_databases: InterProScan_databases
-  #      InterProScan_applications: InterProScan_applications
-  #      InterProScan_outputFormat: InterProScan_outputFormat
-  #      ips_header: ips_header
+    in: 
+      run_qc_rna_predict: run_qc_rna_predict
+      assembly: assembly
 
-  #      func_ann_names_hmmer: func_ann_names_hmmer
-  #      HMM_gathering_bit_score: HMM_gathering_bit_score
-  #      HMM_omit_alignment: HMM_omit_alignment
-  #      HMM_database: HMM_database
-  #      HMM_database_dir: HMM_database_dir
-  #      hmmsearch_header: hmmsearch_header
 
-  #      go_config: go_config
-  #      ko_file: ko_file
-  #      type_analysis: { default: 'Reads' }
-  #   out:
-  #     - functional_annotation_folder
-  #     - stats
+      filtered_fasta: qc-rna-prediction/filtered_fasta
+
+      cgc_results_faa: accessioning_and_prediction/predicted_proteins
+      rna_prediction_ncRNA: rna_prediction/ncRNA
+
+      protein_chunk_size_eggnog: protein_chunk_size_eggnog
+      EggNOG_db: EggNOG_db
+      EggNOG_diamond_db: EggNOG_diamond_db
+      EggNOG_data_dir: EggNOG_data_dir
+
+      protein_chunk_size_hmm: protein_chunk_size_hmm
+      func_ann_names_hmmer: func_ann_names_hmmer
+      HMM_gathering_bit_score: HMM_gathering_bit_score
+      HMM_omit_alignment: HMM_omit_alignment
+      HMM_database: HMM_database
+      HMM_database_dir: HMM_database_dir
+      hmmsearch_header: hmmsearch_header
+
+      protein_chunk_size_IPS: protein_chunk_size_IPS
+      func_ann_names_ips: func_ann_names_ips
+      InterProScan_databases: InterProScan_databases
+      InterProScan_applications: InterProScan_applications
+      InterProScan_outputFormat: InterProScan_outputFormat
+      ips_header: ips_header
+
+      diamond_maxTargetSeqs: diamond_maxTargetSeqs
+      diamond_databaseFile: diamond_databaseFile
+      Uniref90_db_txt: Uniref90_db_txt
+      diamond_header: diamond_header
+
+      antismash_geneclusters_txt: antismash/antismash_clusters
+      go_config: go_config
+
+      ko_file: ko_file
+      graphs: graphs
+      pathways_names: pathways_names
+      pathways_classes: pathways_classes
+
+      gp_flatfiles_path: gp_flatfiles_path
+
+  out: [ functional_annotation_folder ]
+
 
 
 

@@ -2,14 +2,37 @@ $namespaces:
   s: https://schema.org/
   edam: http://edamontology.org/
 
+
+# RNA PREDICTION
+run_qc_rna_predict: true
+min-contig-len: 500
+memory: 550
+
 # ASSEMBLY 
 assembly: true
 qc_min_length: 100
 
+
+# CGC 
+cgc_chunk_size: 100000
+
+# functional annotation
+protein_chunk_size_hmm: 50000
+protein_chunk_size_IPS: 10000
+protein_chunk_size_eggnog: 100000
+
+
+
+
+
+
+#   -----------------------   DO NOT CHANGE  
+
+
+
+
+
 # RNA PREDICTION
-
-run_qc_rna_predict: true
-
 ssu_label: SSU_rRNA
 lsu_label: LSU_rRNA
 5.8s_pattern: 5_8S_rRNA
@@ -167,18 +190,48 @@ other_ncRNA_models:
 - tRNA-Sec.RF01852
 
 
-min-contig-len: 500
-memory: 550
 
 CGC_postfixes: ["_CDS.faa", "_CDS.ffn"]
-
-cgc_chunk_size: 100000
-
-
 
 
 fgs_train: illumina_10
 
-
 seq_type: "0"
 
+# functional annotation
+func_ann_names_ips: .I5.tsv.without_header
+func_ann_names_hmmer: .hmm.tsv.without_header
+
+# hmmer
+HMM_gathering_bit_score: True
+HMM_omit_alignment: True
+HMM_database: db_kofam.hmm
+HMM_database_dir: 
+    class: Directory
+    path: db_kofam/
+
+
+
+InterProScan_applications: 
+- PfamA
+- TIGRFAM
+- PRINTS
+- PrositePatterns
+- Gene3d
+
+InterProScan_outputFormat: ["TSV"]
+
+InterProScan_databases: 
+    class: Directory
+    path: ref-dbs/interproscan-{IPS_VERSION}/data
+
+
+
+ko_file: 
+  class: File 
+  path: ref-dbs/kofam_ko_desc.tsv
+
+
+EggNOG_db: 
+  class: File
+  path: ref-dbs/eggnog/eggnog.db",

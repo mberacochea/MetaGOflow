@@ -8,7 +8,7 @@ NUM_CORES=1
 LIMIT_QUEUE=100
 YML="${PIPELINE_DIR}/Installation/templates/default.yml"
 DB_DIR="${PIPELINE_DIR}/ref-dbs/"
-# ASSEMBLY="false"
+ASSEMBLY="false"
 
 _usage() {
   echo "
@@ -145,6 +145,12 @@ python3 create_yml.py \
   -d "${DB_DIR}" \
   -a "${ASSEMBLY}" \
   -q "${QC}" 
+
+
+
+cat base.yml eosc-
+
+
 
 # ----------------------------- running pipeline ----------------------------- #
 
