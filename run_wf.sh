@@ -23,6 +23,7 @@ Script arguments.
   -f                  Forward reads fasta file path.
   -r                  Reverse reads fasta file path.
   -a                  Assemble samples to get contigs at the study level, i.e. the clean reads are merged in a single sample and then assembled.  (optional, default ${ASSEMBLY})
+  -q                  Run functional annotation
   -n                  Name of run and prefix to output files.
   -d                  Path to run directory.
   -s                  Run workflow using Singularity (docker is the by default container technology) ('true' or 'false')
@@ -47,6 +48,7 @@ while getopts :y:f:r:a:q:c:d:m:n:l:p:h option; do
   m) MEMORY=${OPTARG} ;;
   n) NAME=${OPTARG} ;;
   l) LIMIT_QUEUE=${OPTARG} ;;
+  q) FUNCT_ANNOT=${OPTARG} ;;
   h)
     _usage
     exit 0
@@ -141,7 +143,7 @@ python3 create_yml.py \
   -r "${PIPELINE_DIR}/${REVERSE_READS}" \
   -d "${DB_DIR}" \
   -a "${ASSEMBLY}" \
-  -n "${FUNCT_ANNOT}"
+  -q "${FUNCT_ANNOT}"
 
 
 cat gos_wf.yml ${RENAMED_YML_TMP} > ${RENAMED_YML}

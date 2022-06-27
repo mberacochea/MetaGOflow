@@ -73,7 +73,7 @@ if __name__ == "__main__":
         required=False,
     )
     parser.add_argument(
-        "-n",
+        "-q",
         "--annotation",
         help="Functional annotation of the contigs",
         required=False,
@@ -88,12 +88,14 @@ if __name__ == "__main__":
 
     paired_reads = [args.fr.split("/")[-1].split(".fastq.gz")[0], args.rr.split("/")[-1].split(".fastq.gz")[0]]
     paired_reads_names = '"' + paired_reads[0] + '", "' + paired_reads[1] + '"'
+
     print("paired_reads: ", paired_reads)
     print("paired_reads_names: ", paired_reads_names)
 
     with open(args.output, "w") as output_yml:
         
         print("---------> Write .yml file.")
+
         yaml = YAML(typ="safe")
 
         template_yml["forward_reads"] = {
@@ -108,14 +110,12 @@ if __name__ == "__main__":
             "path": args.rr,
         }
         
-        if args.assembly == "false":
-            template_yml["assembly"] = False
+        # if args.assembly == "false":
+        #     template_yml["assembly"] = False
 
-        if args.annotation == "false": 
-            template_yml["funct_annot"] = False
-
+        # if args.annotation == "false": 
+        #     template_yml["funct_annot"] = False
 
         yaml.dump(template_yml, output_yml)
-
 
         print("<--------- the .yml is now done")

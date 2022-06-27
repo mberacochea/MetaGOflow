@@ -226,11 +226,9 @@ pathways_classes:
   class: File
   path: kegg_pathways/all_pathways_class.txt
 
-
 graphs:
   class: File
   path: kegg_pathways/graphs-20200805.pkl
-
 
 # Headers
 hmmsearch_header: 'query_name\tquery_accession\ttlen\ttarget_name\ttarget_accession\tqlen\tfull_sequence_e-value\tfull_sequence_score\tfull_sequence_bias\t#\tof\tc-evalue\ti-evalue\tdomain_score\tdomain_bias\thmm_coord_from\thmm_coord_to\tali_coord_from\tali_coord_to\tenv_coord_from\tenv_coord_to\tacc\tdescription_of_target'
