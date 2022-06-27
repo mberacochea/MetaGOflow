@@ -22,15 +22,13 @@ Script arguments.
   -y                  template yml file. (optional, default ../templates/rna_prediction_template.yml})
   -f                  Forward reads fasta file path.
   -r                  Reverse reads fasta file path.
-  -a                  Assemble samples to get contigs at the study level, i.e. the clean reads are merged in a single sample and then assembled.  (optional, default ${ASSEMBLY})
-  -q                  Run functional annotation
   -n                  Name of run and prefix to output files.
   -d                  Path to run directory.
   -s                  Run workflow using Singularity (docker is the by default container technology) ('true' or 'false')
 "
 }
 
-while getopts :y:f:r:a:q:c:d:m:n:l:p:h option; do
+while getopts :y:f:r:c:d:m:n:l:p:h option; do
   case "${option}" in
   y) YML=${OPTARG} ;;
   f)
@@ -41,14 +39,12 @@ while getopts :y:f:r:a:q:c:d:m:n:l:p:h option; do
     echo "presented paired-end reverse path"
     REVERSE_READS=${OPTARG}
     ;;
-  a) ASSEMBLY=${OPTARG} ;;
   s) SINGULARITY=${OPTARG} ;;
   c) NUM_CORES=${OPTARG} ;;
   d) RUN_DIR=${OPTARG} ;;
   m) MEMORY=${OPTARG} ;;
   n) NAME=${OPTARG} ;;
   l) LIMIT_QUEUE=${OPTARG} ;;
-  q) FUNCT_ANNOT=${OPTARG} ;;
   h)
     _usage
     exit 0
@@ -141,9 +137,7 @@ python3 create_yml.py \
   -o "${RENAMED_YML_TMP}" \
   -f "${PIPELINE_DIR}/${FORWARD_READS}" \
   -r "${PIPELINE_DIR}/${REVERSE_READS}" \
-  -d "${DB_DIR}" \
-  -a "${ASSEMBLY}" \
-  -q "${FUNCT_ANNOT}"
+  -d "${DB_DIR}" 
 
 
 cat gos_wf.yml ${RENAMED_YML_TMP} > ${RENAMED_YML}
@@ -156,7 +150,7 @@ rm ${RENAMED_YML_TMP}
 # To work with slurm, add "--batchSystem slurm", "--disableChaining" and "--disableCaching" in the TOIL_PARMS object
 TOIL_PARAMS+=(
   --singularity
-  # --preserve-entire-environment
+  --preserve-entire-environment
   --batchSystem slurm
   --disableChaining
   # --provenance "${PROV_DIR}"

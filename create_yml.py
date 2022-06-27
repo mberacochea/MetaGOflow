@@ -66,18 +66,6 @@ if __name__ == "__main__":
         help="Path to database directory",
         required=False,
     )
-    parser.add_argument(
-        "-a",
-        "--assembly",
-        help="Assemble the pre-processed reads using MEGAHIT",
-        required=False,
-    )
-    parser.add_argument(
-        "-q",
-        "--annotation",
-        help="Functional annotation of the contigs",
-        required=False,
-    )
 
     args = parser.parse_args()
 
@@ -109,12 +97,6 @@ if __name__ == "__main__":
             "format": "edam:format_1930",
             "path": args.rr,
         }
-        
-        # if args.assembly == "false":
-        #     template_yml["assembly"] = False
-
-        # if args.annotation == "false": 
-        #     template_yml["funct_annot"] = False
 
         yaml.dump(template_yml, output_yml)
 
