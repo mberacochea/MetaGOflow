@@ -53,6 +53,13 @@ docker pull microbiomeinformatics/pipeline-v5.antismash:v4.2.0
 
 ## Installation
 
+
+### Create `conda` environment 
+
+
+
+### Get the EOSC-Life marine GOs workflow
+
 ```bash
 git clone https://github.com/EBI-Metagenomics/pipeline-v5.git 
 cd pipeline-v5
@@ -62,118 +69,31 @@ cd pipeline-v5
 
 You can download databases for the EOSC-Life GOs workflow by running the
 `download_dbs.sh` script.
-You need to do this only **once**, before start using the workflow. 
-<!-- has 3 arguments: -m (amplicon), -a (assembly), -w (raw reads / WGS). -->
+If you have one or more already in your system, then create a symbolic link pointing 
+at the `ref-dbs` folder. 
 
 
-<!-- ```bash
-mkdir ref-dbs && cd ref-dbs
-bash ../Installation/download_dbs.sh -a True -m True -w True  # for all types
-cd ..
-``` -->
 
 
-#### Create yml-file
-
-Every time you are about to run the EOSC-Life GOs workflow, 
-you first need to run the `init.sh` script. 
 
 
-<!-- Set DIRECTORY as path to the same directory where you downloaded all databases (ref-dbs).
-
-TYPE: assembly/wgs/amplicon
-
-```bash
-python3 Installation/create_yml.py --dir <DIRECTORY> --type <TYPE> 
-``` -->
-
-If you need to generate several YML-files, run this script several times with different TYPEs.
-
-## Run
-
-Before running the pipeline, you need to add lines to the YML files detailing the sequence type and path to FASTA/FASTQ file(-s).
-
-**Amplicon** and **Raw reads** analysis can be performed on single-end or paired-end FASTQ file(-s). 
-
-**Assembly** pipeline requires a contig FASTA file.
-
-- If you are running amplicon or raw-reads **single** analysis - you need to add to generated YML-file:
-
-```bash
-single_reads:  
-  format: edam:format_1930
-  class: File
-  path: <path to FASTQ file>
-```
-
-- If you are running amplicon or raw-reads **paired** analysis - you need to add to generated YML-file:
-
-```bash
-forward_reads:  
-  format: edam:format_1930
-  class: File
-  path: <path to forward reads FASTQ file>
-reverse_reads:  
-  format: edam:format_1930
-  class: File
-  path: <path to reverse reads FASTQ file>
-```
-
-- If you are running **assembly** analysis - you need to add to generated YML-file:
-
-```bash
-contigs:  
-  format: edam:format_1929
-  class: File
-  path: <path to FASTA file>
-```
-
-#### cwltool
-
-```bash
-export ANALYSIS=[amplicon/assembly/raw-reads]
-
-cwltool --enable-dev workflows/${ANALYSIS}-wf--v.5-cond.cwl ${ANALYSIS}.yml
-```
-
-#### toil
-
-```bash
-export ANALYSIS=[amplicon/assembly/raw-reads]
-
-toil-cwl-runner \
-  --preserve-entire-environment \
-  --enable-dev \
-  --disableChaining \
-  --logFile toil.log \
-  --jobStore work-directory \
-  --outdir results-folder \
-  ${ANALYSIS}-wf--v.5-cond.cwl ${ANALYSIS}.yml
-```
-
-#### Other cwl-supported tools
-
-https://www.commonwl.org/#Implementations
-
-## Docker problems
-
-Pipeline uses dockers from MGnify DockerHub.
-
-If you have problems pulling the docker containers, you can re-build them with:
-
-```bash
-bash docker/docker_build.sh
-```
+## How to run
 
 
-## How to run 
+- activate the conda env 
 
-currently working: 
+- edit the `gos_wf.yml` file to set the parameter values of your choice
+
+- In case you are working in a HPC with Singularity, enable Singularity
+
+- run 
 
 ```
- cwltool --singularity --outdir RUN_DIRECTORY/results/cwltool-results  workflows/gos_wf.cwl RUN_DIRECTORY/TEST.yml 
+./run_wf.sh -n false -n osd-short -d short-test-case -f test_input/wgs-paired-SRR1620013_1.fastq.gz -r test_input/wgs-paired-SRR1620013_2.fastq.gz
 ```
 
-> In case you are using Docker, it is strongly recommended to avoid installing it through `snap`
+> In case you are using Docker, it is strongly recommended to **avoid** installing it through `snap`
 
 
+`RuntimeError`: slurm currently does not support shared caching, because it does not support cleaning up a worker after the last job finishes. 
+Set the `--disableCaching` flag if you want to use this batch system.

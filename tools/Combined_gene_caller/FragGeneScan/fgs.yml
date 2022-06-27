@@ -1,7 +1,0 @@
-input_fasta: 
-  class: File
-  path: ../../../RUN_DIRECTORY_REALWORLD-man/results/toil/SRR1620013_MERGED_FASTQ.fasta
-  format: 'edam:format_1929'
-output: fgs
-seq_type: "0" 
-train: illumina_10

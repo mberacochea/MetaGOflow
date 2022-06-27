@@ -41,7 +41,6 @@ while getopts "f:h" opt; do
     esac
 done
 
-
 if ((OPTIND == 1)); then
     echo ""
     echo "ERROR: No options specified"
@@ -49,11 +48,8 @@ if ((OPTIND == 1)); then
     exit 1
 fi
 
-
-
 CWD=$(pwd)
 mkdir -p "${OUTPUT}" && cd "${OUTPUT}" || exit 1
-
 
 # MGnify base FTP server with related dbs
 export FTP_DBS=ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/
@@ -70,7 +66,6 @@ DIAMOND_VERSION=0.9.25
 
 # Checked on June 2022: Last modified November 29, 2021
 UNIREF90_VERSION=v2019_08
-
 
 # --------------------------
 # RNA PREDICTION RELATED
@@ -129,7 +124,6 @@ gunzip db_kofam/db_kofam.hmm.h3f.gz db_kofam/db_kofam.hmm.h3i.gz db_kofam/db_kof
 # ko file
 wget $FTP_DBS/kofam_ko_desc.tsv
 
-
 # eggnog 2.0.0 on diamond 0.9.24
 echo 'Download eggnog dbs'
 wget $FTP_DBS/eggnog_proteins.dmnd
@@ -156,5 +150,6 @@ echo 'Download antismash_glossary'
 wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/antismash_glossary.tsv.gz
 gunzip antismash_glossary.tsv.gz
 
-
-
+# genome properties
+echo 'Download genome-properties flat files'
+wget https://github.com/ebi-pf-team/genome-properties/raw/master/flatfiles/genomeProperties.txt

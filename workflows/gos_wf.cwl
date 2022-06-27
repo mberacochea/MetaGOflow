@@ -22,8 +22,10 @@ inputs:
     type: boolean
     default: true
 
-  # RNA prediction 
-  run_qc_rna_predict: boolean
+  assembly: boolean
+  funct_annot: boolean
+
+  # RNA prediction input vars
   qc_min_length: int
 
   ssu_db: {type: File, secondaryFiles: [.mscluster] }
@@ -45,15 +47,13 @@ inputs:
 
   # Assembly step 
   min-contig-len: int
-  assembly: boolean
   memory: int
 
   # CGC
-  # CGC_config: [string?, File?]
   CGC_postfixes: string[]
   cgc_chunk_size: int
 
-  # FUNCTIONAL ANNOTATION
+  # Functional annotation input vars
   protein_chunk_size_eggnog:  int
   EggNOG_db: [string?, File?]
   EggNOG_diamond_db: [string?, File?]
@@ -90,7 +90,6 @@ inputs:
   gp_flatfiles_path: [string?, Directory?]
 
 
-
 steps:
 
   # QC FOR RNA PREDICTION
@@ -102,10 +101,8 @@ steps:
       for the rna prediction step. 
 
     run: conditionals/raw-reads-1-qc-cond.cwl
-    when: $(inputs.run_qc_rna_predict != false)
 
     in:
-      run_qc_rna_predict: run_qc_rna_predict
       forward_reads: forward_reads
       reverse_reads: reverse_reads
       qc_min_length: qc_min_length
@@ -125,10 +122,7 @@ steps:
 
     run: conditionals/raw-reads-2-rna-only.cwl
 
-    when: $(inputs.run_qc_rna_predict != false)
-
     in:
-      run_qc_rna_predict: run_qc_rna_predict
       filtered_fasta: qc-rna-prediction/filtered_fasta
       ssu_db: ssu_db
       lsu_db: lsu_db
@@ -173,12 +167,12 @@ steps:
       - qc-statistics
 
   # ASSEMBLY USING MEGAHIT
-  assembly: 
+  assembly:
 
     run: conditionals/megahit_paired.cwl
 
     when: $(inputs.assembly != false)
-    
+
     in: 
       assembly: assembly
       min-contig-len: min-contig-len
@@ -193,12 +187,11 @@ steps:
   # COMBINED GENE CALLER
   cgc:
 
-    when: $(inputs.assembly != false && inputs.run_qc_rna_predict != false)
+    when: $(inputs.funct_annot != false)
 
     run: subworkflows/assembly/cgc/CGC-subwf.cwl
 
     in:
-      run_qc_rna_predict: run_qc_rna_predict
       assembly: assembly
       input_fasta: qc-rna-prediction/filtered_fasta
       maskfile: rna-prediction/ncRNA
@@ -208,60 +201,57 @@ steps:
     out: [ predicted_proteins, predicted_seq, count_faa ]
 
 
+  # functional_annotation: 
+
+  #   when: $(inputs.assembly != false && inputs.funct_annot != false)
+
+  #   run: subworkflows/assembly/Func_ann_and_post_processing-subwf.cwl
+
+  #   in: 
+  #     assembly: assembly
 
 
-  functional_annotation: 
+  #     filtered_fasta: qc-rna-prediction/filtered_fasta
 
-    when: $(inputs.assembly != false && inputs.run_qc_rna_predict != false)
+  #     cgc_results_faa: accessioning_and_prediction/predicted_proteins
+  #     rna_prediction_ncRNA: rna_prediction/ncRNA
 
-    run: subworkflows/assembly/Func_ann_and_post_processing-subwf.cwl
+  #     protein_chunk_size_eggnog: protein_chunk_size_eggnog
+  #     EggNOG_db: EggNOG_db
+  #     EggNOG_diamond_db: EggNOG_diamond_db
+  #     EggNOG_data_dir: EggNOG_data_dir
 
-    in: 
-      run_qc_rna_predict: run_qc_rna_predict
-      assembly: assembly
+  #     protein_chunk_size_hmm: protein_chunk_size_hmm
+  #     func_ann_names_hmmer: func_ann_names_hmmer
+  #     HMM_gathering_bit_score: HMM_gathering_bit_score
+  #     HMM_omit_alignment: HMM_omit_alignment
+  #     HMM_database: HMM_database
+  #     HMM_database_dir: HMM_database_dir
+  #     hmmsearch_header: hmmsearch_header
 
+  #     protein_chunk_size_IPS: protein_chunk_size_IPS
+  #     func_ann_names_ips: func_ann_names_ips
+  #     InterProScan_databases: InterProScan_databases
+  #     InterProScan_applications: InterProScan_applications
+  #     InterProScan_outputFormat: InterProScan_outputFormat
+  #     ips_header: ips_header
 
-      filtered_fasta: qc-rna-prediction/filtered_fasta
+  #     diamond_maxTargetSeqs: diamond_maxTargetSeqs
+  #     diamond_databaseFile: diamond_databaseFile
+  #     Uniref90_db_txt: Uniref90_db_txt
+  #     diamond_header: diamond_header
 
-      cgc_results_faa: accessioning_and_prediction/predicted_proteins
-      rna_prediction_ncRNA: rna_prediction/ncRNA
+  #     antismash_geneclusters_txt: antismash/antismash_clusters
+  #     go_config: go_config
 
-      protein_chunk_size_eggnog: protein_chunk_size_eggnog
-      EggNOG_db: EggNOG_db
-      EggNOG_diamond_db: EggNOG_diamond_db
-      EggNOG_data_dir: EggNOG_data_dir
+  #     ko_file: ko_file
+  #     graphs: graphs
+  #     pathways_names: pathways_names
+  #     pathways_classes: pathways_classes
 
-      protein_chunk_size_hmm: protein_chunk_size_hmm
-      func_ann_names_hmmer: func_ann_names_hmmer
-      HMM_gathering_bit_score: HMM_gathering_bit_score
-      HMM_omit_alignment: HMM_omit_alignment
-      HMM_database: HMM_database
-      HMM_database_dir: HMM_database_dir
-      hmmsearch_header: hmmsearch_header
+  #     gp_flatfiles_path: gp_flatfiles_path
 
-      protein_chunk_size_IPS: protein_chunk_size_IPS
-      func_ann_names_ips: func_ann_names_ips
-      InterProScan_databases: InterProScan_databases
-      InterProScan_applications: InterProScan_applications
-      InterProScan_outputFormat: InterProScan_outputFormat
-      ips_header: ips_header
-
-      diamond_maxTargetSeqs: diamond_maxTargetSeqs
-      diamond_databaseFile: diamond_databaseFile
-      Uniref90_db_txt: Uniref90_db_txt
-      diamond_header: diamond_header
-
-      antismash_geneclusters_txt: antismash/antismash_clusters
-      go_config: go_config
-
-      ko_file: ko_file
-      graphs: graphs
-      pathways_names: pathways_names
-      pathways_classes: pathways_classes
-
-      gp_flatfiles_path: gp_flatfiles_path
-
-  out: [ functional_annotation_folder ]
+  # out: [ functional_annotation_folder ]
 
 
 
@@ -297,7 +287,7 @@ outputs:
     outputSource: qc-rna-prediction/filtered_fasta
     pickValue: all_non_null
 
-  # rna-prediction step output
+  # RNA-prediction step output
   sequence-categorisation_folder:
     type: Directory?
     outputSource: rna-prediction/sequence_categorisation_folder
@@ -336,7 +326,6 @@ outputs:
     type: File?
     outputSource: assembly/contigs
 
-
   # FUNCTIONAL ANNOTATION
   # ----------------------
 
@@ -353,6 +342,7 @@ outputs:
     type: int
     outputSource: cgc/count_faa
 
+  # Functional annotation
 
 
 
@@ -360,10 +350,11 @@ outputs:
 $namespaces:
  edam: http://edamontology.org/
  s: http://schema.org/
+
 $schemas:
  - http://edamontology.org/EDAM_1.16.owl
  - https://schema.org/version/latest/schemaorg-current-http.rdf
 
 s:license: "https://www.apache.org/licenses/LICENSE-2.0"
-s:copyrightHolder: ""
+s:copyrightHolder: "European Marine Biological Resource Centre"
 s:author: "Haris Zafeiropoulos"

@@ -8,7 +8,6 @@ NUM_CORES=1
 LIMIT_QUEUE=100
 YML="${PIPELINE_DIR}/Installation/templates/default.yml"
 DB_DIR="${PIPELINE_DIR}/ref-dbs/"
-ASSEMBLY="false"
 
 _usage() {
   echo "
@@ -23,11 +22,10 @@ Script arguments.
   -y                  template yml file. (optional, default ../templates/rna_prediction_template.yml})
   -f                  Forward reads fasta file path.
   -r                  Reverse reads fasta file path.
-  -q                  Run RNA prediction  ('true' or 'false').
   -a                  Assemble samples to get contigs at the study level, i.e. the clean reads are merged in a single sample and then assembled.  (optional, default ${ASSEMBLY})
   -n                  Name of run and prefix to output files.
   -d                  Path to run directory.
-  -p                  Path to database directory. (optional, default ../ref-dbs)
+  -s                  Run workflow using Singularity (docker is the by default container technology) ('true' or 'false')
 "
 }
 
@@ -43,13 +41,12 @@ while getopts :y:f:r:a:q:c:d:m:n:l:p:h option; do
     REVERSE_READS=${OPTARG}
     ;;
   a) ASSEMBLY=${OPTARG} ;;
-  q) QC=${OPTARG} ;;
+  s) SINGULARITY=${OPTARG} ;;
   c) NUM_CORES=${OPTARG} ;;
   d) RUN_DIR=${OPTARG} ;;
   m) MEMORY=${OPTARG} ;;
   n) NAME=${OPTARG} ;;
   l) LIMIT_QUEUE=${OPTARG} ;;
-  p) DB_DIR=${OPTARG} ;;
   h)
     _usage
     exit 0
@@ -129,8 +126,8 @@ export PROV_DIR=${OUT_DIR}/prov
 
 mkdir -p "${LOG_DIR}" "${OUT_DIR_FINAL}" "${JOB_TOIL_FOLDER}" "${TMPDIR}" # "${PROV_DIR}"
 
+export RENAMED_YML_TMP=${RUN_DIR}/"${NAME}"_temp.yml
 export RENAMED_YML=${RUN_DIR}/"${NAME}".yml
-
 # ----------------------------- prepare yml file ----------------------------- #
 
 
@@ -139,29 +136,29 @@ echo "Writing yaml file"
 # DO NOT leave spaces after "\" in the end of a line
 python3 create_yml.py \
   -y "${YML}" \
-  -o "${RENAMED_YML}" \
+  -o "${RENAMED_YML_TMP}" \
   -f "${PIPELINE_DIR}/${FORWARD_READS}" \
   -r "${PIPELINE_DIR}/${REVERSE_READS}" \
   -d "${DB_DIR}" \
   -a "${ASSEMBLY}" \
-  -q "${QC}" 
+  -n "${FUNCT_ANNOT}"
 
 
-
-cat base.yml eosc-
-
+cat gos_wf.yml ${RENAMED_YML_TMP} > ${RENAMED_YML}
+rm ${RENAMED_YML_TMP}
 
 
 # ----------------------------- running pipeline ----------------------------- #
 
 # IMPORTANT! 
-# To work with slurm, add "--batchSystem slurm" and "--disableChaining" in the TOIL_PARMS object
+# To work with slurm, add "--batchSystem slurm", "--disableChaining" and "--disableCaching" in the TOIL_PARMS object
 TOIL_PARAMS+=(
-  # --singularity
+  --singularity
   # --preserve-entire-environment
-  # --batchSystem slurm
+  --batchSystem slurm
+  --disableChaining
   # --provenance "${PROV_DIR}"
-  # --disableCaching
+  --disableCaching
   --logFile "${LOG_DIR}/${NAME}.log"
   --jobStore "${JOB_TOIL_FOLDER}/${NAME}"
   --outdir "${OUT_DIR_FINAL}"

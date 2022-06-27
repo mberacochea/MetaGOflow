@@ -2,20 +2,7 @@
 # parameter values of choice regarding the workflow itself
 # 
 
-forward_reads:
-  class: File
-  format: http://edamontology.org/format_1930
-  path: ~/pipeline-v5/input_examples/wgs-paired-SRR1620013_1_small.fastq.gz
-
-reverse_reads:
-  class: File
-  format: http://edamontology.org/format_1930
-  path: ~/pipeline-v5/input_examples/wgs-paired-SRR1620013_2_small.fastq.gz
-
-
-
 # RNA PREDICTION
-run_qc_rna_predict: true
 min-contig-len: 500
 memory: 550
 
@@ -28,11 +15,13 @@ qc_min_length: 100
 cgc_chunk_size: 100000
 
 # functional annotation
+funct_annot: true
 protein_chunk_size_hmm: 50000
 protein_chunk_size_IPS: 10000
 protein_chunk_size_eggnog: 100000
 
 
+diamond_maxTargetSeqs: 1
 
 
 

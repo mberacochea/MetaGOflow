@@ -103,7 +103,7 @@ steps:
   # << QC >>
   qc_stats:
     run: ../../tools/qc-stats/qc-stats.cwl
-    scatter: [QCed_reads, sequence_count, out_dir_name]
+    scatter: [ QCed_reads, sequence_count, out_dir_name ]
     scatterMethod: dotproduct
     in:
         QCed_reads: length_filter/filtered_file
@@ -155,8 +155,6 @@ outputs:
   motus_input:
     type: File[]?
     outputSource: clean_fasta_headers/sequences_with_cleaned_headers
-
-
 
 $namespaces:
  edam: http://edamontology.org/

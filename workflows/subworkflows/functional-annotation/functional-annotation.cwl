@@ -1,6 +1,6 @@
 #!/usr/bin/env cwl-runner
 class: Workflow
-cwlVersion: v1.2.0-dev2
+cwlVersion: v1.2
 
 requirements:
   ResourceRequirement:
@@ -52,7 +52,6 @@ steps:
 
   # << Chunk faa file >>
   split_seqs:
-    when: $(inputs.type_analysis == "assembly")
     in:
       type_analysis: type
       seqs: CGC_predicted_proteins
@@ -62,7 +61,6 @@ steps:
 
   # << EggNOG >>
   eggnog:
-    when: $(inputs.type_analysis == "assembly")
     run: ../assembly/eggnog-subwf.cwl
     in:
       type_analysis: type

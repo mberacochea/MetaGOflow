@@ -13,6 +13,17 @@ db_fields = [
     "lsu_otus",
     "rfam_models",
     "rfam_model_clans",
+    "HMM_database_dir",
+    "ko_file",
+    "InterProScan_databases",
+    "EggNOG_data_dir",
+    "EggNOG_db",
+    "EggNOG_diamond_db",
+    "diamond_databaseFile",
+    "Uniref90_db_txt",
+    "go_config",
+    "pathways_names",
+    "pathways_classes"
 ]
 
 
@@ -31,24 +42,20 @@ def db_dir(db_path, yaml_path):
                 doc[db_field]["path"] = os.path.join(db_path, doc[db_field]["path"])
     return doc
 
-
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
         description="Create the input.yml for the pipeline"
     )
-
     parser.add_argument(
         "-y", "--yml", dest="yml", help="YAML file with the constants", required=True
     )
-
     parser.add_argument(
         "-f", "--fr", dest="fr", help="forward reads file path", required=False
     )
     parser.add_argument(
         "-r", "--rr", dest="rr", help="reverse reads file path", required=False
     )
-
     parser.add_argument(
         "-o", "--output", dest="output", help="Output yaml file path", required=True
     )
@@ -60,19 +67,19 @@ if __name__ == "__main__":
         required=False,
     )
     parser.add_argument(
-        "-q",
-        "--qc_rna_predct",
-        help="Quality control step for the case of rna prediction",
+        "-a",
+        "--assembly",
+        help="Assemble the pre-processed reads using MEGAHIT",
         required=False,
     )
     parser.add_argument(
-        "-a",
-        "--assembly",
-        help="Assembly of the pre-processed reads using MEGAHIT",
+        "-n",
+        "--annotation",
+        help="Functional annotation of the contigs",
         required=False,
     )
-    args = parser.parse_args()
 
+    args = parser.parse_args()
 
     print(f"Loading the constants from {args.yml}.")
 
@@ -101,11 +108,12 @@ if __name__ == "__main__":
             "path": args.rr,
         }
         
-        if args.qc_rna_predct == "false": 
-            template_yml["run_qc_rna_predict"] = False
-
         if args.assembly == "false":
             template_yml["assembly"] = False
+
+        if args.annotation == "false": 
+            template_yml["funct_annot"] = False
+
 
         yaml.dump(template_yml, output_yml)
 
