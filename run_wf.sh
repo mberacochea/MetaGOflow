@@ -139,10 +139,10 @@ python3 create_yml.py \
   -r "${PIPELINE_DIR}/${REVERSE_READS}" \
   -d "${DB_DIR}" 
 
-
-cat gos_wf.yml ${RENAMED_YML_TMP} > ${RENAMED_YML}
+mv eosc-wf.yml ${RUN_DIR}/
+cat ${RUN_DIR}/eosc-wf.yml ${RENAMED_YML_TMP} > ${RENAMED_YML}
 rm ${RENAMED_YML_TMP}
-
+rm ${RUN_DIR}/eosc-wf.yml
 
 # ----------------------------- running pipeline ----------------------------- #
 
@@ -158,7 +158,7 @@ TOIL_PARAMS+=(
   --logFile "${LOG_DIR}/${NAME}.log"
   --jobStore "${JOB_TOIL_FOLDER}/${NAME}"
   --outdir "${OUT_DIR_FINAL}"
-  --maxCores 8
+  --maxCores 20
   --defaultMemory "${MEMORY}"
   --defaultCores "${NUM_CORES}"
   --retryCount 2
@@ -174,5 +174,10 @@ TOIL_PARAMS+=(
 # --retryCount                     Number of times to retry a failing job before giving up and labeling job failed. default=1
 # --disableCaching                 Disables caching in the file store. This flag must be set to use a batch  system that does not support caching such as Grid Engine, Parasol, LSF, or Slurm.
 
-echo "toil-cwl-runner" "${TOIL_PARAMS[@]}"
-toil-cwl-runner "${TOIL_PARAMS[@]}"
+
+#  # COMMENT IN TO RUN THE TOIL VERSION
+# echo "toil-cwl-runner" "${TOIL_PARAMS[@]}"
+# toil-cwl-runner "${TOIL_PARAMS[@]}"
+
+
+cwltool --singularity --outdir CWL-TOOL-TEST --debug  ${CWL} ${RENAMED_YML}

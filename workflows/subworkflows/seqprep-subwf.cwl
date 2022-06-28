@@ -36,7 +36,7 @@ steps:
       number: { default: 4 }
     out: [ count ]
 
-  # filter paired-end reads (for single do nothing)
+  # filter paired-end reads
   filter_paired:
     run: ../../utils/fastp/fastp.cwl
     in:

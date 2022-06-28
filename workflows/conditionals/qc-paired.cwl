@@ -16,6 +16,10 @@ inputs:
       type: int
       default: 100
 
+    qc_stats_folders:
+      type: string[]
+      default: [ "forward_qc", "reverse_qc" ]
+
 steps:
 
   # << calculate hashsum >>
@@ -28,7 +32,7 @@ steps:
         - reverse_reads
     out: [ hashsum ]
 
-  # << SeqPrep (only for paired reads) + gunzip for paired and single>>
+  # << SeqPrep + gunzip >>
   overlap_reads: 
     label: Paired-end overlapping reads are merged
     run: ../subworkflows/seqprep-subwf.cwl
@@ -72,7 +76,7 @@ steps:
     out: [ fasta ]
 
   # << QC filtering >>
-  length_filter:
+  pe_length_filter:
     run: ../../tools/qc-filtering/qc-filtering.cwl
     scatter: seq_file
     in:
@@ -81,14 +85,14 @@ steps:
       stats_file_name: {default: 'qc_summary' }
       min_length: qc_min_length 
       input_file_format: { default: 'fasta' }
-    out: [ filtered_file, stats_summary_file ]  
-       
+    out: [ filtered_file, stats_summary_file ]
+
 
   count_processed_reads:
     run: ../../utils/count_fasta.cwl
     scatter: sequences
     in:
-      sequences: length_filter/filtered_file
+      sequences: pe_length_filter/filtered_file
       number: { default: 1 }
     out: [ count ]
 
@@ -102,14 +106,15 @@ steps:
 
   # << QC >>
   qc_stats:
-    run: ../../tools/qc-stats/qc-stats.cwl
+
     scatter: [ QCed_reads, sequence_count, out_dir_name ]
     scatterMethod: dotproduct
+    run: ../../tools/qc-stats/qc-stats.cwl
     in:
-        QCed_reads: length_filter/filtered_file
+        QCed_reads: pe_length_filter/filtered_file
         sequence_count: count_processed_reads/count
-        out_dir_name:
-          valueFrom: $(inputs.QCed_reads.basename)
+        out_dir_name: qc_stats_folders
+          # valueFrom: $(inputs.QCed_reads.basename)   # why is this not working ?
     out: [ output_dir, summary_out ]
 
 outputs:
@@ -146,11 +151,11 @@ outputs:
 
   qc_summary:
     type: File[]
-    outputSource: length_filter/stats_summary_file
+    outputSource: pe_length_filter/stats_summary_file
 
   filtered_fasta:
     type: File[]?
-    outputSource: length_filter/filtered_file
+    outputSource: pe_length_filter/filtered_file
 
   motus_input:
     type: File[]?

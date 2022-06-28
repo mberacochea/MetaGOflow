@@ -24,7 +24,7 @@ conda activate EOSC-CWL
 module load singularity/3.7.1
 
 ## run the wf
-./run_wf.sh -n toil -d TOIL-TEST -f test_input/wgs-paired-SRR1620013_1.fastq.gz -r test_input/wgs-paired-SRR1620013_2.fastq.gz
+./run_wf.sh -n toil -d cwl-TEST -f test_input/wgs-paired-SRR1620013_1.fastq.gz -r test_input/wgs-paired-SRR1620013_2.fastq.gz
 
 #cwltool --singularity --outdir cwltool-test-assembly workflows/gos_wf.cwl toil.yml
 

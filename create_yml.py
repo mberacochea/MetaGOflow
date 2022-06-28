@@ -3,6 +3,8 @@
 import argparse
 from ruamel.yaml import YAML
 import os
+import yaml as yml
+
 
 db_fields = [
     "ssu_db",
@@ -51,10 +53,10 @@ if __name__ == "__main__":
         "-y", "--yml", dest="yml", help="YAML file with the constants", required=True
     )
     parser.add_argument(
-        "-f", "--fr", dest="fr", help="forward reads file path", required=False
+        "-f", "--fr", dest="fr", help="Forward reads file path", required=False
     )
     parser.add_argument(
-        "-r", "--rr", dest="rr", help="reverse reads file path", required=False
+        "-r", "--rr", dest="rr", help="Reverse reads file path", required=False
     )
     parser.add_argument(
         "-o", "--output", dest="output", help="Output yaml file path", required=True
@@ -80,24 +82,33 @@ if __name__ == "__main__":
     print("paired_reads: ", paired_reads)
     print("paired_reads_names: ", paired_reads_names)
 
+    print("---------> Write the base .yml file.")
     with open(args.output, "w") as output_yml:
         
-        print("---------> Write .yml file.")
-
         yaml = YAML(typ="safe")
 
-        template_yml["forward_reads"] = {
+        yaml.dump(template_yml, output_yml)
+
+
+    print("........ and edit the config .yml to add files")
+    with open("config.yml", "r") as config_yml: 
+
+
+        config = yml.safe_load(config_yml)
+
+        config["forward_reads"] = {
             "class": "File",
             "format": "edam:format_1930",
             "path": args.fr,
         }
 
-        template_yml["reverse_reads"] = {
+        config["reverse_reads"] = {
             "class": "File",
             "format": "edam:format_1930",
             "path": args.rr,
         }
 
-        yaml.dump(template_yml, output_yml)
+    with open("eosc-wf.yml", "w") as config_yml:
+        yaml.dump(config, config_yml)
 
-        print("<--------- the .yml is now done")
+    print("<--------- the .yml is now done")

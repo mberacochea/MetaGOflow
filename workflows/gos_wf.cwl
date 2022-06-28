@@ -22,8 +22,18 @@ inputs:
     type: boolean
     default: true
 
-  assembly: boolean
-  funct_annot: boolean
+  assemble: { type: boolean, default: false }
+  funct_annot: { type: boolean, default: false }
+
+
+  # Pre-process
+  phred: { type: string, default: '33' }
+  leading: { type: int, default: 3 }
+  trailing: { type: int, default: 3 }
+  end_mode: { type: string, default: PE }
+  minlen: { type: int, default: 100 }
+  slidingwindow: { type: string, default: '4:15' }
+
 
   # RNA prediction input vars
   qc_min_length: int
@@ -102,11 +112,13 @@ steps:
 
     run: conditionals/raw-reads-1-qc-cond.cwl
 
+    when: $(inputs.run_qc != false)
+
     in:
+      run_qc: run_qc
       forward_reads: forward_reads
       reverse_reads: reverse_reads
       qc_min_length: qc_min_length
-      run_qc: run_qc
 
     out:
       - qc-statistics
@@ -120,9 +132,16 @@ steps:
   # RNA PREDICTION STEP 
   rna-prediction:
 
+    doc: 
+      Returns taxonomic profile of the sample based on the prediction of rna reads
+      and their assignment
+
     run: conditionals/raw-reads-2-rna-only.cwl
 
+    when: $(inputs.run_qc != false)
+
     in:
+      run_qc: run_qc
       filtered_fasta: qc-rna-prediction/filtered_fasta
       ssu_db: ssu_db
       lsu_db: lsu_db
@@ -152,13 +171,20 @@ steps:
 
     run: conditionals/qc-paired.cwl
 
-    when: $(inputs.assembly != false)
+    when: $(inputs.assemble != false)
 
     in: 
+
+      assemble: assemble
       forward_reads: forward_reads
       reverse_reads: reverse_reads
       qc_min_length: qc_min_length
-      assembly: assembly
+      phred: phred
+      leading: leading
+      trailing: trailing
+      end_mode: end_mode
+      minlen: minlen
+      slidingwindow: slidingwindow
 
     out: 
       - trimmed_fr
@@ -171,10 +197,10 @@ steps:
 
     run: conditionals/megahit_paired.cwl
 
-    when: $(inputs.assembly != false)
+    when: $(inputs.assemble != false)
 
     in: 
-      assembly: assembly
+      assemble: assemble
       min-contig-len: min-contig-len
       memory: memory
       forward_reads: qc-assembly/trimmed_fr
@@ -187,12 +213,13 @@ steps:
   # COMBINED GENE CALLER
   cgc:
 
-    when: $(inputs.funct_annot != false)
+    when: $(inputs.assemble != false && inputs.funct_annot != false)
 
     run: subworkflows/assembly/cgc/CGC-subwf.cwl
 
     in:
-      assembly: assembly
+      assemble: assemble
+      funct_annot: funct_annot
       input_fasta: qc-rna-prediction/filtered_fasta
       maskfile: rna-prediction/ncRNA
       postfixes: CGC_postfixes
