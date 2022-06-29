@@ -1,0 +1,18 @@
+$namespaces: {edam: 'http://edamontology.org/', s: 'https://schema.org/'}
+fastq1: 
+  class: File
+  format: 'edam:format_1930'
+  path: ../../test_input/wgs-paired-SRR1620013_1.fastq.gz
+fastq2: 
+  class: File
+  format: 'edam:format_1930'
+  path: ../../test_input/wgs-paired-SRR1620013_2.fastq.gz
+threads: 10
+min_length_required: 100
+force_polyg_tail_trimming: 
+base_correction:
+qualified_phred_quality: 
+unqualified_phred_quality: 
+disable_trim_poly_g:
+merge: true
+overlap_min_len: 2
