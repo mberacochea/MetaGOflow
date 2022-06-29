@@ -18,13 +18,13 @@ inputs:
   # Global
   forward_reads: File?
   reverse_reads: File?
+  assemble: { type: boolean, default: false }
+  taxon_infer_contigs_level: { type: boolean, default: false }
+  funct_annot: { type: boolean, default: false }
+  threads: {type: int, default: 2}
   run_qc: 
     type: boolean
     default: true
-
-  assemble: { type: boolean, default: false }
-  funct_annot: { type: boolean, default: false }
-
 
   # Pre-process
   phred: { type: string, default: '33' }
@@ -84,10 +84,6 @@ inputs:
   InterProScan_outputFormat: string[]
   ips_header: string
 
-  diamond_maxTargetSeqs: int
-  diamond_databaseFile: [string, File]
-  Uniref90_db_txt: [string, File]
-  diamond_header: string
 
   antismash_geneclusters_txt: File?
   go_config: [string, File]
@@ -98,6 +94,16 @@ inputs:
   pathways_classes: [string, File]
 
   gp_flatfiles_path: [string?, Directory?]
+
+  # diamond
+  outputFormat:  {type: string, default: '6'}
+  strand: {type: string, default: 'both'}
+  filename: {type: string, default: 'diamond-subwf-test'}
+
+  diamond_maxTargetSeqs: int
+  diamond_databaseFile: [string, File]
+  Uniref90_db_txt: [string, File]
+  diamond_header: string
 
 
 steps:
@@ -213,19 +219,42 @@ steps:
   # COMBINED GENE CALLER
   cgc:
 
-    when: $(inputs.assemble != false && inputs.funct_annot != false)
+    when: $(inputs.assemble != false && inputs.taxon_infer_contigs_level != false)
 
     run: subworkflows/assembly/cgc/CGC-subwf.cwl
 
     in:
       assemble: assemble
       funct_annot: funct_annot
-      input_fasta: qc-rna-prediction/filtered_fasta
+      input_fasta: assembly/contigs
       maskfile: rna-prediction/ncRNA
       postfixes: CGC_postfixes
       chunk_size: cgc_chunk_size
 
-    out: [ predicted_proteins, predicted_seq, count_faa ]
+    out: [ predicted_proteins, predicted_seq, count_faa ] # pred prot -> .faa // pred seq --> .ffn  
+
+  # taxonomic inference based on contigs
+  diamond-taxonomic-prediction: 
+
+    run: subworkflows/assembly/diamond/diamond-subwf.cwl 
+
+    when: $(inputs.assemble != false && inputs.diamond != false)
+
+    in: 
+      assemble: assemble
+      diamond: taxon_infer_contigs_level
+
+      queryInputFile: cgc/predicted_proteins
+      outputFormat: outputFormat
+      maxTargetSeqs: diamond_maxTargetSeqs
+      strand: strand
+      databaseFile: EggNOG_diamond_db
+      threads: threads
+      Uniref90_db_txt: Uniref90_db_txt
+      filename: {default: 'diamond-subwf-test'}
+
+    out: [ diamond_output, post-processing_output]
+
 
 
   # functional_annotation: 
@@ -369,6 +398,14 @@ outputs:
     type: int
     outputSource: cgc/count_faa
 
+  # Diamond taxonomic inference
+  diamond_output:
+    type: File
+    outputSource: diamond-taxonomic-prediction/diamond_output
+  post-processing_output:
+    type: File
+    outputSource: diamond-taxonomic-prediction/post-processing_output
+
   # Functional annotation
 
 
@@ -385,3 +422,8 @@ $schemas:
 s:license: "https://www.apache.org/licenses/LICENSE-2.0"
 s:copyrightHolder: "European Marine Biological Resource Centre"
 s:author: "Haris Zafeiropoulos"
+
+
+# always to remember: 
+# .ffn	> FASTA nucleotide of gene regions	> Contains coding regions for a genome.
+# .faa	> FASTA amino acid	> Contains amino acid sequences. A multiple protein fasta file can have the more specific extension mpfa.

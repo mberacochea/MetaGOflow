@@ -25,7 +25,8 @@ db_fields = [
     "Uniref90_db_txt",
     "go_config",
     "pathways_names",
-    "pathways_classes"
+    "pathways_classes",
+    "graphs"
 ]
 
 

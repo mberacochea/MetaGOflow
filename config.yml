@@ -1,15 +1,26 @@
+
+# Global 
 assemble: true
+funct_annot: true
+taxon_infer_contigs_level: true
+threads: 20
+
+
+# Functional annotation
+
 cgc_chunk_size: 200
+
 diamond_maxTargetSeqs: 1
 
 
-funct_annot: true
+
 memory: 550
 min-contig-len: 250
 protein_chunk_size_IPS: 10000
 protein_chunk_size_eggnog: 100000
 protein_chunk_size_hmm: 50000
 qc_min_length: 200
+
 
 leading: 
 trailing: 

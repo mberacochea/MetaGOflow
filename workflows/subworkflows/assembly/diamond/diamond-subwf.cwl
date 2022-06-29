@@ -25,7 +25,7 @@ outputs:
     type: File
     outputSource: diamond_run/matches
   post-processing_output:
-    type: File
+    type: File?
     outputSource: post_processing_uniref90/join_out
 
 steps:
