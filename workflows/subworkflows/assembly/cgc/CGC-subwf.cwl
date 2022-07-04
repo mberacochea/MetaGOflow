@@ -13,7 +13,7 @@ requirements:
 
 inputs:
 
-  input_fasta: File
+  input_fasta: File?
   maskfile: File?
   postfixes: string[]
   chunk_size: int

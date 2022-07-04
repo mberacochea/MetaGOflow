@@ -10,7 +10,7 @@ requirements:
 
 inputs:
   clan_info: [string, File]
-  #cores: int
+  threads: {type: int?, default: 2}
   covariance_models:
     type:
       - type: array
@@ -34,7 +34,7 @@ steps:
     run: ../../../tools/RNA_prediction/cmsearch/infernal-cmsearch-v1.1.2.cwl
     in:
       covariance_model_database: covariance_models
-      cpu: { default: 8 }
+      cpu: threads
       omit_alignment_section:
         default: true
       only_hmm:

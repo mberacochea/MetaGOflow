@@ -212,7 +212,7 @@ diamond_databaseFile:
 
 Uniref90_db_txt:
   class: File
-  path: /uniref90.txt
+  path: diamond/uniref90.txt
 
 go_config:
   class: File

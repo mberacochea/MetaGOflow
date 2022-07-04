@@ -109,6 +109,9 @@ if __name__ == "__main__":
             "path": args.rr,
         }
 
+        config["both_reads"] = [args.fr.split("/")[-1].split(".fastq.gz")[0], args.rr.split("/")[-1].split(".fastq.gz")[0]]
+
+
     with open("eosc-wf.yml", "w") as config_yml:
         yaml.dump(config, config_yml)
 

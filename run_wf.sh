@@ -180,4 +180,4 @@ TOIL_PARAMS+=(
 # toil-cwl-runner "${TOIL_PARAMS[@]}"
 
 
-cwltool --singularity --outdir CWL-TOOL-TEST --debug  ${CWL} ${RENAMED_YML}
+# cwltool --singularity --outdir CWL-TOOL-TEST --debug  ${CWL} ${RENAMED_YML}

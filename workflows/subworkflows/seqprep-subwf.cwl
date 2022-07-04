@@ -12,7 +12,14 @@ requirements:
 inputs:
     forward_reads: File?
     reverse_reads: File?
-    paired_reads_length_filter: int
+    min_length_required: int
+    force_polyg_tail_trimming: boolean
+    overlap_min_len: int
+    qualified_phred_quality: int
+    unqualified_phred_quality: int
+    disable_trim_poly_g: boolean
+    threads: int
+    base_correction: boolean
 
 outputs:
 
@@ -24,7 +31,34 @@ outputs:
 
   fastp_report:
     type: File?
-    outputSource: filter_paired/json_report
+    outputSource: fastp_paired/json_report
+
+  out_fastq1:
+    type: File
+    outputSource: fastp_paired/out_fastq1
+
+  out_fastq2:
+    type: File?
+    format: $(inputs.fastq2.format)
+    outputSource: fastp_paired/out_fastq2
+
+  merged_fastq: 
+    type: File? 
+    format: $(inputs.fastq1.format)
+    outputSource: fastp_paired/merged_fastq
+
+  html_report:
+    type: File
+    outputSource: fastp_paired/html_report
+
+  json_report:
+    type: File
+    outputSource: fastp_paired/json_report
+
+  both_paired: 
+    type: File[]?
+    format: edam:format_1930
+    outputSource: fastp_paired/both_paired
 
 steps:
 
@@ -37,19 +71,22 @@ steps:
     out: [ count ]
 
   # filter paired-end reads
-  filter_paired:
-    run: ../../utils/fastp/fastp.cwl
+  fastp_paired:
+    run: ../../tools/fastp/fastp.cwl
     in:
-      fastq1: forward_reads
-      fastq2: reverse_reads
-      min_length_required: paired_reads_length_filter
-      base_correction: { default: false }
-      disable_trim_poly_g: { default: false }
-      force_polyg_tail_trimming: { default: false }
-      threads: {default: 8}
-    out: [ out_fastq1, out_fastq2, json_report ]  # unzipped
+      forward_reads: forward_reads
+      reverse_reads: reverse_reads
+      merge: {default: true}
+      min_length_required: min_length_required
+      disable_trim_poly_g: disable_trim_poly_g
+      force_polyg_tail_trimming: force_polyg_tail_trimming
+      threads: threads
+      overlap_min_len: overlap_min_len
+      unqualified_phred_quality: unqualified_phred_quality
+      qualified_phred_quality: qualified_phred_quality
+      base_correction: base_correction
 
-
+    out: [ out_fastq1, out_fastq2, both_paired, merged_fastq, html_report, json_report ]  # unzipped
 
 
 $namespaces:

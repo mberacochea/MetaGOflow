@@ -14,162 +14,235 @@ hints:
 baseCommand: [ fastp ]
 
 arguments: [
-        --detect_adapter_for_pe,
-        --overrepresentation_analysis,
+        $(inputs.detect_adapter_for_pe),
+        $(inputs.overrepresentation_analysis),
         $(inputs.merge),
         $(inputs.merged_out),
-        --correction, 
-        --cut_right, 
+        $(inputs.cut_right), 
+        $(inputs.base_correction),
+        $(inputs.overlap_len_require),
         $(inputs.force_polyg_tail_trimming),
-        $(inputs.overlap_min_len),
-        --length_required=$(inputs.min_length_required),
+        $(inputs.min_length_required),
+
         --thread=$(inputs.threads),
         --html, "fastp.html", 
         --json, "fastp.json",
-        --qualified_quality_phred=$(inputs.qualified_phred_quality),
-        --unqualified_percent_limit=$(inputs.unqualified_phred_quality),
-        $(inputs.disable_trim_poly_g),
-        -i, $(inputs.fastq1),
-        -I, $(inputs.fastq2),
-        -o, $(inputs.fastq1.nameroot).fastp.fastq,
-        -O, $(inputs.fastq2.nameroot).fastp.fastq
+        -i, $(inputs.forward_reads),
+        -I, $(inputs.reverse_reads),
+        -o, $(inputs.forward_reads.nameroot).trimmed.fastq,
+        -O, $(inputs.reverse_reads.nameroot).trimmed.fastq
 ]
 
 inputs:
 
-    merge: 
-      type: boolean
-      default: true
-      inputBinding: 
-        valueFrom: 
-          ${
-            if (inputs.merge != false){
-              return '--merge';
-            } else {
-              return '';
-            }
+  detect_adapter_for_pe:
+    type: boolean
+    default: false
+    inputBinding: 
+      valueFrom:
+        ${
+          if (inputs.detect_adapter_for_pe == true){
+            return '--detect_adapter_for_pe';
+          } else {
+            return '';
           }
+        }
 
-    merged_out: 
-      type: boolean?
-      default: true
-      inputBinding: 
-        prefix: --merged_out
-        valueFrom: 
-          ${
-            if (inputs.merge != false){
-              return inputs.fastq1.nameroot.split(/_(.*)/s)[0] + '.merged.fastq';
-            } else {
-              return '';
-            }
+  overrepresentation_analysis:
+    type: boolean
+    default: false
+    inputBinding: 
+      valueFrom:
+        ${
+          if (inputs.overrepresentation_analysis == true){
+            return '--overrepresentation_analysis';
+          } else {
+            return '';
           }
+        }
 
-    fastq1:
-      type: File
-      format:
-        - edam:format_1930 # FASTA
-        - edam:format_1929 # FASTQ
-    fastq2:
-      format:
-        - edam:format_1930 # FASTA
-        - edam:format_1929 # FASTQ
-      type: File?
-
-    threads:
-      type: int?
-      default: 1
-
-    qualified_phred_quality:
-      type: int?
-      default: 15
-
-    unqualified_phred_quality:
-      type: int?
-      default: 40
-
-    min_length_required:
-      type: int?
-      default: 50
-
-    force_polyg_tail_trimming:
-      type: boolean?
-      default: false
-      inputBinding:
-        valueFrom: 
-          ${
-            if (inputs.force_polyg_tail_trimming != false){
-              return '--trim_poly_g';
-            } else {
-              return '';
-            }
+  merge: 
+    type: boolean
+    default: true
+    inputBinding: 
+      valueFrom: 
+        ${
+          if (inputs.merge != false){
+            return '--merge';
+          } else {
+            return '';
           }
+        }
 
-    disable_trim_poly_g:
-      type: boolean?
-      default: false
-      inputBinding:
-        valueFrom: 
-          ${
-            if (inputs.disable_trim_poly_g == true){
-              return '--disable_trim_poly_g';
-            } else {
-              return '';
-            }
+  merged_out: 
+    type: boolean?
+    default: true
+    inputBinding: 
+      prefix: --merged_out
+      valueFrom: 
+        ${
+          if (inputs.merge != false){
+            return inputs.forward_reads.nameroot.split(/_(.*)/s)[0] + '.merged.fastq';
+          } else {
+            return '';
           }
+        }
 
-    base_correction:
-      type: boolean?
-      inputBinding:
-        valueFrom: 
-          ${
-            if (inputs.merge == true){
-              return '--correction';
-            } else {
-              return '';
-            }
-          }
+  forward_reads:
+    type: File
+    format:
+      - edam:format_1930 # FASTA
+      - edam:format_1929 # FASTQ
 
-    overlap_min_len: 
-      type: int
-      default: 30
-      inputBinding:
-        valueFrom:
-          ${
-            if (inputs.merge == true){
-              return '--overlap_len_require='+inputs.overlap_min_len;
-            } else {
-              return '';
-            }
+  reverse_reads:
+    format:
+      - edam:format_1930 # FASTA
+      - edam:format_1929 # FASTQ
+    type: File?
+
+  threads:
+    type: int?
+    default: 1
+
+  qualified_phred_quality:
+    type: int?
+    default: 0
+    inputBinding: 
+      valueFrom: 
+        ${
+          if (inputs.qualified_phred_quality > 0) {
+            return '--qualified_quality_phred=' + inputs.qualified_phred_quality
+          } else {
+            return ''
           }
+        }
+
+  unqualified_percent_limit:
+    type: int?
+    default: 0
+    inputBinding: 
+      valueFrom: 
+        ${
+          if (inputs.unqualified_percent_limit > 0) {
+            return '--unqualified_percent_limit=' + inputs.unqualified_percent_limit
+          } else {
+            return ''
+          }
+        }
+
+  min_length_required:
+    type: int?
+    default: 0
+    inputBinding: 
+      valueFrom: 
+        ${
+          if (inputs.min_length_required > 0) {
+            return '--length_required=' + inputs.min_length_required
+          } else {
+            return ''
+          }
+        }
+
+  force_polyg_tail_trimming:
+    type: boolean?
+    default: false
+    inputBinding:
+      valueFrom: 
+        ${
+          if (inputs.force_polyg_tail_trimming != false){
+            return '--trim_poly_g';
+          } else {
+            return '';
+          }
+        }
+
+  disable_trim_poly_g:
+    type: boolean?
+    default: false
+    inputBinding:
+      valueFrom: 
+        ${
+          if (inputs.disable_trim_poly_g == true){
+            return '--disable_trim_poly_g';
+          } else {
+            return '';
+          }
+        }
+
+  base_correction:
+    type: boolean?
+    default: false
+    inputBinding:
+      valueFrom: 
+        ${
+          if (inputs.merge == true && inputs.base_correction == true){
+            return '--correction';
+          } else {
+            return '';
+          }
+        }
+
+  overlap_len_require: 
+    type: int
+    default: 0
+    inputBinding:
+      valueFrom:
+        ${
+          if (inputs.merge == true){
+            return '--overlap_len_require='+inputs.overlap_len_require;
+          } else {
+            return '';
+          }
+        }
+
+  cut_right: 
+    type: boolean
+    default: true
+    inputBinding:
+      valueFrom: 
+        ${
+          if (inputs.cut_right == true){
+            return '--cut_right'
+          } else {
+            return ''
+          }
+        }
+
 
 #  overlap_diff_limit (default 5) and overlap_diff_limit_percent (default 20%). 
 #  Please note that the reads should meet these three conditions simultaneously.
 
 outputs:
-    out_fastq1:
-       type: File
-       format: $(inputs.fastq1.format)
-       outputBinding:
-          glob: $(inputs.fastq1.nameroot).fastp.fastq
-    out_fastq2:
-       type: File?
-       format: $(inputs.fastq2.format)
-       outputBinding:
-          glob: $(inputs.fastq2.nameroot).fastp.fastq
-    merged_fastq: 
-      type: File? 
-      format: $(inputs.fastq1.format)
-      outputBinding:
-          glob: '*.merged.fastq'
-    html_report:
+  out_fastq1:
       type: File
+      format: $(inputs.forward_reads.format)
       outputBinding:
-          glob: fastp.html
-    json_report:
-      type: File
+        glob: $(inputs.forward_reads.nameroot).trimmed.fastq
+  out_fastq2:
+      type: File?
+      format: $(inputs.reverse_reads.format)
       outputBinding:
-          glob: fastp.json
+        glob: $(inputs.reverse_reads.nameroot).trimmed.fastq
+  merged_fastq: 
+    type: File? 
+    format: $(inputs.forward_reads.format)
+    outputBinding:
+        glob: '*.merged.fastq'
+  html_report:
+    type: File
+    outputBinding:
+        glob: fastp.html
+  json_report:
+    type: File
+    outputBinding:
+        glob: fastp.json
+  both_paired: 
+    type: File[]?
+    format: edam:format_1930
+    outputBinding: 
+      glob: [$(inputs.forward_reads.nameroot).trimmed.fastq, $(inputs.reverse_reads.nameroot).trimmed.fastq]
 
+# namespaces
 $namespaces:
   edam: http://edamontology.org/
   s: http://schema.org/

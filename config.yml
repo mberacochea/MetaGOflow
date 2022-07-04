@@ -1,28 +1,50 @@
 
 # Global 
+run_qc: true
+rna_prediction_reads_level: true
 assemble: true
-funct_annot: true
-taxon_infer_contigs_level: true
+rna_prediction_contigs_level: true
+funct_annot: false
+
 threads: 20
 
 
+# Run wf partially
+processed_reads: 
+contigs_file: 
+
+
+# fastp parameters
+detect_adapter_for_pe: false
+overrepresentation_analysis: false
+min_length_required: 75
+force_polyg_tail_trimming: 
+base_correction: false
+qualified_phred_quality: 
+unqualified_percent_limit: 
+disable_trim_poly_g:
+overlap_len_require: 
+cut_right: false
+correction: false
+
 # Functional annotation
 
-cgc_chunk_size: 200
-
+cgc_chunk_size: 100
 diamond_maxTargetSeqs: 1
 
 
+# Assembly
 
+# memory: 550
+# min-contig-len: 250
 memory: 550
-min-contig-len: 250
-protein_chunk_size_IPS: 10000
-protein_chunk_size_eggnog: 100000
-protein_chunk_size_hmm: 50000
-qc_min_length: 200
+min-contig-len: 50
 
 
-leading: 
-trailing: 
-minlen: 
-slidingwindow: 
+
+protein_chunk_size_IPS: 100
+protein_chunk_size_eggnog: 100
+protein_chunk_size_hmm: 20
+# protein_chunk_size_IPS: 10000
+# protein_chunk_size_eggnog: 100000
+# protein_chunk_size_hmm: 50000
