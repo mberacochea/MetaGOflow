@@ -12,13 +12,20 @@ requirements:
 inputs:
     forward_reads: File?
     reverse_reads: File?
-    qc_min_length: 
-      type: int
-      default: 100
-
+    threads: int
+    min_length_required: int
+    force_polyg_tail_trimming: boolean
+    overlap_min_len: int
+    qualified_phred_quality: int
+    unqualified_phred_quality: int
+    disable_trim_poly_g: boolean
     qc_stats_folders:
       type: string[]
       default: [ "forward_qc", "reverse_qc" ]
+    # qc_min_length: 
+    #   type: int
+    #   default: 100
+
 
 steps:
 
@@ -33,38 +40,31 @@ steps:
     out: [ hashsum ]
 
   # << SeqPrep + gunzip >>
-  overlap_reads: 
+  fastp_trim_and_overlap: 
     label: Paired-end overlapping reads are merged
     run: ../subworkflows/seqprep-subwf.cwl
     in:
       forward_reads: forward_reads
       reverse_reads: reverse_reads
-      paired_reads_length_filter: { default: 70 }
-    out: [ count_forward_submitted_reads, fastp_report ]
+      min_length_required: paired_reads_length_filter
+      disable_trim_poly_g: disable_trim_poly_g
+      force_polyg_tail_trimming: force_polyg_tail_trimming
+      threads: threads
+      overlap_min_len: overlap_min_len
+      unqualified_phred_quality: unqualified_phred_quality
+      qualified_phred_quality: qualified_phred_quality
+    out: [ out_fastq1, out_fastq2, merged_fastq, count_forward_submitted_reads, fastp_report, both_paired ]
 
-  # << Trim and Reformat >>
-  trim_quality_control:
-    doc: |
-      Low quality trimming (low quality ends and sequences with < quality scores
-      less than 15 over a 4 nucleotide wide window are removed)
-    run: ../../tools/Trimmomatic/Trimmomatic-v0.36-PE.cwl
-    in:
-      reads1: forward_reads
-      reads2: reverse_reads
-      phred: { default: '33' }
-      leading: { default: 3 }
-      trailing: { default: 3 }
-      end_mode: { default: PE }
-      minlen: { default: 100 }
-      slidingwindow: { default: '4:15' }
-    out: [ reads1_trimmed_paired, reads2_trimmed_paired, both_paired ]
+
+# -----------> trimommatic step output
+    # out: [ reads1_trimmed_paired, reads2_trimmed_paired, both_paired ]
 
   #fastq
   clean_fasta_headers:
     run: ../../utils/clean_fasta_headers.cwl
     scatter: sequences
     in:
-      sequences: trim_quality_control/both_paired
+      sequences: fastp_trim_and_overlap/both_paired
     out: [ sequences_with_cleaned_headers ]
 
   #fasta - output called *.unclean
@@ -81,9 +81,9 @@ steps:
     scatter: seq_file
     in:
       seq_file: convert_trimmed_reads_to_fasta/fasta
-      submitted_seq_count: overlap_reads/count_forward_submitted_reads
+      submitted_seq_count: fastp_trim_and_overlap/count_forward_submitted_reads
       stats_file_name: {default: 'qc_summary' }
-      min_length: qc_min_length 
+      min_length: min_length_required 
       input_file_format: { default: 'fasta' }
     out: [ filtered_file, stats_summary_file ]
 
@@ -127,19 +127,19 @@ outputs:
 
   fastp_filtering_json:
     type: File?
-    outputSource: overlap_reads/fastp_report
+    outputSource: fastp_trim_and_overlap/fastp_report
 
   trimmed_fr: 
     type: File?
-    outputSource: trim_quality_control/reads1_trimmed_paired
+    outputSource: fastp_trim_and_overlap/out_fastq1
 
   trimmed_rr: 
     type: File?
-    outputSource: trim_quality_control/reads2_trimmed_paired
+    outputSource: fastp_trim_and_overlap/out_fastq2
 
   trimmed_seqs: 
     type: File[]?
-    outputSource: trim_quality_control/both_paired
+    outputSource: fastp_trim_and_overlap/both_paired
 
   trimmed_fasta_seqs: 
     type: File[]?
@@ -160,6 +160,11 @@ outputs:
   motus_input:
     type: File[]?
     outputSource: clean_fasta_headers/sequences_with_cleaned_headers
+
+  merged: 
+    type: File? 
+    outputSource: fastp_trim_and_overlap/merged_fastq
+
 
 $namespaces:
  edam: http://edamontology.org/
