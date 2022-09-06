@@ -1,3 +1,9 @@
+# Get data from ENA 
+
+run_accession_number: 
+private_data: false
+ena_api_username: ""
+ena_api_password: ""
 
 # Global 
 run_qc: true
