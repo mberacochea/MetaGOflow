@@ -6,6 +6,10 @@ hints:
   DockerRequirement:
     dockerPull: hariszaf/fetch-tool:latest
 
+requirements:
+  NetworkAccess:
+     networkAccess: true
+
 baseCommand: [ get_raw_data.sh ]
 
 inputs: 
