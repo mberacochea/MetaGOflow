@@ -68,7 +68,7 @@ cd pipeline-v5
 #### Download necessary dbs
 
 You can download databases for the EOSC-Life GOs workflow by running the
-`download_dbs.sh` script.
+`download_dbs.sh` script under the `Installation` folder.
 If you have one or more already in your system, then create a symbolic link pointing 
 at the `ref-dbs` folder. 
 

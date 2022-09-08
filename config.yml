@@ -1,5 +1,4 @@
 # Get data from ENA 
-
 run_accession_number: 
 private_data: false
 ena_api_username: ""
@@ -34,7 +33,6 @@ cut_right: false
 correction: false
 
 # Functional annotation
-
 cgc_chunk_size: 100
 diamond_maxTargetSeqs: 1
 

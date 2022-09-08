@@ -15,6 +15,16 @@ doc: |
 
 inputs:
 
+  # Get data from ENA 
+  run_accession_number: 
+    type: string?
+  private_data: 
+    type: boolean?
+  ena_api_username:
+    type: string?
+  ena_api_password:
+    type: string?
+
   # Global
   forward_reads: File?
   reverse_reads: File?
@@ -127,10 +137,9 @@ steps:
 
     run: conditionals/qc.cwl
 
-    when: $(inputs.run_qc != false)
+    # when: $(inputs.run_qc != false)
 
     in:
-      run_qc: run_qc
       forward_reads: forward_reads
       reverse_reads: reverse_reads
       both_reads: both_reads
@@ -161,107 +170,107 @@ steps:
       - filtered_fasta        # trimmed PE seq file
 
 
-  # RNA PREDICTION STEP 
-  rna-prediction:
+  # # RNA PREDICTION STEP 
+  # rna-prediction:
 
-    doc: 
-      Returns taxonomic profile of the sample based on the prediction of rna reads
-      and their assignment
+  #   doc: 
+  #     Returns taxonomic profile of the sample based on the prediction of rna reads
+  #     and their assignment
 
-    run: conditionals/rna-prediction.cwl
+  #   run: conditionals/rna-prediction.cwl
 
-    when: $(inputs.run_qc != false && inputs.rna_prediction_reads_level != false)
+  #   when: $(inputs.run_qc != false && inputs.rna_prediction_reads_level != false)
 
-    in:
+  #   in:
 
-      # conditions
-      run_qc: run_qc
-      rna_prediction_reads_level: rna_prediction_reads_level
+  #     # conditions
+  #     run_qc: run_qc
+  #     rna_prediction_reads_level: rna_prediction_reads_level
 
-      # from previous step
-      filtered_fasta: qc_and_merge/m_filtered_fasta
+  #     # from previous step
+  #     filtered_fasta: qc_and_merge/m_filtered_fasta
 
-      # from initial arguments reg. RNA prediction
-      ssu_db: ssu_db
-      lsu_db: lsu_db
-      ssu_tax: ssu_tax
-      lsu_tax: lsu_tax
-      ssu_otus: ssu_otus
-      lsu_otus: lsu_otus
-      rfam_models: rfam_models
-      rfam_model_clans: rfam_model_clans
-      other_ncRNA_models: other_ncRNA_models
-      ssu_label: ssu_label
-      lsu_label: lsu_label
-      5s_pattern: 5s_pattern
-      5.8s_pattern: 5.8s_pattern
+  #     # from initial arguments reg. RNA prediction
+  #     ssu_db: ssu_db
+  #     lsu_db: lsu_db
+  #     ssu_tax: ssu_tax
+  #     lsu_tax: lsu_tax
+  #     ssu_otus: ssu_otus
+  #     lsu_otus: lsu_otus
+  #     rfam_models: rfam_models
+  #     rfam_model_clans: rfam_model_clans
+  #     other_ncRNA_models: other_ncRNA_models
+  #     ssu_label: ssu_label
+  #     lsu_label: lsu_label
+  #     5s_pattern: 5s_pattern
+  #     5.8s_pattern: 5.8s_pattern
 
-    out:
-      - sequence_categorisation_folder
-      - taxonomy-summary_folder
-      - rna-count
-      - compressed_files
-      - optional_tax_file_flag
-      - ncRNA
+  #   out:
+  #     - sequence_categorisation_folder
+  #     - taxonomy-summary_folder
+  #     - rna-count
+  #     - compressed_files
+  #     - optional_tax_file_flag
+  #     - ncRNA
 
-  # ASSEMBLY USING MEGAHIT
-  assembly:
+  # # ASSEMBLY USING MEGAHIT
+  # assembly:
 
-    run: conditionals/megahit.cwl
+  #   run: conditionals/megahit.cwl
 
-    when: $(inputs.assemble != false)
+  #   when: $(inputs.assemble != false)
 
-    in:
-      assemble: assemble
+  #   in:
+  #     assemble: assemble
 
-      forward_reads: 
-        source: qc_and_merge/filtered_fasta
-        valueFrom: $(self[0])
+  #     forward_reads: 
+  #       source: qc_and_merge/filtered_fasta
+  #       valueFrom: $(self[0])
 
-      reverse_reads:
-        source: qc_and_merge/filtered_fasta
-        valueFrom: $(self[1])
+  #     reverse_reads:
+  #       source: qc_and_merge/filtered_fasta
+  #       valueFrom: $(self[1])
 
-      min-contig-len: min-contig-len
-      memory: memory
-      threads: threads
+  #     min-contig-len: min-contig-len
+  #     memory: memory
+  #     threads: threads
 
-    out: 
-      - contigs
-      - options
+  #   out: 
+  #     - contigs
+  #     - options
 
 
-  # COMBINED GENE CALLER
-  cgc:
+  # # COMBINED GENE CALLER
+  # cgc:
 
-    when: $(inputs.funct_annot == true)
+  #   when: $(inputs.funct_annot == true)
 
-    run: subworkflows/assembly/cgc/CGC-subwf.cwl
+  #   run: subworkflows/assembly/cgc/CGC-subwf.cwl
 
-    in:
-      # assemble: assemble
-      funct_annot: funct_annot
+  #   in:
+  #     # assemble: assemble
+  #     funct_annot: funct_annot
 
-      # coming from previous steps: 
-      input_fasta: 
-        source: 
-          - assembly/contigs
-          - contigs_file
-          - forward_reads           # forward reads is a work around so that the conditional statement to be evaluated ; this is a cwl constraint for the moment
-        pickValue: first_non_null 
+  #     # coming from previous steps: 
+  #     input_fasta: 
+  #       source: 
+  #         - assembly/contigs
+  #         - contigs_file
+  #         - forward_reads           # forward reads is a work around so that the conditional statement to be evaluated ; this is a cwl constraint for the moment
+  #       pickValue: first_non_null 
 
-      maskfile: 
-        source: 
-          - rna-prediction/ncRNA
-          - ncrna_tab_file
-          - forward_reads           # like above (line 250)
-        pickValue: first_non_null
+  #     maskfile: 
+  #       source: 
+  #         - rna-prediction/ncRNA
+  #         - ncrna_tab_file
+  #         - forward_reads           # like above (line 250)
+  #       pickValue: first_non_null
 
-      postfixes: CGC_postfixes
-      chunk_size: cgc_chunk_size
+  #     postfixes: CGC_postfixes
+  #     chunk_size: cgc_chunk_size
 
-    # pred prot -> .faa // pred seq --> .ffn  
-    out: [ predicted_proteins, predicted_seq, count_faa ] 
+  #   # pred prot -> .faa // pred seq --> .ffn  
+  #   out: [ predicted_proteins, predicted_seq, count_faa ] 
 
 
   # # taxonomic inference based on contigs
@@ -385,51 +394,51 @@ outputs:
     outputSource: qc_and_merge/m_qc_stats
 
 
-  # RNA-prediction step output
-  sequence-categorisation_folder:
-    type: Directory?
-    outputSource: rna-prediction/sequence_categorisation_folder
+  # # RNA-prediction
+  # sequence-categorisation_folder:
+  #   type: Directory?
+  #   outputSource: rna-prediction/sequence_categorisation_folder
 
-  taxonomy-summary_folder:
-    type: Directory?
-    outputSource: rna-prediction/taxonomy-summary_folder
+  # taxonomy-summary_folder:
+  #   type: Directory?
+  #   outputSource: rna-prediction/taxonomy-summary_folder
 
-  rna-count:
-    type: File?
-    outputSource: rna-prediction/rna-count
+  # rna-count:
+  #   type: File?
+  #   outputSource: rna-prediction/rna-count
 
-  no_tax_flag_file:
-    type: File?
-    outputSource: rna-prediction/optional_tax_file_flag
+  # no_tax_flag_file:
+  #   type: File?
+  #   outputSource: rna-prediction/optional_tax_file_flag
 
-  ncRNA: 
-    type: File? 
-    outputSource: rna-prediction/ncRNA
+  # ncRNA: 
+  #   type: File? 
+  #   outputSource: rna-prediction/ncRNA
 
-  # ASSEMBLY
-  # ---------
+  # # ASSEMBLY
+  # # ---------
 
-  contigs: 
-    type: File?
-    outputSource: assembly/contigs
+  # contigs: 
+  #   type: File?
+  #   outputSource: assembly/contigs
 
 
 
-  # FUNCTIONAL ANNOTATION
-  # ----------------------
+  # # FUNCTIONAL ANNOTATION
+  # # ----------------------
 
-  # CGC 
-  predicted_faa:
-    type: File
-    format: edam:format_1929
-    outputSource: cgc/predicted_proteins
-  predicted_ffn:
-    type: File
-    format: edam:format_1929
-    outputSource: cgc/predicted_seq
-  count_faa:
-    type: int
-    outputSource: cgc/count_faa
+  # # CGC 
+  # predicted_faa:
+  #   type: File
+  #   format: edam:format_1929
+  #   outputSource: cgc/predicted_proteins
+  # predicted_ffn:
+  #   type: File
+  #   format: edam:format_1929
+  #   outputSource: cgc/predicted_seq
+  # count_faa:
+  #   type: int
+  #   outputSource: cgc/count_faa
 
   # # Diamond taxonomic inference
   # # ---------------------------
