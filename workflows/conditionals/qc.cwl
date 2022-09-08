@@ -12,8 +12,8 @@ requirements:
 
 inputs:
 
-    forward_reads: File?
-    reverse_reads: File?
+    fr: File?
+    rr: File?
     both_reads: string[]?
     threads: {type: int }
 
@@ -105,7 +105,7 @@ steps:
     scatter: input_file
     in:
       input_file:
-        - forward_reads
+        - fr
         - reverse_reads
     out: [ hashsum ]
 
@@ -113,7 +113,7 @@ steps:
   count_submitted_reads:
     run: ../../utils/count_lines/count_lines.cwl
     in:
-      sequences: forward_reads
+      sequences: fr
       number: { default: 4 }
     out: [ count ]
 
@@ -125,8 +125,8 @@ steps:
     run: ../../tools/fastp/fastp.cwl
 
     in:
-      forward_reads: forward_reads
-      reverse_reads: reverse_reads
+      forward_reads: fr
+      reverse_reads: rr
       threads: threads
       min_length_required: min_length_required
       force_polyg_tail_trimming: force_polyg_tail_trimming
