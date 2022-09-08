@@ -8,8 +8,6 @@ hints:
 
 baseCommand: [ get_raw_data.sh ]
 
-
-
 inputs: 
 
  run_accession_number: 
@@ -41,5 +39,3 @@ outputs:
         type: Directory
         outputBinding:
             glob: "raw_data_from_ENA"
-
-

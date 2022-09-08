@@ -42,10 +42,9 @@ printf '{
    "url_max_attempts": 5,
    "ena_api_username": "%s",
    "ena_api_password": "%s",
-   "aspera_bin": "",
-   "aspera_cert": "" 
+   "aspera_bin": "/app/fetch_tool/aspera-cli/cli/bin/ascp",
+   "aspera_cert": "/app/fetch_tool/aspera-cli/cli/etc/asperaweb_id_dsa.openssh" 
 }' $USER_NAME $USER_PASSWORD >> $CONF_FILE
-
 
 # Run the fetch tool
 if [[ $PRIVATE == "true" ]]; 
