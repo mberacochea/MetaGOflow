@@ -28,18 +28,21 @@ Script arguments.
 "
 }
 
-while getopts :y:f:r:c:d:m:n:l:p:h option; do
+while getopts :y:f:r:c:d:m:n:l:p:sh option; do
   case "${option}" in
   y) YML=${OPTARG} ;;
   f)
-    echo "presented paired-end forward path"
+    echo "Presented paired-end forward path:"
     FORWARD_READS=${OPTARG}
     ;;
   r)
-    echo "presented paired-end reverse path"
     REVERSE_READS=${OPTARG}
+    printf "Presented paired-end reverse path: ${REVERSE_READS}\n"
     ;;
-  s) SINGULARITY=${OPTARG} ;;
+  s) 
+    SINGULARITY="--singularity" 
+    printf "Singularity flag: ${SINGULARITY}\n"
+    ;;
   c) NUM_CORES=${OPTARG} ;;
   d) RUN_DIR=${OPTARG} ;;
   m) MEMORY=${OPTARG} ;;
@@ -50,9 +53,9 @@ while getopts :y:f:r:c:d:m:n:l:p:h option; do
     exit 0
     ;;
   :)
-    usage
-    exit 1
-    ;;
+   usage
+   exit 1
+   ;;
   \?)
     echo ""
     echo "Invalid option -${OPTARG}" >&2
@@ -179,5 +182,4 @@ TOIL_PARAMS+=(
 # echo "toil-cwl-runner" "${TOIL_PARAMS[@]}"
 # toil-cwl-runner "${TOIL_PARAMS[@]}"
 
-
-cwl-runner --outdir CWL-TOOL-TEST --debug  ${CWL} ${RENAMED_YML}
+cwl-runner ${SINGULARITY} --outdir ${OUT_DIR} --debug ${CWL} ${RENAMED_YML}
