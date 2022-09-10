@@ -69,6 +69,43 @@ if __name__ == "__main__":
         help="Path to database directory",
         required=False,
     )
+    parser.add_argument(
+        "-e", 
+        "--run_accession_number", 
+        dest="run_accession_number", 
+        help="The accession number in ENA of the run to be analysed", 
+        required=False
+    )
+    parser.add_argument(
+        "-s", 
+        "--study_accession_number", 
+        dest="study_accession_number", 
+        help="The accession number in ENA of the study of the run", 
+        required=False
+    )
+    parser.add_argument(
+        "-p", 
+        "--private", 
+        dest="private_data", 
+        help="Use if raw data in ENA are under private status", 
+        action='store_true',
+        required=False
+    )
+    parser.add_argument(
+        "-u", 
+        "--ena_api_username", 
+        dest="ena_api_username", 
+        help="The username of the account in ENA where the run is located", 
+        required=False
+    )
+    parser.add_argument(
+        "-k", 
+        "--ena_api_password", 
+        dest="ena_api_password", 
+        help="The password for the account in ENA where the run is located", 
+        required=False
+    )
+
 
     args = parser.parse_args()
 
@@ -77,12 +114,11 @@ if __name__ == "__main__":
     # load template yml file and append database path
     template_yml = db_dir(args.db_dir, args.yml)
 
-    paired_reads = [args.fr.split("/")[-1].split(".fastq.gz")[0], args.rr.split("/")[-1].split(".fastq.gz")[0]]
-    paired_reads_names = '"' + paired_reads[0] + '", "' + paired_reads[1] + '"'
+    # paired_reads = [args.fr.split("/")[-1].split(".fastq.gz")[0], args.rr.split("/")[-1].split(".fastq.gz")[0]]
+    # paired_reads_names = '"' + paired_reads[0] + '", "' + paired_reads[1] + '"'
 
-    print("paired_reads: ", paired_reads)
-    print("paired_reads_names: ", paired_reads_names)
 
+    # Building the .yml file
     print("---------> Write the base .yml file.")
     with open(args.output, "w") as output_yml:
         
@@ -90,27 +126,62 @@ if __name__ == "__main__":
 
         yaml.dump(template_yml, output_yml)
 
-
     print("........ and edit the config .yml to add files")
     with open("config.yml", "r") as config_yml: 
 
-
         config = yml.safe_load(config_yml)
 
-        config["forward_reads"] = {
-            "class": "File",
-            "format": "edam:format_1930",
-            "path": args.fr,
-        }
+        if args.fr.endswith(".fastq.gz") and args.rr.endswith(".fastq.gz"): 
 
-        config["reverse_reads"] = {
-            "class": "File",
-            "format": "edam:format_1930",
-            "path": args.rr,
-        }
+            config["forward_reads"] = {
+                "class": "File",
+                "format": "edam:format_1930",
+                "path": args.fr,
+            }
 
-        config["both_reads"] = [args.fr.split("/")[-1].split(".fastq.gz")[0], args.rr.split("/")[-1].split(".fastq.gz")[0]]
+            config["reverse_reads"] = {
+                "class": "File",
+                "format": "edam:format_1930",
+                "path": args.rr,
+            }
 
+            config["both_reads"] = [args.fr.split("/")[-1].split(".fastq.gz")[0], args.rr.split("/")[-1].split(".fastq.gz")[0]]
+
+        else: 
+
+            config["run_accession_number"]  = args.run_accession_number
+            config["study_accession_number"] = args.study_accession_number
+
+            if args.private_data:
+                config["private_data"] = True
+            else:
+                config["private_data"] = False
+
+            config["ena_api_username"] = args.ena_api_username
+            config["ena_api_password"] = args.ena_api_password
+
+            ```
+            We need to use the study_accession_number variable to give the forward_reads and the reverse_reads 
+            as a javascript inline argument on the gos_wf.cwl script
+            ```
+
+
+            # forward_reads = "raw_data_from_ENA/" + args.study_accession_number + "/raw/" + args.run_accession_number + "_1.fastq.gz"
+            # reverse_reads = "raw_data_from_ENA/" + args.study_accession_number + "/raw/" + args.run_accession_number + "_2.fastq.gz"
+
+            # config["forward_reads"] = {
+            #     "class": "File",
+            #     "format": "edam:format_1931",
+            #     "path": forward_reads
+            # }
+
+            # config["reverse_reads"] = {
+            #     "class": "File",
+            #     "format": "edam:format_1930",
+            #     "path": reverse_reads
+            # }
+
+            config["both_reads"] = [forward_reads.split("/")[-1].split(".fastq.gz")[0], reverse_reads.split("/")[-1].split(".fastq.gz")[0]]
 
     with open("eosc-wf.yml", "w") as config_yml:
         yaml.dump(config, config_yml)

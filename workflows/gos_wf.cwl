@@ -127,6 +127,26 @@ inputs:
 
 steps:
 
+  # FETCH DATA FROM ENA
+  fetch_data: 
+  
+    doc: 
+      In case the user needs to get the raw data for the analysis from ENA, this step invokes the 
+      fetch tool developed by the MGnify group to do so
+
+    run: ../tools/fetch-tool/get_raw_data_run.cwl
+
+    when: $(inputs.run_accession_number != "")
+
+    in:
+      run_accession_number: run_accession_number
+      private_data: private_data
+      ena_api_username: ena_api_username
+      ena_api_password: ena_api_password
+
+    out: [ raw_data ]
+
+
   # QC FOR RNA PREDICTION
   qc_and_merge:
 
@@ -137,7 +157,7 @@ steps:
 
     run: conditionals/qc.cwl
 
-    # when: $(inputs.run_qc != false)
+    when: $(inputs.run_qc != false)
 
     in:
       forward_reads: forward_reads
@@ -354,10 +374,15 @@ steps:
 
 outputs:
 
-  # A/ RNA PREDICTION 
-  # ------------------
+  # FETCH DATA FROM ENA
+  # ------------------------
+  raw_ena_data: 
+    type: Directory
+    outputSource: fetch_data/raw_data
+    pickValue: all_non_null
 
-  # pre-qc step output
+  # QC FOR RNA PREDICTION
+  # ---------------------
   qc-statistics:
     type: Directory[]?
     outputSource: qc_and_merge/qc-statistics
@@ -394,7 +419,10 @@ outputs:
     outputSource: qc_and_merge/m_qc_stats
 
 
-  # # RNA-prediction
+# ----------------------------------------------------------------------------------
+
+
+  # # RNA PREDICTION STEP 
   # sequence-categorisation_folder:
   #   type: Directory?
   #   outputSource: rna-prediction/sequence_categorisation_folder

@@ -37,7 +37,6 @@ done
 
 # Make the config file
 CONF_FILE="fetchdata-config.json"
-rm $CONF_FILE
 printf '{
    "url_max_attempts": 5,
    "ena_api_username": "%s",
@@ -45,6 +44,7 @@ printf '{
    "aspera_bin": "/app/fetch_tool/aspera-cli/cli/bin/ascp",
    "aspera_cert": "/app/fetch_tool/aspera-cli/cli/etc/asperaweb_id_dsa.openssh" 
 }' $USER_NAME $USER_PASSWORD >> $CONF_FILE
+
 
 # Run the fetch tool
 if [[ $PRIVATE == "true" ]]; 

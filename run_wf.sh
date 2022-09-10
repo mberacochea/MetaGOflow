@@ -28,7 +28,7 @@ Script arguments.
 "
 }
 
-while getopts :y:f:r:c:d:m:n:l:p:sh option; do
+while getopts :y:f:r:e:u:k:c:d:m:n:l:sph option; do
   case "${option}" in
   y) YML=${OPTARG} ;;
   f)
@@ -39,15 +39,16 @@ while getopts :y:f:r:c:d:m:n:l:p:sh option; do
     REVERSE_READS=${OPTARG}
     printf "Presented paired-end reverse path: ${REVERSE_READS}\n"
     ;;
-  s) 
-    SINGULARITY="--singularity" 
-    printf "Singularity flag: ${SINGULARITY}\n"
-    ;;
+  e) ENA_RUN_ID=${OPTARG} ;;
+  u) ENA_USERNAME=${OPTARG} ;;
+  k) ENA_PASSWORD=${OPTARG} ;;
   c) NUM_CORES=${OPTARG} ;;
   d) RUN_DIR=${OPTARG} ;;
   m) MEMORY=${OPTARG} ;;
   n) NAME=${OPTARG} ;;
   l) LIMIT_QUEUE=${OPTARG} ;;
+  s) SINGULARITY="--singularity" ;;
+  p) PRIVATE_DATA="-p" ;;
   h)
     _usage
     exit 0
@@ -129,8 +130,36 @@ mkdir -p "${LOG_DIR}" "${OUT_DIR_FINAL}" "${JOB_TOIL_FOLDER}" "${TMPDIR}" # "${P
 
 export RENAMED_YML_TMP=${RUN_DIR}/"${NAME}"_temp.yml
 export RENAMED_YML=${RUN_DIR}/"${NAME}".yml
-# ----------------------------- prepare yml file ----------------------------- #
 
+# Get study id in case of ENA fetch tool
+if [[ $ENA_RUN_ID != "" ]];
+then 
+
+  # Run cwl for the ENA fetch tool
+  cp tools/fetch-tool/get_raw_data_run.cwl .
+
+  printf "
+  run_accession_number: ${ENA_RUN_ID}
+  private_data: ${PRIVATE_DATA}
+  ena_api_username: ${ENA_USERNAME}
+  ena_api_password: ${ENA_PASSWORD}
+  " > get_raw_data_run-test.yml
+
+  cwl-runner ${SINGULARITY} --outdir ${OUT_DIR} --debug get_raw_data_run.cwl get_raw_data_run-test.yml
+
+  rm get_raw_data_run.cwl
+  rm get_raw_data_run-test.yml
+
+  # Get the accession id of the corresponding study
+  ENA_STUDY_ID=$(curl -X POST "https://www.ebi.ac.uk/ena/browser/api/xml?accessions="$ENA_RUN_ID"&expanded=true" \
+                -H "accept: application/xml" | grep -A 1 "ENA-STUDY" | tail -1 | sed 's/.*<ID>// ; s/<\/ID>//')
+
+fi
+
+exit 1
+
+
+# ----------------------------- prepare yml file ----------------------------- #
 
 echo "Writing yaml file"
 
@@ -140,12 +169,18 @@ python3 create_yml.py \
   -o "${RENAMED_YML_TMP}" \
   -f "${PIPELINE_DIR}/${FORWARD_READS}" \
   -r "${PIPELINE_DIR}/${REVERSE_READS}" \
-  -d "${DB_DIR}" 
+  -d "${DB_DIR}" \
+  -e "${ENA_RUN_ID}" \
+  -s "${ENA_STUDY_ID}" \
+  -k "${ENA_PASSWORD}" \
+  -u "${ENA_USERNAME}" \
+  $PRIVATE_DATA
 
 mv eosc-wf.yml ${RUN_DIR}/
 cat ${RUN_DIR}/eosc-wf.yml ${RENAMED_YML_TMP} > ${RENAMED_YML}
 rm ${RENAMED_YML_TMP}
 rm ${RUN_DIR}/eosc-wf.yml
+
 
 # ----------------------------- running pipeline ----------------------------- #
 
