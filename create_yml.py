@@ -63,11 +63,17 @@ if __name__ == "__main__":
         "-o", "--output", dest="output", help="Output yaml file path", required=True
     )
     parser.add_argument(
+        "-l", "--ena_raw_data_path", 
+        dest="ena_raw_data_path", 
+        help="Path to output directory", 
+        required=False
+    )    
+    parser.add_argument(
         "-d",
         "--dbdir",
         dest="db_dir",
         help="Path to database directory",
-        required=False,
+        required=False
     )
     parser.add_argument(
         "-e", 
@@ -76,13 +82,13 @@ if __name__ == "__main__":
         help="The accession number in ENA of the run to be analysed", 
         required=False
     )
-    parser.add_argument(
-        "-s", 
-        "--study_accession_number", 
-        dest="study_accession_number", 
-        help="The accession number in ENA of the study of the run", 
-        required=False
-    )
+    # parser.add_argument(
+    #     "-s", 
+    #     "--study_accession_number", 
+    #     dest="study_accession_number", 
+    #     help="The accession number in ENA of the study of the run", 
+    #     required=False
+    # )
     parser.add_argument(
         "-p", 
         "--private", 
@@ -149,37 +155,31 @@ if __name__ == "__main__":
 
         else: 
 
-            config["run_accession_number"]  = args.run_accession_number
-            config["study_accession_number"] = args.study_accession_number
+            # config["run_accession_number"]  = args.run_accession_number
+            # config["study_accession_number"] = args.study_accession_number
+            # if args.private_data:
+            #     config["private_data"] = True
+            # else:
+            #     config["private_data"] = False
+            # config["ena_api_username"] = args.ena_api_username
+            # config["ena_api_password"] = args.ena_api_password
 
-            if args.private_data:
-                config["private_data"] = True
-            else:
-                config["private_data"] = False
+            print("this is the ena_raw_data_path var: ", args.ena_raw_data_path)
 
-            config["ena_api_username"] = args.ena_api_username
-            config["ena_api_password"] = args.ena_api_password
+            forward_reads = args.ena_raw_data_path + "/" + args.run_accession_number + "_1.fastq.gz"
+            reverse_reads = args.ena_raw_data_path + "/" + args.run_accession_number + "_2.fastq.gz"
 
-            ```
-            We need to use the study_accession_number variable to give the forward_reads and the reverse_reads 
-            as a javascript inline argument on the gos_wf.cwl script
-            ```
+            config["forward_reads"] = {
+                "class": "File",
+                "format": "edam:format_1930",
+                "path": forward_reads
+            }
 
-
-            # forward_reads = "raw_data_from_ENA/" + args.study_accession_number + "/raw/" + args.run_accession_number + "_1.fastq.gz"
-            # reverse_reads = "raw_data_from_ENA/" + args.study_accession_number + "/raw/" + args.run_accession_number + "_2.fastq.gz"
-
-            # config["forward_reads"] = {
-            #     "class": "File",
-            #     "format": "edam:format_1931",
-            #     "path": forward_reads
-            # }
-
-            # config["reverse_reads"] = {
-            #     "class": "File",
-            #     "format": "edam:format_1930",
-            #     "path": reverse_reads
-            # }
+            config["reverse_reads"] = {
+                "class": "File",
+                "format": "edam:format_1930",
+                "path": reverse_reads
+            }
 
             config["both_reads"] = [forward_reads.split("/")[-1].split(".fastq.gz")[0], reverse_reads.split("/")[-1].split(".fastq.gz")[0]]
 

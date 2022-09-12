@@ -140,13 +140,13 @@ then
 
   printf "
   run_accession_number: ${ENA_RUN_ID}
-  private_data: ${PRIVATE_DATA}
+  private_data: true
   ena_api_username: ${ENA_USERNAME}
   ena_api_password: ${ENA_PASSWORD}
   " > get_raw_data_run-test.yml
 
   cwl-runner ${SINGULARITY} --outdir ${OUT_DIR} --debug get_raw_data_run.cwl get_raw_data_run-test.yml
-
+ 
   rm get_raw_data_run.cwl
   rm get_raw_data_run-test.yml
 
@@ -154,9 +154,10 @@ then
   ENA_STUDY_ID=$(curl -X POST "https://www.ebi.ac.uk/ena/browser/api/xml?accessions="$ENA_RUN_ID"&expanded=true" \
                 -H "accept: application/xml" | grep -A 1 "ENA-STUDY" | tail -1 | sed 's/.*<ID>// ; s/<\/ID>//')
 
-fi
+  export PATH_ENA_RAW_DATA=${PIPELINE_DIR}/${OUT_DIR}/raw_data_from_ENA/${ENA_STUDY_ID}/raw/
 
-exit 1
+
+fi
 
 
 # ----------------------------- prepare yml file ----------------------------- #
@@ -167,14 +168,14 @@ echo "Writing yaml file"
 python3 create_yml.py \
   -y "${YML}" \
   -o "${RENAMED_YML_TMP}" \
+  -l "${PATH_ENA_RAW_DATA}" \
   -f "${PIPELINE_DIR}/${FORWARD_READS}" \
   -r "${PIPELINE_DIR}/${REVERSE_READS}" \
   -d "${DB_DIR}" \
-  -e "${ENA_RUN_ID}" \
-  -s "${ENA_STUDY_ID}" \
-  -k "${ENA_PASSWORD}" \
-  -u "${ENA_USERNAME}" \
-  $PRIVATE_DATA
+  -e "${ENA_RUN_ID}"
+  # -s "${ENA_STUDY_ID}" \
+  # -k "${ENA_PASSWORD}" \
+  # -u "${ENA_USERNAME}"
 
 mv eosc-wf.yml ${RUN_DIR}/
 cat ${RUN_DIR}/eosc-wf.yml ${RENAMED_YML_TMP} > ${RENAMED_YML}

@@ -15,16 +15,6 @@ doc: |
 
 inputs:
 
-  # Get data from ENA 
-  run_accession_number: 
-    type: string?
-  private_data: 
-    type: boolean?
-  ena_api_username:
-    type: string?
-  ena_api_password:
-    type: string?
-
   # Global
   forward_reads: File?
   reverse_reads: File?
@@ -127,26 +117,6 @@ inputs:
 
 steps:
 
-  # FETCH DATA FROM ENA
-  fetch_data: 
-  
-    doc: 
-      In case the user needs to get the raw data for the analysis from ENA, this step invokes the 
-      fetch tool developed by the MGnify group to do so
-
-    run: ../tools/fetch-tool/get_raw_data_run.cwl
-
-    when: $(inputs.run_accession_number != "")
-
-    in:
-      run_accession_number: run_accession_number
-      private_data: private_data
-      ena_api_username: ena_api_username
-      ena_api_password: ena_api_password
-
-    out: [ raw_data ]
-
-
   # QC FOR RNA PREDICTION
   qc_and_merge:
 
@@ -190,48 +160,48 @@ steps:
       - filtered_fasta        # trimmed PE seq file
 
 
-  # # RNA PREDICTION STEP 
-  # rna-prediction:
+  # RNA PREDICTION STEP 
+  rna-prediction:
 
-  #   doc: 
-  #     Returns taxonomic profile of the sample based on the prediction of rna reads
-  #     and their assignment
+    doc: 
+      Returns taxonomic profile of the sample based on the prediction of rna reads
+      and their assignment
 
-  #   run: conditionals/rna-prediction.cwl
+    run: conditionals/rna-prediction.cwl
 
-  #   when: $(inputs.run_qc != false && inputs.rna_prediction_reads_level != false)
+    when: $(inputs.run_qc != false && inputs.rna_prediction_reads_level != false)
 
-  #   in:
+    in:
 
-  #     # conditions
-  #     run_qc: run_qc
-  #     rna_prediction_reads_level: rna_prediction_reads_level
+      # conditions
+      run_qc: run_qc
+      rna_prediction_reads_level: rna_prediction_reads_level
 
-  #     # from previous step
-  #     filtered_fasta: qc_and_merge/m_filtered_fasta
+      # from previous step
+      filtered_fasta: qc_and_merge/m_filtered_fasta
 
-  #     # from initial arguments reg. RNA prediction
-  #     ssu_db: ssu_db
-  #     lsu_db: lsu_db
-  #     ssu_tax: ssu_tax
-  #     lsu_tax: lsu_tax
-  #     ssu_otus: ssu_otus
-  #     lsu_otus: lsu_otus
-  #     rfam_models: rfam_models
-  #     rfam_model_clans: rfam_model_clans
-  #     other_ncRNA_models: other_ncRNA_models
-  #     ssu_label: ssu_label
-  #     lsu_label: lsu_label
-  #     5s_pattern: 5s_pattern
-  #     5.8s_pattern: 5.8s_pattern
+      # from initial arguments reg. RNA prediction
+      ssu_db: ssu_db
+      lsu_db: lsu_db
+      ssu_tax: ssu_tax
+      lsu_tax: lsu_tax
+      ssu_otus: ssu_otus
+      lsu_otus: lsu_otus
+      rfam_models: rfam_models
+      rfam_model_clans: rfam_model_clans
+      other_ncRNA_models: other_ncRNA_models
+      ssu_label: ssu_label
+      lsu_label: lsu_label
+      5s_pattern: 5s_pattern
+      5.8s_pattern: 5.8s_pattern
 
-  #   out:
-  #     - sequence_categorisation_folder
-  #     - taxonomy-summary_folder
-  #     - rna-count
-  #     - compressed_files
-  #     - optional_tax_file_flag
-  #     - ncRNA
+    out:
+      - sequence_categorisation_folder
+      - taxonomy-summary_folder
+      - rna-count
+      - compressed_files
+      - optional_tax_file_flag
+      - ncRNA
 
   # # ASSEMBLY USING MEGAHIT
   # assembly:
@@ -374,13 +344,6 @@ steps:
 
 outputs:
 
-  # FETCH DATA FROM ENA
-  # ------------------------
-  raw_ena_data: 
-    type: Directory
-    outputSource: fetch_data/raw_data
-    pickValue: all_non_null
-
   # QC FOR RNA PREDICTION
   # ---------------------
   qc-statistics:
@@ -418,30 +381,30 @@ outputs:
     type: Directory? 
     outputSource: qc_and_merge/m_qc_stats
 
-
 # ----------------------------------------------------------------------------------
 
+  # RNA PREDICTION STEP 
+  sequence-categorisation_folder:
+    type: Directory?
+    outputSource: rna-prediction/sequence_categorisation_folder
 
-  # # RNA PREDICTION STEP 
-  # sequence-categorisation_folder:
-  #   type: Directory?
-  #   outputSource: rna-prediction/sequence_categorisation_folder
+  taxonomy-summary_folder:
+    type: Directory?
+    outputSource: rna-prediction/taxonomy-summary_folder
 
-  # taxonomy-summary_folder:
-  #   type: Directory?
-  #   outputSource: rna-prediction/taxonomy-summary_folder
+  rna-count:
+    type: File?
+    outputSource: rna-prediction/rna-count
 
-  # rna-count:
-  #   type: File?
-  #   outputSource: rna-prediction/rna-count
+  no_tax_flag_file:
+    type: File?
+    outputSource: rna-prediction/optional_tax_file_flag
 
-  # no_tax_flag_file:
-  #   type: File?
-  #   outputSource: rna-prediction/optional_tax_file_flag
+  ncRNA: 
+    type: File? 
+    outputSource: rna-prediction/ncRNA
 
-  # ncRNA: 
-  #   type: File? 
-  #   outputSource: rna-prediction/ncRNA
+# ----------------------------------------------------------------------------------
 
   # # ASSEMBLY
   # # ---------
