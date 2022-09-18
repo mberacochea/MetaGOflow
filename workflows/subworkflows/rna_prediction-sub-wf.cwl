@@ -32,7 +32,7 @@ inputs:
   pattern_LSU: string
   pattern_5S: string
   pattern_5.8S: string
-
+  threads: {type: int?, default: 2}
 
 outputs:
 
@@ -93,6 +93,7 @@ steps:
     run: cmsearch/cmsearch-condition.cwl
     in:
       type: type
+      threads: threads
       query_sequences: input_sequences
       covariance_models: ncRNA_ribosomal_models
       clan_info: ncRNA_ribosomal_model_clans

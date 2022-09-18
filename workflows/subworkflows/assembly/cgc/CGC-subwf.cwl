@@ -29,7 +29,7 @@ outputs:
     type: File
     format: edam:format_1929
     outputSource: combine_ffn/result
-  count_faa:
+  count_faa:  # replace count_cds with combined_gene_caller to check if working fine
     type: int
     outputSource: count_cds/count
 
@@ -54,6 +54,11 @@ steps:
     out: [ predicted_proteins, predicted_seq ]
     run: predict_proteins_assemblies.cwl
     label: CGC run
+
+
+  # try to mute here and see what happens
+
+
 
   combine_faa:
     in:

@@ -1,28 +1,19 @@
-# # Get data from ENA 
-# run_accession_number: ""
-# private_data: false
-# ena_api_username: ""
-# ena_api_password: ""
-
 # Global 
-run_qc: true
 rna_prediction_reads_level: true
-assemble: true
-rna_prediction_contigs_level: true
-funct_annot: false
-
+assemble:
+rna_prediction_contigs_level:
+funct_annot_on_reads: true
+funct_annot_on_assembly: 
 threads: 20
-
 
 # Run wf partially
 processed_reads: 
 contigs_file: 
 
-
 # fastp parameters
 detect_adapter_for_pe: false
 overrepresentation_analysis: false
-min_length_required: 75
+min_length_required: 100
 force_polyg_tail_trimming: 
 base_correction: false
 qualified_phred_quality: 
@@ -32,20 +23,20 @@ overlap_len_require:
 cut_right: false
 correction: false
 
-# Functional annotation
-cgc_chunk_size: 100
+
+# Assembly
+memory: 550
+min-contig-len: 200
+
+# Combined Gene Caller // the size is in MB
+cgc_chunk_size: 50
+
+# Taxonomic inference using Diamond and the contigs
 diamond_maxTargetSeqs: 1
 
 
-# Assembly
 
-# memory: 550
-# min-contig-len: 250
-memory: 550
-min-contig-len: 50
-
-
-
+# Functional annotation
 protein_chunk_size_IPS: 100
 protein_chunk_size_eggnog: 100
 protein_chunk_size_hmm: 20

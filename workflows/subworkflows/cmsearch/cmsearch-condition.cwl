@@ -10,6 +10,7 @@ inputs:
 
   query_sequences: File
   clan_info: [string, File]
+  threads: {type: int?, default: 2}
   covariance_models:
     type:
       - type: array
@@ -18,18 +19,18 @@ inputs:
 outputs:
 
   concatenate_matches:
-    outputSource: cmsearch_assembly/concatenate_matches
+    outputSource: cmsearch_raw_data/concatenate_matches
     type: File
 
   deoverlapped_matches:
-    outputSource: cmsearch_assembly/deoverlapped_matches
+    outputSource: cmsearch_raw_data/deoverlapped_matches
     type: File
 
 steps:
-  cmsearch_assembly:
+  cmsearch_raw_data:
 
     label: Search sequence(s) against a covariance model database for assemblies
-    run: cmsearch-multimodel-assembly.cwl
+    run: cmsearch-multimodel-raw-data.cwl
     in:
       clan_info: clan_info
       covariance_models: covariance_models

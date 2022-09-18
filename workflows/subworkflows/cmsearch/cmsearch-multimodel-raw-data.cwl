@@ -15,6 +15,7 @@ inputs:
     - type: array
       items: [string, File]
   clan_info: [string, File]
+  threads: {type: int?, default: 2}
 
 outputs:
   concatenate_matches:

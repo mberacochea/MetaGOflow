@@ -173,9 +173,6 @@ python3 create_yml.py \
   -r "${PIPELINE_DIR}/${REVERSE_READS}" \
   -d "${DB_DIR}" \
   -e "${ENA_RUN_ID}"
-  # -s "${ENA_STUDY_ID}" \
-  # -k "${ENA_PASSWORD}" \
-  # -u "${ENA_USERNAME}"
 
 mv eosc-wf.yml ${RUN_DIR}/
 cat ${RUN_DIR}/eosc-wf.yml ${RENAMED_YML_TMP} > ${RENAMED_YML}

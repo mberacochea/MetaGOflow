@@ -31,6 +31,8 @@ inputs:
     5s_pattern: string
     5.8s_pattern: string
 
+    threads: {type: int?, default: 2}
+
 steps:
 
   # << Get RNA >>
@@ -51,6 +53,7 @@ steps:
       pattern_LSU: lsu_label
       pattern_5S: 5s_pattern
       pattern_5.8S: 5.8s_pattern
+      threads: threads
     out:
       - ncRNA
       - cmsearch_result

@@ -21,9 +21,12 @@ inputs:
   both_reads: string[]?
 
   rna_prediction_reads_level: {type: boolean, default: true}
+  funct_annot_on_reads: { type: boolean, default: true }
+
   assemble: { type: boolean, default: false }
+  funct_annot_on_assembly: { type: boolean, default: false }
   taxon_infer_contigs_level: { type: boolean, default: false }
-  funct_annot: { type: boolean, default: false }
+
   threads: {type: int, default: 2}
   run_qc: 
     type: boolean
@@ -127,8 +130,6 @@ steps:
 
     run: conditionals/qc.cwl
 
-    when: $(inputs.run_qc != false)
-
     in:
       forward_reads: forward_reads
       reverse_reads: reverse_reads
@@ -146,7 +147,6 @@ steps:
       detect_adapter_for_pe: detect_adapter_for_pe
 
     out:
-
       ## reg. merged seq file
       - m_qc_stats
       - m_filtered_fasta        # for rna prediction
@@ -159,7 +159,6 @@ steps:
       - fastp_filtering_json
       - filtered_fasta        # trimmed PE seq file
 
-
   # RNA PREDICTION STEP 
   rna-prediction:
 
@@ -169,12 +168,11 @@ steps:
 
     run: conditionals/rna-prediction.cwl
 
-    when: $(inputs.run_qc != false && inputs.rna_prediction_reads_level != false)
+    when: $(inputs.rna_prediction_reads_level) # inputs.run_qc != false && 
 
     in:
 
       # conditions
-      run_qc: run_qc
       rna_prediction_reads_level: rna_prediction_reads_level
 
       # from previous step
@@ -194,6 +192,7 @@ steps:
       lsu_label: lsu_label
       5s_pattern: 5s_pattern
       5.8s_pattern: 5.8s_pattern
+      threads: threads
 
     out:
       - sequence_categorisation_folder
@@ -203,64 +202,80 @@ steps:
       - optional_tax_file_flag
       - ncRNA
 
-  # # ASSEMBLY USING MEGAHIT
-  # assembly:
+  # ASSEMBLY USING MEGAHIT
+  assembly:
 
-  #   run: conditionals/megahit.cwl
+    run: conditionals/megahit.cwl
 
-  #   when: $(inputs.assemble != false)
+    when: $(inputs.assemble)
 
-  #   in:
-  #     assemble: assemble
+    in:
+      assemble: assemble
 
-  #     forward_reads: 
-  #       source: qc_and_merge/filtered_fasta
-  #       valueFrom: $(self[0])
+      forward_reads: 
+        source: qc_and_merge/filtered_fasta
+        valueFrom: $(self[0])
 
-  #     reverse_reads:
-  #       source: qc_and_merge/filtered_fasta
-  #       valueFrom: $(self[1])
+      reverse_reads:
+        source: qc_and_merge/filtered_fasta
+        valueFrom: $(self[1])
 
-  #     min-contig-len: min-contig-len
-  #     memory: memory
-  #     threads: threads
+      min-contig-len: min-contig-len
+      memory: memory
+      threads: threads
 
-  #   out: 
-  #     - contigs
-  #     - options
+    out: 
+      - contigs   # final.contigs.fa
+      - options
+
+  # COMBINED GENE CALLER BASED ON THE ASSEMBLY
+  cgc_on_assembly:
+
+    in:
+      ## assemble: assemble
+      #funct_annot: funct_annot
+
+      # coming from previous steps: 
+      input_fasta: assembly/contigs    # final.contigs.fa
+
+      maskfile: 
+        source: 
+          - rna-prediction/ncRNA
+          - ncrna_tab_file
+          - forward_reads           ## forward reads is a work around so that the conditional statement to be evaluated ; this is a cwl constraint for the moment
+        pickValue: first_non_null
+
+      postfixes: CGC_postfixes
+      chunk_size: cgc_chunk_size
+
+    when: $(inputs.funct_annot_on_assembly == true)
+
+    run: subworkflows/assembly/cgc/CGC-subwf.cwl
+
+    # pred prot -> .faa // pred seq --> .ffn  
+    out: [ predicted_proteins, predicted_seq, count_faa ] 
+
+  # COMBINED GENE CALLER BASED ON THE READS
+  cgc_on_reads:
+
+    in:
+      # assemble: assemble
+      funct_annot_on_reads: funct_annot_on_reads
+
+      # coming from previous steps: 
+      input_fasta: qc_and_merge/m_filtered_fasta
+
+      maskfile: rna-prediction/ncRNA
+      postfixes: CGC_postfixes
+      chunk_size: cgc_chunk_size
+
+    when: $(inputs.funct_annot_on_reads)
+
+    run: subworkflows/raw_reads/cgc/CGC-subwf.cwl
+
+    out: [ predicted_faa, predicted_ffn, count_faa ]
 
 
-  # # COMBINED GENE CALLER
-  # cgc:
-
-  #   when: $(inputs.funct_annot == true)
-
-  #   run: subworkflows/assembly/cgc/CGC-subwf.cwl
-
-  #   in:
-  #     # assemble: assemble
-  #     funct_annot: funct_annot
-
-  #     # coming from previous steps: 
-  #     input_fasta: 
-  #       source: 
-  #         - assembly/contigs
-  #         - contigs_file
-  #         - forward_reads           # forward reads is a work around so that the conditional statement to be evaluated ; this is a cwl constraint for the moment
-  #       pickValue: first_non_null 
-
-  #     maskfile: 
-  #       source: 
-  #         - rna-prediction/ncRNA
-  #         - ncrna_tab_file
-  #         - forward_reads           # like above (line 250)
-  #       pickValue: first_non_null
-
-  #     postfixes: CGC_postfixes
-  #     chunk_size: cgc_chunk_size
-
-  #   # pred prot -> .faa // pred seq --> .ffn  
-  #   out: [ predicted_proteins, predicted_seq, count_faa ] 
 
 
   # # taxonomic inference based on contigs
@@ -268,7 +283,7 @@ steps:
 
   #   run: subworkflows/assembly/diamond/diamond-subwf.cwl 
 
-  #   when: $(inputs.assemble != false && inputs.diamond != false)
+  #   when: $(inputs.diamond)
 
   #   in: 
   #     assemble: assemble
@@ -284,6 +299,139 @@ steps:
   #     filename: {default: 'diamond-subwf-test'}
 
   #   out: [ diamond_output, post-processing_output]
+
+
+outputs:
+
+  # QC FOR RNA PREDICTION
+  # ---------------------
+  qc-statistics:
+    type: Directory[]?
+    outputSource: qc_and_merge/qc-statistics
+    pickValue: all_non_null
+
+  qc_summary:
+    type: File[]?
+    outputSource: qc_and_merge/qc_summary
+    pickValue: all_non_null
+
+  hashsum_paired:
+    type: File[]?
+    outputSource: qc_and_merge/input_files_hashsum_paired
+    pickValue: all_non_null
+
+  fastp_filtering_json_report:
+    type: File[]?
+    outputSource: qc_and_merge/fastp_filtering_json
+    pickValue: all_non_null
+
+  filtered_fasta:
+    type: File[]?
+    outputSource: qc_and_merge/filtered_fasta
+    pickValue: all_non_null
+
+
+  m_filtered_fasta:  # this is the filtered merged seq file
+    type: File
+    outputSource: qc_and_merge/m_filtered_fasta
+
+
+  m_qc_stats:
+    type: Directory? 
+    outputSource: qc_and_merge/m_qc_stats
+
+  # RNA PREDICTION STEP 
+  # ----------------------
+  sequence-categorisation_folder:
+    type: Directory?
+    outputSource: rna-prediction/sequence_categorisation_folder
+
+  taxonomy-summary_folder:
+    type: Directory?
+    outputSource: rna-prediction/taxonomy-summary_folder
+
+  rna-count:
+    type: File?
+    outputSource: rna-prediction/rna-count
+
+  no_tax_flag_file:
+    type: File?
+    outputSource: rna-prediction/optional_tax_file_flag
+
+  ncRNA: 
+    type: File? 
+    outputSource: rna-prediction/ncRNA
+
+  # ASSEMBLY
+  # ---------
+  contigs: 
+    type: File?
+    outputSource: assembly/contigs
+  # CGC ON ASSEMBLY
+  # ---
+  predicted_assembled_faa:
+    type: File
+    format: edam:format_1929
+    outputSource: cgc_on_assembly/predicted_proteins
+  predicted_assembled_ffn:
+    type: File
+    format: edam:format_1929
+    outputSource: cgc_on_assembly/predicted_seq
+  count_assembled_faa:
+    type: int
+    outputSource: cgc_on_assembly/count_faa
+
+  # CGC ON READS
+  # ---
+  predicted_faa:
+    type: File
+    format: edam:format_1929
+    outputSource: cgc_on_reads/predicted_faa
+  predicted_ffn:
+    type: File
+    format: edam:format_1929
+    outputSource: cgc_on_reads/predicted_ffn
+  count_faa:
+    type: int
+    outputSource: cgc_on_reads/count_faa
+
+
+
+
+
+  # # Diamond taxonomic inference
+  # # ---------------------------
+  # diamond_output:
+  #   type: File
+  #   outputSource: diamond-taxonomic-prediction/diamond_output
+  # post-processing_output:
+  #   type: File
+  #   outputSource: diamond-taxonomic-prediction/post-processing_output
+
+
+
+
+
+$namespaces:
+ edam: http://edamontology.org/
+ s: http://schema.org/
+
+$schemas:
+ - http://edamontology.org/EDAM_1.16.owl
+ - https://schema.org/version/latest/schemaorg-current-https.jsonld
+#  https://schema.org/version/latest/schemaorg-current-https.rdf
+s:license: "https://www.apache.org/licenses/LICENSE-2.0"
+s:copyrightHolder: "European Marine Biological Resource Centre"
+s:author: "Haris Zafeiropoulos"
+
+
+# always to remember: 
+# .ffn	> FASTA nucleotide of gene regions	> Contains coding regions for a genome.
+# .faa	> FASTA amino acid	> Contains amino acid sequences. A multiple protein fasta file can have the more specific extension mpfa.
+
+
+
+
 
 # -----------------------------------------------------------------------
 
@@ -338,127 +486,3 @@ steps:
   #     gp_flatfiles_path: gp_flatfiles_path
 
   # out: [ functional_annotation_folder ]
-
-
-
-
-outputs:
-
-  # QC FOR RNA PREDICTION
-  # ---------------------
-  qc-statistics:
-    type: Directory[]?
-    outputSource: qc_and_merge/qc-statistics
-    pickValue: all_non_null
-
-  qc_summary:
-    type: File[]?
-    outputSource: qc_and_merge/qc_summary
-    pickValue: all_non_null
-
-  hashsum_paired:
-    type: File[]?
-    outputSource: qc_and_merge/input_files_hashsum_paired
-    pickValue: all_non_null
-
-  fastp_filtering_json_report:
-    type: File[]?
-    outputSource: qc_and_merge/fastp_filtering_json
-    pickValue: all_non_null
-
-  filtered_fasta:
-    type: File[]?
-    outputSource: qc_and_merge/filtered_fasta
-    pickValue: all_non_null
-
-
-  m_filtered_fasta:  # this is the filtered merged seq file
-    type: File
-    outputSource: qc_and_merge/m_filtered_fasta
-
-
-  m_qc_stats:
-    type: Directory? 
-    outputSource: qc_and_merge/m_qc_stats
-
-# ----------------------------------------------------------------------------------
-
-  # RNA PREDICTION STEP 
-  sequence-categorisation_folder:
-    type: Directory?
-    outputSource: rna-prediction/sequence_categorisation_folder
-
-  taxonomy-summary_folder:
-    type: Directory?
-    outputSource: rna-prediction/taxonomy-summary_folder
-
-  rna-count:
-    type: File?
-    outputSource: rna-prediction/rna-count
-
-  no_tax_flag_file:
-    type: File?
-    outputSource: rna-prediction/optional_tax_file_flag
-
-  ncRNA: 
-    type: File? 
-    outputSource: rna-prediction/ncRNA
-
-# ----------------------------------------------------------------------------------
-
-  # # ASSEMBLY
-  # # ---------
-
-  # contigs: 
-  #   type: File?
-  #   outputSource: assembly/contigs
-
-
-
-  # # FUNCTIONAL ANNOTATION
-  # # ----------------------
-
-  # # CGC 
-  # predicted_faa:
-  #   type: File
-  #   format: edam:format_1929
-  #   outputSource: cgc/predicted_proteins
-  # predicted_ffn:
-  #   type: File
-  #   format: edam:format_1929
-  #   outputSource: cgc/predicted_seq
-  # count_faa:
-  #   type: int
-  #   outputSource: cgc/count_faa
-
-  # # Diamond taxonomic inference
-  # # ---------------------------
-
-  # diamond_output:
-  #   type: File
-  #   outputSource: diamond-taxonomic-prediction/diamond_output
-  # post-processing_output:
-  #   type: File
-  #   outputSource: diamond-taxonomic-prediction/post-processing_output
-
-  # Functional annotation
-
-
-
-
-$namespaces:
- edam: http://edamontology.org/
- s: http://schema.org/
-
-$schemas:
- - http://edamontology.org/EDAM_1.16.owl
- - https://schema.org/version/latest/schemaorg-current-https.jsonld
-#  https://schema.org/version/latest/schemaorg-current-https.rdf
-s:license: "https://www.apache.org/licenses/LICENSE-2.0"
-s:copyrightHolder: "European Marine Biological Resource Centre"
-s:author: "Haris Zafeiropoulos"
-
-
-# always to remember: 
-# .ffn	> FASTA nucleotide of gene regions	> Contains coding regions for a genome.
-# .faa	> FASTA amino acid	> Contains amino acid sequences. A multiple protein fasta file can have the more specific extension mpfa.
