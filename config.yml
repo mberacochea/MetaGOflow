@@ -1,9 +1,8 @@
 # Global 
-rna_prediction_reads_level: true
-assemble:
-rna_prediction_contigs_level:
-funct_annot_on_reads: true
-funct_annot_on_assembly: 
+get_rna_prediction: true
+cgc_step: true
+reads_functional_annotation: false
+assemble: true
 threads: 20
 
 # Run wf partially
@@ -23,7 +22,6 @@ overlap_len_require:
 cut_right: false
 correction: false
 
-
 # Assembly
 memory: 550
 min-contig-len: 200
@@ -33,8 +31,6 @@ cgc_chunk_size: 50
 
 # Taxonomic inference using Diamond and the contigs
 diamond_maxTargetSeqs: 1
-
-
 
 # Functional annotation
 protein_chunk_size_IPS: 100

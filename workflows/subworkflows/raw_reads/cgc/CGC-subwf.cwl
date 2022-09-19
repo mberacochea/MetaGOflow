@@ -46,7 +46,6 @@ steps:
     scatter: input_fasta
     in:
       input_fasta: split_seqs/chunks
-      # input_fasta: input_fasta
       maskfile: maskfile
     out: [ predicted_proteins, predicted_seq ]
     run: predict_proteins_reads.cwl

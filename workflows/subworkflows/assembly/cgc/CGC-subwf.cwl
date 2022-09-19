@@ -55,11 +55,6 @@ steps:
     run: predict_proteins_assemblies.cwl
     label: CGC run
 
-
-  # try to mute here and see what happens
-
-
-
   combine_faa:
     in:
       files: combined_gene_caller/predicted_proteins
