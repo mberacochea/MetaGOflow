@@ -31,8 +31,12 @@ inputs:
   HMM_database_dir: [string, Directory?]
   hmmsearch_header: string
 
+  EggNOG_diamond_db: [string?, File?]
+
   go_config: [string, File]
   ko_file: [string, File]
+
+  protein_chunk_size_eggnog: int
 
 outputs:
   functional_annotation_folder:
@@ -61,6 +65,8 @@ steps:
       InterProScan_databases: InterProScan_databases
       InterProScan_applications: InterProScan_applications
       InterProScan_outputFormat: InterProScan_outputFormat
+      chunk_size_eggnog: protein_chunk_size_eggnog
+      EggNOG_diamond_db: EggNOG_diamond_db
     out: [ hmm_result, ips_result ]
 
   # GO SUMMARY; PFAM; summaries and stats IPS, HMMScan, Pfam; add header; chunking TSV

@@ -23,28 +23,19 @@ inputs:
   forward_reads: File?
   reverse_reads: File?
   both_reads: string[]?
-
-  get_rna_prediction: {type: boolean, default: true}
-  reads_functional_annotation: { type: boolean, default: true }
-
-  assemble: { type: boolean, default: false }
-  cgc_step: { type: boolean, default: false }
-  assembly_functional_annotation: { type: boolean, default: false }
-  taxonomy_annotation_on_contigs: { type: boolean, default: false }
-
   threads: {type: int, default: 2}
-  run_qc: 
-    type: boolean
-    default: true
+
+  # Steps
+  cgc_step: { type: boolean, default: false }
+  reads_functional_annotation: { type: boolean, default: true }
+  assemble: { type: boolean, default: false }
 
   # Files to run partially the wf
-  contigs_file: {type: File?}
   ncrna_tab_file: {type: File?}
 
   # Pre-process
   overrepresentation_analysis: { type: boolean, default: false }
   detect_adapter_for_pe: { type: boolean, default: false }
-  phred: { type: string, default: '33' }
   force_polyg_tail_trimming: { type: boolean, default: false }
   overlap_len_require: { type: int, default: 3 }
   qualified_phred_quality: { type: int? }
@@ -80,22 +71,8 @@ inputs:
   CGC_postfixes: string[]
   cgc_chunk_size: {type: int, default: 50}
 
-  # diamond
-  outputFormat:  {type: string, default: '6'}
-  strand: {type: string, default: 'both'}
-  filename: {type: string, default: 'diamond-subwf-test'}
-
-  diamond_maxTargetSeqs: int
-  diamond_databaseFile: [string, File]
-  Uniref90_db_txt: [string, File]
-  diamond_header: string
 
   ## Functional annotation input vars
-  # protein_chunk_size_eggnog:  int
-  # EggNOG_db: [string?, File?]
-  # EggNOG_diamond_db: [string?, File?]
-  # EggNOG_data_dir: [string, Directory]
-
   protein_chunk_size_hmm: int
   func_ann_names_hmmer: string
   HMM_gathering_bit_score: boolean
@@ -104,22 +81,21 @@ inputs:
   HMM_database_dir: [string, Directory?]
   hmmsearch_header: string
 
-  protein_chunk_size_IPS: int
+  protein_chunk_size_IPS: int?
   func_ann_names_ips: string
   InterProScan_databases: [string, Directory]
   InterProScan_applications: string[]
   InterProScan_outputFormat: string[]
   ips_header: string
 
+  protein_chunk_size_eggnog: int
+
+  EggNOG_db: [string?, File?]
+  EggNOG_diamond_db: [string?, File?]
+  EggNOG_data_dir: [string?, Directory?]
+  
   go_config: [string, File]
   ko_file: [string, File]
-
-  # antismash_geneclusters_txt: File?
-  # graphs: [string, File]
-  # pathways_names: [string, File]
-  # pathways_classes: [string, File]
-  # gp_flatfiles_path: [string?, Directory?]
-
 
 steps:
 
@@ -151,11 +127,11 @@ steps:
 
     out:
 
-      # reg. merged seq file
+      # Merged sequence file
       - m_qc_stats
       - m_filtered_fasta
 
-      # reg. trimmed PE files
+      # Trimmed PE files
       - qc-statistics
       - qc_summary
       - qc-status
@@ -172,12 +148,8 @@ steps:
 
     run: conditionals/rna-prediction.cwl
 
-    when: $(inputs.get_rna_prediction)
-
     in:
-      # conditions
-      get_rna_prediction: get_rna_prediction
-
+    
       # from previous step
       filtered_fasta: qc_and_merge/m_filtered_fasta
 
@@ -238,6 +210,7 @@ steps:
        cgc_results_faa: cgc_on_reads/predicted_faa
        protein_chunk_size_hmm: protein_chunk_size_hmm
        protein_chunk_size_IPS: protein_chunk_size_IPS
+       protein_chunk_size_eggnog: protein_chunk_size_eggnog
 
        func_ann_names_ips: func_ann_names_ips
        InterProScan_databases: InterProScan_databases
@@ -251,6 +224,10 @@ steps:
        HMM_database: HMM_database
        HMM_database_dir: HMM_database_dir
        hmmsearch_header: hmmsearch_header
+
+       EggNOG_db: EggNOG_db
+       EggNOG_diamond_db: EggNOG_diamond_db
+       EggNOG_data_dir: EggNOG_data_dir
 
        go_config: go_config
        ko_file: ko_file

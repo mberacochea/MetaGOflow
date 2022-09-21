@@ -1,8 +1,7 @@
 # Global 
-get_rna_prediction: true
 cgc_step: true
-reads_functional_annotation: false
-assemble: true
+reads_functional_annotation: true
+assemble: false
 threads: 20
 
 # Run wf partially
@@ -36,6 +35,9 @@ diamond_maxTargetSeqs: 1
 protein_chunk_size_IPS: 100
 protein_chunk_size_eggnog: 100
 protein_chunk_size_hmm: 20
+
 # protein_chunk_size_IPS: 10000
 # protein_chunk_size_eggnog: 100000
 # protein_chunk_size_hmm: 50000
+
+

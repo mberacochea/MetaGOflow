@@ -29,7 +29,7 @@ inputs:
   InterProScan_applications: string[]  # ../tools/InterProScan/InterProScan-apps.yaml#apps[]?
   InterProScan_outputFormat: string[]  # ../tools/InterProScan/InterProScan-protein_formats.yaml#protein_formats[]?
 
-  chunk_size_eggnog: int?
+  chunk_size_eggnog: int
   EggNOG_db: [string?, File?]
   EggNOG_diamond_db: [string?, File?]
   EggNOG_data_dir: [string?, Directory?]
@@ -49,8 +49,7 @@ outputs:
     type: File?
 
 steps:
-
-  # << Chunk faa file >>
+  # Chunk faa file
   split_seqs:
     in:
       type_analysis: type
@@ -59,7 +58,7 @@ steps:
     out: [ chunks ]
     run: ../../../tools/chunks/protein_chunker.cwl
 
-  # << EggNOG >>
+  # Annotation steps
   eggnog:
     run: ../assembly/eggnog-subwf.cwl
     in:
@@ -98,7 +97,7 @@ steps:
       previous_step_result: run_IPS/ips_result
     out: [ hmm_result ]
 
-
+# Namespaces and schemas
 $namespaces:
  edam: http://edamontology.org/
  s: http://schema.org/

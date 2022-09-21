@@ -215,4 +215,4 @@ TOIL_PARAMS+=(
 # echo "toil-cwl-runner" "${TOIL_PARAMS[@]}"
 # toil-cwl-runner "${TOIL_PARAMS[@]}"
 
-cwl-runner ${SINGULARITY} --outdir ${OUT_DIR} --debug ${CWL} ${RENAMED_YML}
+cwl-runner ${SINGULARITY} --outdir ${OUT_DIR} --debug ${CWL} ${RENAMED_YML} 
