@@ -24,9 +24,9 @@ conda activate EOSC-CWL
 module load singularity/3.7.1
 
 # run the wf
-# ./run_wf.sh -f test_input/wgs-paired-SRR1620013_1.fastq.gz -r test_input/wgs-paired-SRR1620013_2.fastq.gz -n SRR1620013 -d TEST_FILES_CGC1 -s
+./run_wf.sh -f test_input/wgs-paired-SRR1620013_1.fastq.gz -r test_input/wgs-paired-SRR1620013_2.fastq.gz -n SRR1620013 -d TEST_FILES_CGC1 -s
 # ./run_wf.sh -f test_input/SRR1620013_1.fastq.gz -r test_input/SRR1620013_2.fastq.gz -n SRR1620013 -d TEST_FULL_FILES_CGC1 -s
-./run_wf.sh -e ERR855786 -d TEST_SIMPLIFIED_PFAM -n ERR855786 -s
+# ./run_wf.sh -e ERR855786 -d TEST_SIMPLIFIED_PFAM -n ERR855786 -s
 
 
 # disable the 
