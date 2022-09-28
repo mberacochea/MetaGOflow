@@ -1,6 +1,6 @@
 # Global 
-cgc_step: true
-reads_functional_annotation: true
+cgc_step: false
+reads_functional_annotation: false
 assemble: false
 threads: 20
 

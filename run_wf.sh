@@ -11,7 +11,7 @@ DB_DIR="${PIPELINE_DIR}/ref-dbs/"
 
 _usage() {
   echo "
-Run MGnify pipeline.
+metaGOflow interface.
 Script arguments.
   Resources:
   -m                  Memory to use to with toil --defaultMemory. (optional, default ${MEMORY})
@@ -32,8 +32,8 @@ while getopts :y:f:r:e:u:k:c:d:m:n:l:sph option; do
   case "${option}" in
   y) YML=${OPTARG} ;;
   f)
-    echo "Presented paired-end forward path:"
     FORWARD_READS=${OPTARG}
+    echo "Presented paired-end forward read: ${FORWARD_READS}" 
     ;;
   r)
     REVERSE_READS=${OPTARG}
@@ -60,7 +60,7 @@ while getopts :y:f:r:e:u:k:c:d:m:n:l:sph option; do
   \?)
     echo ""
     echo "Invalid option -${OPTARG}" >&2
-    usage
+    _usage
     exit 1
     ;;
   esac
@@ -126,7 +126,7 @@ export LOG_DIR=${OUT_DIR}/log-dir/${NAME}
 export OUT_DIR_FINAL=${OUT_DIR}/results/${NAME}
 export PROV_DIR=${OUT_DIR}/prov 
 
-mkdir -p "${LOG_DIR}" "${OUT_DIR_FINAL}" "${JOB_TOIL_FOLDER}" "${TMPDIR}" # "${PROV_DIR}"
+mkdir -p "${LOG_DIR}" "${OUT_DIR_FINAL}" "${JOB_TOIL_FOLDER}" "${TMPDIR}" "${PROV_DIR}"
 
 export RENAMED_YML_TMP=${RUN_DIR}/"${NAME}"_temp.yml
 export RENAMED_YML=${RUN_DIR}/"${NAME}".yml
@@ -215,4 +215,10 @@ TOIL_PARAMS+=(
 # echo "toil-cwl-runner" "${TOIL_PARAMS[@]}"
 # toil-cwl-runner "${TOIL_PARAMS[@]}"
 
-cwl-runner ${SINGULARITY} --outdir ${OUT_DIR} --debug ${CWL} ${RENAMED_YML} 
+cwltool ${SINGULARITY} --outdir ${OUT_DIR} --debug ${CWL} ${RENAMED_YML} 
+
+# --provenance ${PROV_DIR}
+# --leave-tmpdir 
+# --leave-outputs 
+# --cachedir CACHE_FOR_DEV 
+

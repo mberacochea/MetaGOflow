@@ -293,11 +293,6 @@ outputs:
     outputSource: qc_and_merge/fastp_filtering_json
     pickValue: all_non_null
 
-  # s_filtered_fasta:
-  #   type: File[]?
-  #   outputSource: qc_and_merge/filtered_fasta
-  #   pickValue: all_non_null
-
   m_filtered_fasta:  # this is the filtered merged seq file
     type: File
     outputSource: qc_and_merge/m_filtered_fasta
@@ -369,8 +364,3 @@ $schemas:
 s:license: "https://www.apache.org/licenses/LICENSE-2.0"
 s:copyrightHolder: "European Marine Biological Resource Centre"
 s:author: "Haris Zafeiropoulos"
-
-
-# always to remember: 
-# .ffn	> FASTA nucleotide of gene regions	> Contains coding regions for a genome.
-# .faa	> FASTA amino acid	> Contains amino acid sequences. A multiple protein fasta file can have the more specific extension mpfa.

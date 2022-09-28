@@ -18,7 +18,7 @@ inputs:
 
 outputs:
   annotations:
-    type: File
+    type: File?
     outputSource: eggnog_annotation/output_annotations
   orthologs:
     type: File

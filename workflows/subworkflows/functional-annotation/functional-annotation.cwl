@@ -52,7 +52,6 @@ steps:
   # Chunk faa file
   split_seqs:
     in:
-      type_analysis: type
       seqs: CGC_predicted_proteins
       chunk_size: chunk_size_eggnog
     out: [ chunks ]
@@ -62,7 +61,6 @@ steps:
   eggnog:
     run: ../assembly/eggnog-subwf.cwl
     in:
-      type_analysis: type
       fasta_file: split_seqs/chunks
       db_diamond: EggNOG_diamond_db
       db: EggNOG_db

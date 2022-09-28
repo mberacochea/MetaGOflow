@@ -30,8 +30,6 @@ inputs:
     overrepresentation_analysis: { type: boolean, default: false }
     qc_stats_folder_for_merged: { type: string, default: "merged_qc" }
 
-
-
 outputs:
 
   # hashsum files
