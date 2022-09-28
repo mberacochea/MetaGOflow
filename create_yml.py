@@ -115,8 +115,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    print(f"Loading the constants from {args.yml}.")
-
     # load template yml file and append database path
     template_yml = db_dir(args.db_dir, args.yml)
 
@@ -125,14 +123,12 @@ if __name__ == "__main__":
 
 
     # Building the .yml file
-    print("---------> Write the base .yml file.")
     with open(args.output, "w") as output_yml:
         
         yaml = YAML(typ="safe")
 
         yaml.dump(template_yml, output_yml)
 
-    print("........ and edit the config .yml to add files")
     with open("config.yml", "r") as config_yml: 
 
         config = yml.safe_load(config_yml)
@@ -164,8 +160,6 @@ if __name__ == "__main__":
             # config["ena_api_username"] = args.ena_api_username
             # config["ena_api_password"] = args.ena_api_password
 
-            print("this is the ena_raw_data_path var: ", args.ena_raw_data_path)
-
             forward_reads = args.ena_raw_data_path + "/" + args.run_accession_number + "_1.fastq.gz"
             reverse_reads = args.ena_raw_data_path + "/" + args.run_accession_number + "_2.fastq.gz"
 
@@ -186,4 +180,3 @@ if __name__ == "__main__":
     with open("eosc-wf.yml", "w") as config_yml:
         yaml.dump(config, config_yml)
 
-    print("<--------- the .yml is now done")

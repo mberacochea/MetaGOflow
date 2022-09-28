@@ -58,6 +58,8 @@ docker pull microbiomeinformatics/pipeline-v5.antismash:v4.2.0
 
 
 
+
+
 ### Get the EOSC-Life marine GOs workflow
 
 ```bash
@@ -71,6 +73,8 @@ You can download databases for the EOSC-Life GOs workflow by running the
 `download_dbs.sh` script under the `Installation` folder.
 If you have one or more already in your system, then create a symbolic link pointing 
 at the `ref-dbs` folder. 
+
+
 
 
 
@@ -97,3 +101,18 @@ at the `ref-dbs` folder.
 
 `RuntimeError`: slurm currently does not support shared caching, because it does not support cleaning up a worker after the last job finishes. 
 Set the `--disableCaching` flag if you want to use this batch system.
+
+
+In case you are having errors like: 
+```
+wltool.errors.WorkflowException: Singularity is not available for this tool
+```
+
+You may run the following script. 
+
+```
+singularity pull --force --name debian:stable-slim.sif docker://debian:stable-sli
+
+```
+
+

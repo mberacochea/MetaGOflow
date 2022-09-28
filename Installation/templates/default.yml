@@ -182,7 +182,7 @@ ko_file:
   path: kofam_ko_desc.tsv
 
 InterProScan_applications: 
-- PfamA
+- Pfam
 - TIGRFAM
 - PRINTS
 - PrositePatterns

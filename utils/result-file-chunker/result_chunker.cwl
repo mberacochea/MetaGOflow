@@ -17,7 +17,7 @@ inputs:
     default: "n"
   size_limit: int?
   line_number_tsv:
-    type: int?
+    type: int
     default: 10000000
 
 outputs:
