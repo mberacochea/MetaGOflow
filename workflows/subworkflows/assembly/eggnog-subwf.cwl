@@ -31,7 +31,6 @@ steps:
     in:
       fasta_file: fasta_file
       db_diamond: db_diamond
-      db: db
       data_dir: data_dir
       no_annot: {default: true}
       no_file_comments: {default: true}
@@ -54,7 +53,10 @@ steps:
     run: ../../../tools/Assembly/EggNOG/eggnog.cwl
     in:
       annotate_hits_table: unite_seed_orthologs/result
+      db: db
       data_dir: data_dir
+      mode: { default: no_search }
+      dbmem: {default: True}
       no_file_comments: {default: true}
       cpu: cpu
       output:

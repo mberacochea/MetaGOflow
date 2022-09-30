@@ -1,5 +1,5 @@
 #!/usr/bin/env cwl-runner
-cwlVersion: v1.0
+cwlVersion: v1.2
 class: CommandLineTool
 
 label: "eggNOG"
@@ -10,7 +10,8 @@ doc: |
 
 hints:
   DockerRequirement:
-    dockerPull: microbiomeinformatics/pipeline-v5.eggnog:v2.0.0
+    dockerPull: hariszaf/pipeline-v5.eggnog:v2.1.8
+    # dockerPull: microbiomeinformatics/pipeline-v5.eggnog:v2.0.0
 
 requirements:
   ResourceRequirement:
@@ -68,12 +69,19 @@ inputs:
     type: int?
     inputBinding:
       prefix: --cpu
+    default: 8
 
   annotate_hits_table:
     type: File?
     inputBinding:
       prefix: --annotate_hits_table
     label: Annotatate TSV formatted table of query->hits
+
+  dbmem:
+    type: boolean?
+    inputBinding:
+      prefix: --dbmem
+    label: Store the whole eggNOG sqlite DB into memory before retrieving the annotations. This requires ~44 GB of RAM memory available.
 
   output:
     type: string?

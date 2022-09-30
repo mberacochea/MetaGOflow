@@ -33,6 +33,7 @@ inputs:
   EggNOG_db: [string?, File?]
   EggNOG_diamond_db: [string?, File?]
   EggNOG_data_dir: [string?, Directory?]
+  threads: int
 
 outputs:
   hmm_result:
@@ -65,7 +66,7 @@ steps:
       db_diamond: EggNOG_diamond_db
       db: EggNOG_db
       data_dir: EggNOG_data_dir
-      cpu: { default: 16 }
+      cpu: threads
       file_acc:
         source: CGC_predicted_proteins
         valueFrom: $(self.nameroot)

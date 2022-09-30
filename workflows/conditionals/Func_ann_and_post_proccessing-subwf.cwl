@@ -38,6 +38,8 @@ inputs:
 
   protein_chunk_size_eggnog: int
 
+  threads: int
+
 outputs:
   functional_annotation_folder:
     type: Directory
@@ -67,6 +69,7 @@ steps:
       InterProScan_outputFormat: InterProScan_outputFormat
       chunk_size_eggnog: protein_chunk_size_eggnog
       EggNOG_diamond_db: EggNOG_diamond_db
+      threads: threads
     out: [ hmm_result, ips_result ]
 
   # GO SUMMARY; PFAM; summaries and stats IPS, HMMScan, Pfam; add header; chunking TSV

@@ -219,12 +219,12 @@ outputs:
       outputBinding:
         glob: $(inputs.forward_reads.nameroot).trimmed.fastq
   out_fastq2:
-      type: File?
+      type: File
       format: $(inputs.reverse_reads.format)
       outputBinding:
         glob: $(inputs.reverse_reads.nameroot).trimmed.fastq
   merged_fastq: 
-    type: File? 
+    type: File
     format: $(inputs.forward_reads.format)
     outputBinding:
         glob: '*.merged.fastq'
@@ -237,7 +237,7 @@ outputs:
     outputBinding:
         glob: fastp.json
   both_paired: 
-    type: File[]?
+    type: File[]
     format: edam:format_1930
     outputBinding: 
       glob: [$(inputs.forward_reads.nameroot).trimmed.fastq, $(inputs.reverse_reads.nameroot).trimmed.fastq]

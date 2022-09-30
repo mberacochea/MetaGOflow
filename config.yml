@@ -1,7 +1,11 @@
-# Global 
-cgc_step: false
-reads_functional_annotation: false
+# Steps to go for
+qc_and_merge_step: true
+taxonomic_inventory: true
+cgc_step: true
+reads_functional_annotation: true
 assemble: false
+
+# Global
 threads: 20
 
 # Run wf partially
@@ -32,12 +36,29 @@ cgc_chunk_size: 50
 diamond_maxTargetSeqs: 1
 
 # Functional annotation
-protein_chunk_size_IPS: 100
-protein_chunk_size_eggnog: 100
-protein_chunk_size_hmm: 20
+protein_chunk_size_IPS: 10000      # 100
+protein_chunk_size_eggnog: 10000   # 800
+protein_chunk_size_hmm: 5000       # 20 
 
-# protein_chunk_size_IPS: 10000
-# protein_chunk_size_eggnog: 100000
-# protein_chunk_size_hmm: 50000
+# The following variables should be considered only in case 
+# the user has already ran some of the first steps and wants to 
+# run the following parts of the workflow. 
+# For example, you have ran the quality contron and the rna prediction steps
+# and you would like to go just for the assembly step. 
+
+
+
+# Input files for running the CGC step; 
+# this step is required if you are about to run the functional annotation step and 
+# the one of CGC has not been performed earlier
+# The CGC step returns the: 
+# check_value
+# cgc_results_faa
+# files, required for the functional annotation step
+input_fasta: 
+maskfile: 
+
+
+# Required files for running the functional annotation step
 
 
