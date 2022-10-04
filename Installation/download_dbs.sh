@@ -58,7 +58,7 @@ export FTP_DBS=ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-d
 IPR=5
 
 # We are now in InterPro 89.0. (Checked on June 2022)
-IPRSCAN=5.36-75.0
+IPRSCAN=5.57-90.0
 
 # The integrated version is from Jul 23, 2019
 # We are now in version 2..0.15 (Checked on June 2022)
@@ -97,6 +97,7 @@ wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/rRNA.cl
 
 # other Rfam models
 mkdir other
+cd other
 wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/rfam_models/other_models/*.cm \
     -P other
 
@@ -124,10 +125,10 @@ gunzip db_kofam/db_kofam.hmm.h3f.gz db_kofam/db_kofam.hmm.h3i.gz db_kofam/db_kof
 # ko file
 wget $FTP_DBS/kofam_ko_desc.tsv
 
-# eggnog 2.0.0 on diamond 0.9.24
+# eggnog and diamond 5.0.2 
 echo 'Download eggnog dbs'
-wget $FTP_DBS/eggnog_proteins.dmnd
-wget $FTP_DBS/eggnog.db
+wget http://eggnog5.embl.de/download/emapperdb-5.0.2/eggnog_proteins.dmnd.gz
+wget http://eggnog5.embl.de/download/emapperdb-5.0.2/eggnog.db.gz
 mkdir eggnog && mv eggnog_proteins.dmnd eggnog.db eggnog
 
 # Diamond

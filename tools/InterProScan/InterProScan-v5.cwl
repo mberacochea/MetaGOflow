@@ -1,27 +1,31 @@
+#!/usr/bin/env cwl-runner
 class: CommandLineTool
-cwlVersion: v1.0
-
-id: i5
+cwlVersion: v1.2
 
 label: 'InterProScan: protein sequence classifier'
 
 requirements:
-  - class: ShellCommandRequirement
-  - class: ResourceRequirement
-    ramMin: 15000
-    coresMin: 4
+  - class: ShellCommandRequirement 
   - class: InlineJavascriptRequirement
   - class: ScatterFeatureRequirement
- 
-# Disabled
-hints:
   - class: DockerRequirement
-    dockerPull: microbiomeinformatics/pipeline-v5.interproscan:v5.36-75.0
+    dockerPull: docker://hariszaf/pipeline-v5.interproscan:v5.57-90.0
+  - class: InitialWorkDirRequirement
+    listing:
+      - entry: $(inputs.databases)
+        entryname: $("/opt/interproscan/data")
+        writable: true
+  - class: ResourceRequirement 
+    ramMin: 15000
+    coresMin: 4
+  - class: NetworkAccess
+    networkAccess: true
 
 baseCommand: [ interproscan.sh ]
 
 inputs:
-  - id: inputFile
+
+  inputFile:
     type: File
     format: edam:format_1929
     inputBinding:
@@ -31,7 +35,8 @@ inputs:
     doc: >-
       Optional, path to fasta file that should be loaded on Master startup.
       Alternatively, in CONVERT mode, the InterProScan 5 XML file to convert.
-  - id: applications
+
+  applications:
     type: string[]?
     inputBinding:
       position: 9
@@ -41,44 +46,25 @@ inputs:
     doc: >-
       Optional, comma separated list of analyses. If this option is not set, ALL
       analyses will be run.
-  - id: outputFormat
-    type: string[]
-    inputBinding:
-      position: 10
-      itemSeparator: ','
-      prefix: '--formats'
-    label: output format
-    doc: >-
-      Optional, case-insensitive, comma separated list of output formats.
-      Supported formats are TSV, XML, JSON, GFF3, HTML and SVG. Default for
-      protein sequences are TSV, XML and GFF3, or for nucleotide sequences GFF3
-      and XML.
 
-  - id: databases
+  databases:
     type: [string?, Directory]
 
-  - id: disableResidueAnnotation
+  disableResidueAnnotation:
     type: boolean?
     inputBinding:
       position: 11
       prefix: '--disable-residue-annot'
     label: Disables residue annotation
     doc: 'Optional, excludes sites from the XML, JSON output.'
-  - id: seqtype
-    type:
-      - 'null'
-      - type: enum
-        symbols:
-          - p
-          - n
-        name: seqtype
-    inputBinding:
-      position: 12
-      prefix: '--seqtype'
-    label: Sequence type
-    doc: >-
-      Optional, the type of the input sequences (dna/rna (n) or protein (p)).
-      The default sequence type is protein.
+
+
+
+  cpu: 
+    type: int
+    default: 8
+    inputBinding: 
+      prefix: --cpu
 
 arguments:
   - position: 0
@@ -90,13 +76,19 @@ arguments:
   - position: 3
     prefix: '--tempdir'
     valueFrom: $(runtime.tmpdir)
+  - position: 7
+    valueFrom: 'TSV'
+    prefix: '-f'
+  - position: 8
+    valueFrom: $(runtime.outdir)/$(inputs.inputFile.nameroot).IPS.tsv
+    prefix: '-o'
 
 outputs:
-  - id: i5Annotations
+  i5Annotations:
     format: edam:format_3475
     type: File
     outputBinding:
-      glob: $(inputs.inputFile.nameroot).f*.tsv
+      glob: $(inputs.inputFile.nameroot).IPS.tsv
 
 doc: >-
   InterProScan is the software package that allows sequences (protein and
@@ -108,12 +100,6 @@ doc: >-
   Documentation on how to run InterProScan 5 can be found here:
   https://github.com/ebi-pf-team/interproscan/wiki/HowToRun
 
-#  - class: SchemaDefRequirement
-#    types:
-#      - type: enum
-#        name: outputFormats
-#        symbols: [ TSV, XML, JSON, GFF3 ]
-
 $namespaces:
   edam: 'http://edamontology.org/'
   iana: 'https://www.iana.org/assignments/media-types/'
@@ -123,7 +109,7 @@ $schemas:
   - 'http://edamontology.org/EDAM_1.20.owl'
   - 'https://schema.org/version/latest/schemaorg-current-http.rdf'
 
-s:author: "Michael Crusoe, Aleksandra Ola Tarkowska, Maxim Scheremetjew"
+s:author: "Michael Crusoe, Aleksandra Ola Tarkowska, Maxim Scheremetjew, Haris Zafeiropoulos"
 s:license: "https://www.apache.org/licenses/LICENSE-2.0"
 s:copyrightHolder:
     - name: "EMBL - European Bioinformatics Institute"

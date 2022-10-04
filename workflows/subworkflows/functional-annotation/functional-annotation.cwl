@@ -76,6 +76,7 @@ steps:
     run: ../chunking-subwf-IPS.cwl
     in:
       CGC_predicted_proteins: CGC_predicted_proteins
+      threads: threads
       chunk_size: chunk_size_IPS
       name_ips: name_ips
       InterProScan_databases: InterProScan_databases

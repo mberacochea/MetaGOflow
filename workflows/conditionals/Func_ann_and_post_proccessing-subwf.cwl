@@ -31,7 +31,9 @@ inputs:
   HMM_database_dir: [string, Directory?]
   hmmsearch_header: string
 
+  EggNOG_db: [string?, File?]
   EggNOG_diamond_db: [string?, File?]
+  EggNOG_data_dir: [string?, Directory?]  
 
   go_config: [string, File]
   ko_file: [string, File]
@@ -52,7 +54,7 @@ steps:
 
   # << FUNCTIONAL ANNOTATION: hmmscan, IPS, eggNOG >>
   functional_annotation:
-    run: ../functional-annotation/functional-annotation.cwl
+    run: ../subworkflows/functional-annotation/functional-annotation.cwl
     in:
       type: { default: "raw-reads"}
       CGC_predicted_proteins: cgc_results_faa
@@ -69,12 +71,14 @@ steps:
       InterProScan_outputFormat: InterProScan_outputFormat
       chunk_size_eggnog: protein_chunk_size_eggnog
       EggNOG_diamond_db: EggNOG_diamond_db
+      EggNOG_data_dir: EggNOG_data_dir
+      EggNOG_db: EggNOG_db
       threads: threads
     out: [ hmm_result, ips_result ]
 
   # GO SUMMARY; PFAM; summaries and stats IPS, HMMScan, Pfam; add header; chunking TSV
   post_processing:
-    run: ../functional-annotation/post-proccessing-go-pfam-stats-subwf.cwl
+    run: ../subworkflows/functional-annotation/post-proccessing-go-pfam-stats-subwf.cwl
     in:
       fasta: filtered_fasta
       IPS_table: functional_annotation/ips_result
@@ -94,9 +98,9 @@ steps:
       - go_summary_slim
       - chunked_tsvs
 
-# << move to functional annotation >>
+  # << move to functional annotation >>
   move_to_functional_annotation_folder:
-    run: ../../../utils/return_directory/return_directory.cwl
+    run: ../../utils/return_directory/return_directory.cwl
     in:
       file_list:
         source:

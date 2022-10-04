@@ -23,11 +23,13 @@ inputs:
   forward_reads: File?
   reverse_reads: File?
   both_reads: string[]?
-  threads: {type: int, default: 2}
+  threads: {type: int, default: 5}
 
   # Steps
+  qc_and_merge: { type: boolean, default: true }
+  taxonomic_inventory: { type: boolean, default: true }
   cgc_step: { type: boolean, default: false }
-  reads_functional_annotation: { type: boolean, default: true }
+  reads_functional_annotation: { type: boolean, default: false }
   assemble: { type: boolean, default: false }
 
   # Files to run partially the wf
@@ -46,8 +48,8 @@ inputs:
   base_correction: { type: boolean, default: false }
 
   # RNA prediction input vars
-  ssu_db: {type: File, secondaryFiles: [.mscluster] }
-  lsu_db: {type: File, secondaryFiles: [.mscluster] }
+  ssu_db: {type: File?, secondaryFiles: [.mscluster] }
+  lsu_db: {type: File?, secondaryFiles: [.mscluster] }
   ssu_tax: [string, File]
   lsu_tax: [string, File]
   ssu_otus: [string, File]
@@ -56,60 +58,66 @@ inputs:
     type:
       - type: array
         items: [string, File]
-  rfam_model_clans: [string, File]
-  other_ncRNA_models: string[]
-  ssu_label: string
-  lsu_label: string
-  5s_pattern: string
-  5.8s_pattern: string
+  rfam_model_clans: [string, File?]
+  other_ncRNA_models: string[]?
+  ssu_label: string?
+  lsu_label: string?
+  5s_pattern: string?
+  5.8s_pattern: string?
 
   # Assembly step 
-  min-contig-len: int
-  memory: int?
+  min-contig-len: int?
+  memory: float?
 
   # CGC
-  CGC_postfixes: string[]
+  CGC_postfixes: string[]?
   cgc_chunk_size: {type: int, default: 50}
 
 
   ## Functional annotation input vars
-  protein_chunk_size_hmm: int
-  func_ann_names_hmmer: string
-  HMM_gathering_bit_score: boolean
-  HMM_omit_alignment: boolean
-  HMM_database: string
+  protein_chunk_size_hmm: int?
+  func_ann_names_hmmer: string?
+  HMM_gathering_bit_score: {type: boolean, default: true}
+  HMM_omit_alignment: {type: boolean, default: true}
+  HMM_database: [string, File?]
   HMM_database_dir: [string, Directory?]
-  hmmsearch_header: string
+  hmmsearch_header: string?
 
   protein_chunk_size_IPS: int?
-  func_ann_names_ips: string
-  InterProScan_databases: [string, Directory]
-  InterProScan_applications: string[]
-  InterProScan_outputFormat: string[]
-  ips_header: string
+  func_ann_names_ips: string?
+  InterProScan_databases: [string, Directory?]
+  InterProScan_applications: string[]?
+  InterProScan_outputFormat: string[]?
+  ips_header: string?
 
-  protein_chunk_size_eggnog: int
+  protein_chunk_size_eggnog: int?
 
   EggNOG_db: [string?, File?]
   EggNOG_diamond_db: [string?, File?]
   EggNOG_data_dir: [string?, Directory?]
   
-  go_config: [string, File]
-  ko_file: [string, File]
+  go_config: [string, File?]
+  ko_file: [string, File?]
+
+  # Variables to be used for partial run of the wf
+  filtered_sequence_file: [string, File?]
+
 
 steps:
-
   # QC FOR RNA PREDICTION
   qc_and_merge:
-
     doc: 
       The rna prediction step is based on pre-processed and merged reads. 
       This step aims at the pre-processing and merging the raw reads so its output can be used 
       for the rna prediction step. 
 
+    when: $(inputs.qc_and_merge)
     run: conditionals/qc.cwl
-
     in:
+      # conditional
+      qc_and_merge: qc_and_merge
+
+      # Parameters' values
       forward_reads: forward_reads
       reverse_reads: reverse_reads
       both_reads: both_reads
@@ -126,7 +134,6 @@ steps:
       detect_adapter_for_pe: detect_adapter_for_pe
 
     out:
-
       # Merged sequence file
       - m_qc_stats
       - m_filtered_fasta
@@ -141,15 +148,15 @@ steps:
 
   # RNA PREDICTION STEP 
   rna_prediction:
-
     doc: 
       Returns taxonomic profile of the sample based on the prediction of rna reads
       and their assignment
-
+    when: $(inputs.taxonomic_inventory)
     run: conditionals/rna-prediction.cwl
-
     in:
-    
+      # conditional
+      taxonomic_inventory: taxonomic_inventory
+
       # from previous step
       filtered_fasta: qc_and_merge/m_filtered_fasta
 
@@ -179,35 +186,53 @@ steps:
 
   # COMBINED GENE CALLER BASED ON THE READS
   cgc_on_reads:
+    doc: 
+      Combined gene caller is a step where thanks to the FragGeneScan software, genes are predicted. 
 
+    when: $(inputs.cgc_step)
+    run: subworkflows/raw_reads/cgc/CGC-subwf.cwl
     in:
-      reads_functional_annotation: reads_functional_annotation
+      # Conditional 
       cgc_step: cgc_step
 
-      # coming from previous steps: 
-      input_fasta: qc_and_merge/m_filtered_fasta
+      # Coming from the QC step: 
+      input_fasta: 
+        source:
+          - qc_and_merge/m_filtered_fasta
+          - filtered_sequence_file
+        pickValue: first_non_null
 
+      # Coming from the taxonomic intentory step: 
       maskfile: rna_prediction/ncRNA
+
+      # Values from the default.yml
       postfixes: CGC_postfixes
       chunk_size: cgc_chunk_size
 
-    when: $(inputs.cgc_step)
-
-    run: subworkflows/raw_reads/cgc/CGC-subwf.cwl
-
     out: [ predicted_faa, predicted_ffn, count_faa ]
-
   # FUNCTIONAL ANNOTATION ON THE RAW READS
   functional_annotation_on_reads:
+    doc: 
+      The functional annotation subworkflow of the MGnify raw-reads workflow is performed
+      to annotate the filtered reads. This is the most computationally- and time-expensive step. 
 
+    when: $(inputs.reads_functional_annotation)
+    run: conditionals/Func_ann_and_post_proccessing-subwf.cwl
     in:
+       # Conditional
        reads_functional_annotation: reads_functional_annotation
 
-       check_value: cgc_on_reads/count_faa
-
+       # From the QC step 
        filtered_fasta: qc_and_merge/m_filtered_fasta
+
+       # From the taxonomic inventory step 
        rna_prediction_ncRNA: rna_prediction/ncRNA
+
+       #  From the CGC step
+       check_value: cgc_on_reads/count_faa
        cgc_results_faa: cgc_on_reads/predicted_faa
+
+       # Parameters' values 
        protein_chunk_size_hmm: protein_chunk_size_hmm
        protein_chunk_size_IPS: protein_chunk_size_IPS
        protein_chunk_size_eggnog: protein_chunk_size_eggnog
@@ -232,10 +257,7 @@ steps:
        go_config: go_config
        ko_file: ko_file
        type_analysis: { default: 'Reads' }
-
-    when: $(inputs.reads_functional_annotation)
-
-    run: subworkflows/raw_reads/Func_ann_and_post_proccessing-subwf.cwl
+       threads: threads
 
     out:
       - functional_annotation_folder
@@ -243,14 +265,16 @@ steps:
 
   # ASSEMBLY USING MEGAHIT
   assembly:
-
-    run: conditionals/megahit.cwl
-
+    doc: 
+      Assembly of the raw reads using the MEGAHIT algorithm.
     when: $(inputs.assemble)
-
+    run: conditionals/megahit.cwl
     in:
+      
+      # Conditional
       assemble: assemble
 
+      # From the QC step
       forward_reads: 
         source: qc_and_merge/filtered_fasta
         valueFrom: $(self[0])
@@ -259,6 +283,7 @@ steps:
         source: qc_and_merge/filtered_fasta
         valueFrom: $(self[1])
 
+      # Parameters' values
       min-contig-len: min-contig-len
       memory: memory
       threads: threads
@@ -267,10 +292,7 @@ steps:
       - contigs
       - options
 
-
-
 outputs:
-
   # QC FOR RNA PREDICTION
   # ---------------------
   qc-statistics:
@@ -289,12 +311,12 @@ outputs:
     pickValue: all_non_null
 
   fastp_filtering_json_report:
-    type: File[]?
+    type: File?
     outputSource: qc_and_merge/fastp_filtering_json
     pickValue: all_non_null
 
   m_filtered_fasta:  # this is the filtered merged seq file
-    type: File
+    type: File?
     outputSource: qc_and_merge/m_filtered_fasta
 
 
@@ -327,11 +349,12 @@ outputs:
   # CGC ON READS
   # ---
   predicted_faa:
-    type: File
+    type: File?
     format: edam:format_1929
     outputSource: cgc_on_reads/predicted_faa
+
   predicted_ffn:
-    type: File
+    type: File?
     format: edam:format_1929
     outputSource: cgc_on_reads/predicted_ffn
   count_faa:
@@ -341,11 +364,13 @@ outputs:
   # READS FUNCTIONAL ANNOTATION
   # ---------------------------
   reads_functional_annotation_folder:
-    type: Directory
+    type: Directory?
     outputSource: functional_annotation_on_reads/functional_annotation_folder
+
   reads_stats:
-    type: Directory
+    type: Directory?
     outputSource: functional_annotation_on_reads/stats
+
   # ASSEMBLY
   # ---------
   contigs: 
