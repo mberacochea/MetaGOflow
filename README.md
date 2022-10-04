@@ -1,4 +1,4 @@
-# A workflow for marine Genomic Observatories data analysis
+# metaGOflow: A workflow for marine Genomic Observatories data analysis
 ## An EOSC-Life project
 
 
