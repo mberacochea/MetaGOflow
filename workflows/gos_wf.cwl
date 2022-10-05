@@ -145,6 +145,22 @@ steps:
       - input_files_hashsum_paired
       - fastp_filtering_json
       - filtered_fasta
+      - motus_input
+
+  # mOTUs2
+  motus_taxonomy:
+    doc: 
+    when: $(inputs.taxonomic_inventory)
+    run: subworkflows/raw_reads/mOTUs-workflow.cwl
+    in:
+      # conditional
+      taxonomic_inventory: taxonomic_inventory
+      # from previous step
+      reads: qc_and_merge/motus_input
+      # Global
+      threads: threads
+    out: 
+      - motus
 
   # RNA PREDICTION STEP 
   rna_prediction:
@@ -323,6 +339,11 @@ outputs:
   m_qc_stats:
     type: Directory? 
     outputSource: qc_and_merge/m_qc_stats
+
+  # mOTUs
+  motus:
+    type: File
+    outputSource: motus_taxonomy/motus
 
   # RNA PREDICTION STEP 
   # ----------------------

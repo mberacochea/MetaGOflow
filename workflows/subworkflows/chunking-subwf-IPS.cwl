@@ -54,7 +54,7 @@ steps:
       files: interproscan/i5Annotations
       outputFileName:
         source: CGC_predicted_proteins
-        valueFrom: $(self.nameroot.split('_CDS')[0])
+        valueFrom: $(self.nameroot.split('_IPS')[0])
       postfix: name_ips
     out: [result]
     run: ../../utils/concatenate.cwl

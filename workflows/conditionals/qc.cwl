@@ -1,15 +1,12 @@
 #!/usr/bin/env cwl-runner
 cwlVersion: v1.2
 class: Workflow
-
 requirements:
   SubworkflowFeatureRequirement: {}
   MultipleInputFeatureRequirement: {}
   InlineJavascriptRequirement: {}
   StepInputExpressionRequirement: {}
   ScatterFeatureRequirement: {}
-
-
 inputs:
 
     forward_reads: File?
@@ -89,14 +86,10 @@ outputs:
     outputSource: pe_length_filter/filtered_file
 
   motus_input:
-    type: File[]?
-    outputSource: clean_fasta_headers/sequences_with_cleaned_headers
-
-
-
+    type: File?
+    outputSource: clean_merged_fasta_headers/sequences_with_cleaned_headers
 
 steps:
-
   # << calculate hashsum >>
   hashsum_paired:
     run: ../../utils/generate_checksum/generate_checksum.cwl
@@ -141,7 +134,6 @@ steps:
 
   # WITH RESPECT TO MERGED SEQS
   # ---------------------------
-
   #fastq
   m_clean_fasta_headers:
     run: ../../utils/clean_fasta_headers.cwl
@@ -189,6 +181,15 @@ steps:
       sequence_count: m_count_processed_reads/count
       out_dir_name: qc_stats_folder_for_merged
     out: [ output_dir ]
+
+
+  clean_merged_fasta_headers:
+    run: ../../utils/clean_fasta_headers.cwl
+    in:
+      sequences: fastp_trim_and_overlap/merged_fastq
+    out: [ sequences_with_cleaned_headers ]
+
+
 
   # WITH REPSECT TO EACH OF THE 2 TRIMMED SEQ FILES
   # -------------------------------------------------
