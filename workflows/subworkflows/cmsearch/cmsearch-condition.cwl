@@ -35,6 +35,7 @@ steps:
       clan_info: clan_info
       covariance_models: covariance_models
       query_sequences: query_sequences
+      threads: threads
     out: [ concatenate_matches, deoverlapped_matches ]
 
 

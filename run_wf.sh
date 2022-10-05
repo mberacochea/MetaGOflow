@@ -123,10 +123,12 @@ export TMPDIR=${RUN_DIR}/tmp
 # result dir
 export OUT_DIR=${RUN_DIR}
 export LOG_DIR=${OUT_DIR}/log-dir/${NAME}
-export OUT_DIR_FINAL=${OUT_DIR}/results/${NAME}
+export OUT_DIR_FINAL=${OUT_DIR}/results
 export PROV_DIR=${OUT_DIR}/prov 
-
-mkdir -p "${LOG_DIR}" "${OUT_DIR_FINAL}" "${JOB_TOIL_FOLDER}" "${TMPDIR}" "${PROV_DIR}"
+export CACHE_DIR=${OUT_DIR}/cache
+mkdir -p "${OUT_DIR_FINAL}" \
+         "${TMPDIR}" 
+         # "         "${PROV_DIR}" "${CACHE_DIR}" ${JOB_TOIL_FOLDER}" "${LOG_DIR}"
 
 export RENAMED_YML_TMP=${RUN_DIR}/"${NAME}"_temp.yml
 export RENAMED_YML=${RUN_DIR}/"${NAME}".yml
@@ -203,7 +205,7 @@ TOIL_PARAMS+=(
   "$RENAMED_YML"
 )
 
-# Toir parameters documentation 
+# Toil parameters documentation 
 # --disableChaining                Disables  chaining  of jobs (chaining uses one job's resource allocation for its successor job if possible).
 # --preserve-entire-environment    Need to propagate the env vars for Singularity, etc., into the HPC jobs
 # --disableProgress                Disables the progress bar shown when standard error is a terminal.
@@ -216,5 +218,5 @@ TOIL_PARAMS+=(
 # toil-cwl-runner "${TOIL_PARAMS[@]}"
 
 
-cwl-runner ${SINGULARITY} --outdir ${OUT_DIR} --cachedir cache_dev --debug ${CWL} ${RENAMED_YML} 
-
+cwltool ${SINGULARITY} --outdir ${OUT_DIR_FINAL} --debug ${CWL} ${RENAMED_YML}
+#  --provenance ${PROV_DIR} --cachedir ${CACHE_DIR} --leave-tmpdir --leave-outputs
