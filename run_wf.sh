@@ -8,6 +8,7 @@ NUM_CORES=1
 LIMIT_QUEUE=100
 YML="${PIPELINE_DIR}/Installation/templates/default.yml"
 DB_DIR="${PIPELINE_DIR}/ref-dbs/"
+TOOLS="${PIPELINE_DIR}/tools/"
 
 _usage() {
   echo "
@@ -174,6 +175,7 @@ python3 create_yml.py \
   -f "${PIPELINE_DIR}/${FORWARD_READS}" \
   -r "${PIPELINE_DIR}/${REVERSE_READS}" \
   -d "${DB_DIR}" \
+  -t "${TOOLS}" \
   -e "${ENA_RUN_ID}"
 
 mv eosc-wf.yml ${RUN_DIR}/

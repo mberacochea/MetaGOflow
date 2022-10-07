@@ -309,7 +309,6 @@ steps:
 
        go_config: go_config
        ko_file: ko_file
-      #  type_analysis: { default: 'Reads' }
        threads: threads
 
     out:
@@ -387,7 +386,12 @@ outputs:
     type: Directory? 
     outputSource: qc_and_merge/m_qc_stats
 
-  # mOTUs
+  motus_input:
+    type: File?
+    outputSource: qc_and_merge/motus_input
+
+  # mOTUs STEP
+  # ----------------------
   motus:
     type: File
     outputSource: motus_taxonomy/motus

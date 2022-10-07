@@ -1,16 +1,12 @@
 # Steps to go for
-qc_and_merge_step: true
-taxonomic_inventory: true
+qc_and_merge_step: false
+taxonomic_inventory: false
 cgc_step: false
-reads_functional_annotation: false
+reads_functional_annotation: true
 assemble: false
 
 # Global
-threads: 40
-
-# Run wf partially
-processed_reads: 
-contigs_file: 
+threads: 20
 
 # fastp parameters
 detect_adapter_for_pe: false
@@ -30,15 +26,19 @@ memory: 550
 min-contig-len: 200
 
 # Combined Gene Caller // the size is in MB
-cgc_chunk_size: 50
+cgc_chunk_size: 200
 
 # Taxonomic inference using Diamond and the contigs
 diamond_maxTargetSeqs: 1
 
 # Functional annotation
-protein_chunk_size_IPS: 10000      # 100
-protein_chunk_size_eggnog: 10000   # 800
-protein_chunk_size_hmm: 5000       # 20 
+protein_chunk_size_IPS: 10000
+protein_chunk_size_eggnog: 100000   
+protein_chunk_size_hmm: 50000 
+
+# -----------------
+# Run wf partially
+# -----------------
 
 # The following variables should be considered only in case 
 # the user has already ran some of the first steps and wants to 
@@ -46,19 +46,41 @@ protein_chunk_size_hmm: 5000       # 20
 # For example, you have ran the quality contron and the rna prediction steps
 # and you would like to go just for the assembly step. 
 
+# ATTENTION! 
+# Currently, because of CWL-limitations (see https://github.com/common-workflow-language/cwl-v1.3/issues/3)
+# you need to provide values to some of the following variables even if it is not to be used.
+# To that end, we provide pseudo-files under the /test_input folder you may use 
 
+# Mandatory for running any step; merged pre-processed reads
+processed_reads: {
+  class: File, 
+  path: "/home1/gmoro/pipeline-v5/WATER_SAMPLE_TAX/results/DBB.merged.fasta"
+}
 
-# Input files for running the CGC step; 
-# this step is required if you are about to run the functional annotation step and 
-# the one of CGC has not been performed earlier
-# The CGC step returns the: 
-# check_value
-# cgc_results_faa
-# files, required for the functional annotation step
-input_fasta: 
-maskfile: 
+# Mandatory for running cgc and/or the functional annotation steps
+# If produced previously from metaGOflow, will have a suffix like: .cmsearch.all.tblout.deoverlapped 
+maskfile: {
+  class: File, 
+  path: "/home1/gmoro/pipeline-v5/WATER_SAMPLE_TAX/results/DBB.merged.cmsearch.all.tblout.deoverlapped"
+}
 
+# Mandatory for the functional annotation step 
+# Give the number of the sequences included in the predicted_faa_from_previous_run file 
+# You may get this by running:
+# grep -c ">" <*..merged_CDS.faa>
+count_faa_from_previous_run: 27946569
 
-# Required files for running the functional annotation step
+# Mandatory for the functional annotation step
+predicted_faa_from_previous_run: {
+  class: File, 
+  format: "edam:format_1929",
+  path: "/home1/gmoro/pipeline-v5/WATER_SAMPLE_CGC/results/DBB.merged_CDS.faa"
+}
 
+# Mandatory for running the assembly step 
+processed_read_files: 
+  - class: File
+    path: "/home1/gmoro/pipeline-v5/WATER_SAMPLE_QC/results/DBB_AABVOSDA_1_1_HMNJKDSX3.UDI256_clean.fastq.trimmed.fasta"
+  - class: File
+    path: "/home1/gmoro/pipeline-v5/WATER_SAMPLE_QC/results/DBB_AABVOSDA_1_2_HMNJKDSX3.UDI256_clean.fastq.trimmed.fasta"
 
