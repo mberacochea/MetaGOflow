@@ -26,7 +26,7 @@ inputs:
   threads: {type: int, default: 5}
 
   # Steps
-  qc_and_merge: { type: boolean, default: true }
+  qc_and_merge_step: { type: boolean, default: true }
   taxonomic_inventory: { type: boolean, default: true }
   cgc_step: { type: boolean, default: false }
   reads_functional_annotation: { type: boolean, default: false }
@@ -99,8 +99,23 @@ inputs:
   go_config: [string, File?]
   ko_file: [string, File?]
 
+  # ----------------------------------------------
   # Variables to be used for partial run of the wf
-  filtered_sequence_file: [string, File?]
+  processed_reads: [string, File?]
+  maskfile: [string, File?]
+
+  processed_read_files:
+    type:
+      - File?
+      - type: array
+        items: File
+
+  predicted_faa_from_previous_run: 
+    type: File?
+    format: edam:format_1929
+
+  count_faa_from_previous_run: int?
+
 
 
 steps:
@@ -111,11 +126,11 @@ steps:
       This step aims at the pre-processing and merging the raw reads so its output can be used 
       for the rna prediction step. 
 
-    when: $(inputs.qc_and_merge)
+    when: $(inputs.qc_and_merge_step)
     run: conditionals/qc.cwl
     in:
       # conditional
-      qc_and_merge: qc_and_merge
+      qc_and_merge_step: qc_and_merge_step
 
       # Parameters' values
       forward_reads: forward_reads
@@ -215,15 +230,20 @@ steps:
       input_fasta: 
         source:
           - qc_and_merge/m_filtered_fasta
-          - filtered_sequence_file
+          - processed_reads
         pickValue: first_non_null
 
       # Coming from the taxonomic intentory step: 
-      maskfile: rna_prediction/ncRNA
+      maskfile: 
+        source: 
+          - rna_prediction/ncRNA
+          - maskfile
+        pickValue: first_non_null
 
       # Values from the default.yml
       postfixes: CGC_postfixes
       chunk_size: cgc_chunk_size
+
 
     out: [ predicted_faa, predicted_ffn, count_faa ]
   # FUNCTIONAL ANNOTATION ON THE RAW READS
@@ -239,14 +259,31 @@ steps:
        reads_functional_annotation: reads_functional_annotation
 
        # From the QC step 
-       filtered_fasta: qc_and_merge/m_filtered_fasta
+       filtered_fasta: 
+        source: 
+          - qc_and_merge/m_filtered_fasta
+          - processed_reads
+        pickValue: first_non_null
 
        # From the taxonomic inventory step 
-       rna_prediction_ncRNA: rna_prediction/ncRNA
+       rna_prediction_ncRNA:
+        source: 
+          - rna_prediction/ncRNA
+          - maskfile
+        pickValue: first_non_null
 
        #  From the CGC step
-       check_value: cgc_on_reads/count_faa
-       cgc_results_faa: cgc_on_reads/predicted_faa
+       check_value: 
+        source: 
+          - cgc_on_reads/count_faa
+          - count_faa_from_previous_run
+        pickValue: first_non_null
+
+       cgc_results_faa: 
+        source: 
+          - cgc_on_reads/predicted_faa
+          - predicted_faa_from_previous_run
+        pickValue: first_non_null
 
        # Parameters' values 
        protein_chunk_size_hmm: protein_chunk_size_hmm
@@ -272,7 +309,7 @@ steps:
 
        go_config: go_config
        ko_file: ko_file
-       type_analysis: { default: 'Reads' }
+      #  type_analysis: { default: 'Reads' }
        threads: threads
 
     out:
@@ -286,17 +323,23 @@ steps:
     when: $(inputs.assemble)
     run: conditionals/megahit.cwl
     in:
-      
+
       # Conditional
       assemble: assemble
 
       # From the QC step
       forward_reads: 
-        source: qc_and_merge/filtered_fasta
+        source: 
+          - qc_and_merge/filtered_fasta
+          - processed_read_files
+        pickValue: first_non_null
         valueFrom: $(self[0])
 
       reverse_reads:
-        source: qc_and_merge/filtered_fasta
+        source: 
+         - qc_and_merge/filtered_fasta
+         - processed_read_files
+        pickValue: first_non_null
         valueFrom: $(self[1])
 
       # Parameters' values
@@ -335,6 +378,10 @@ outputs:
     type: File?
     outputSource: qc_and_merge/m_filtered_fasta
 
+  filtered_fasta: 
+    type: File[]?
+    outputSource: qc_and_merge/filtered_fasta
+    pickValue: all_non_null
 
   m_qc_stats:
     type: Directory? 
@@ -378,6 +425,7 @@ outputs:
     type: File?
     format: edam:format_1929
     outputSource: cgc_on_reads/predicted_ffn
+
   count_faa:
     type: int
     outputSource: cgc_on_reads/count_faa

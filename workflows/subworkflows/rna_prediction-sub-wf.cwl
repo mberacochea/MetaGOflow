@@ -39,6 +39,7 @@ outputs:
   ncRNA:
     type: File
     outputSource: find_ribosomal_ncRNAs/deoverlapped_matches
+  
   cmsearch_result:
     type: File
     outputSource: find_ribosomal_ncRNAs/concatenate_matches

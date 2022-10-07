@@ -214,9 +214,10 @@ Uniref90_db_txt:
   class: File
   path: diamond/uniref90.txt
 
+# This will not be found under ref-dbs. but under tools/
 go_config:
   class: File
-  path: tools/GO-slim/go_summary-config.json
+  path: GO-slim/go_summary-config.json
 
 pathways_names:
   class: File

@@ -30,17 +30,18 @@ db_fields = [
 ]
 
 
-def db_dir(db_path, yaml_path):
-    """Append databases path to values in template yaml"""
-    if not db_path.endswith("/"):
-        db_path += "/"
+def db_dir(db_path, tools_path, yaml_path):
+
     with open(yaml_path) as f:
         yaml = YAML(typ="safe")
         doc = yaml.load(f)
         for db_field in db_fields:
             if isinstance(doc[db_field], (list, tuple)):
                 for el in doc[db_field]:
-                    el["path"] = os.path.join(db_path, el["path"])
+                    if el == "go_config": 
+                        el["path"] = os.path.join(tools_paths, el["path"])
+                    else:    
+                        el["path"] = os.path.join(db_path, el["path"])
             else:
                 doc[db_field]["path"] = os.path.join(db_path, doc[db_field]["path"])
     return doc
@@ -73,6 +74,13 @@ if __name__ == "__main__":
         "--dbdir",
         dest="db_dir",
         help="Path to database directory",
+        required=False
+    )
+    parser.add_argument(
+        "-t",
+        "--toolsdir",
+        dest="tools_dir",
+        help="Path to tools directory",
         required=False
     )
     parser.add_argument(
@@ -116,7 +124,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # load template yml file and append database path
-    template_yml = db_dir(args.db_dir, args.yml)
+    template_yml = db_dir(args.db_dir, args.tools_dir, args.yml)
 
     # paired_reads = [args.fr.split("/")[-1].split(".fastq.gz")[0], args.rr.split("/")[-1].split(".fastq.gz")[0]]
     # paired_reads_names = '"' + paired_reads[0] + '", "' + paired_reads[1] + '"'
@@ -150,15 +158,6 @@ if __name__ == "__main__":
             config["both_reads"] = [args.fr.split("/")[-1].split(".fastq.gz")[0], args.rr.split("/")[-1].split(".fastq.gz")[0]]
 
         else: 
-
-            # config["run_accession_number"]  = args.run_accession_number
-            # config["study_accession_number"] = args.study_accession_number
-            # if args.private_data:
-            #     config["private_data"] = True
-            # else:
-            #     config["private_data"] = False
-            # config["ena_api_username"] = args.ena_api_username
-            # config["ena_api_password"] = args.ena_api_password
 
             forward_reads = args.ena_raw_data_path + "/" + args.run_accession_number + "_1.fastq.gz"
             reverse_reads = args.ena_raw_data_path + "/" + args.run_accession_number + "_2.fastq.gz"
