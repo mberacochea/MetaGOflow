@@ -73,7 +73,6 @@ inputs:
   CGC_postfixes: string[]?
   cgc_chunk_size: {type: int, default: 50}
 
-
   ## Functional annotation input vars
   protein_chunk_size_hmm: int?
   func_ann_names_hmmer: string?
@@ -101,21 +100,35 @@ inputs:
 
   # ----------------------------------------------
   # Variables to be used for partial run of the wf
-  processed_reads: [string, File?]
-  maskfile: [string, File?]
+  processed_reads:
+    type: File?
+    default: test_input/pseudo.merged.fasta
+
+  motus_input: 
+    type: File?
+    default: test_input/pseudo.merged.unfiltered.fasta
+
+  maskfile: 
+    type: File?
+    default: test_input/pseudo.merged.cmsearch.all.tblout.deoverlapped
 
   processed_read_files:
     type:
       - File?
       - type: array
         items: File
+    default: 
+      - class: File
+        path: classtest_input/pseudo_1_clean.fastq.trimmed.fasta
+      - class: File
+        path: test_input/pseudo_2_clean.fastq.trimmed.fasta
 
   predicted_faa_from_previous_run: 
     type: File?
     format: edam:format_1929
+    default: test_input/pseudo.merged_CDS.faa
 
-  count_faa_from_previous_run: int?
-
+  count_faa_from_previous_run: {type: int?, default: 1}
 
 
 steps:
@@ -170,8 +183,14 @@ steps:
     in:
       # conditional
       taxonomic_inventory: taxonomic_inventory
+
       # from previous step
-      reads: qc_and_merge/motus_input
+      reads:
+        source:
+          - qc_and_merge/motus_input
+          - motus_input
+        pickValue: first_non_null
+
       # Global
       threads: threads
     out: 
@@ -189,7 +208,11 @@ steps:
       taxonomic_inventory: taxonomic_inventory
 
       # from previous step
-      filtered_fasta: qc_and_merge/m_filtered_fasta
+      filtered_fasta:
+        source:
+          - qc_and_merge/m_filtered_fasta
+          - processed_reads
+        pickValue: first_non_null
 
       # from initial arguments reg. RNA prediction
       ssu_db: ssu_db
