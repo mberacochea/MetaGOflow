@@ -37,7 +37,7 @@ steps:
 
   post-processing:
     in:
-      masking_file: maskfile
+      # masking_file: maskfile
       predicted_proteins_fgs_out: FGS/predicted_proteins_out
       predicted_proteins_fgs_ffn: FGS/predicted_proteins_ffn
       predicted_proteins_fgs_faa: FGS/predicted_proteins_faa

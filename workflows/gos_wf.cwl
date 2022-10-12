@@ -104,7 +104,7 @@ inputs:
     type: File?
     default: test_input/pseudo.merged.fasta
 
-  motus_input: 
+  input_for_motus: 
     type: File?
     default: test_input/pseudo.merged.unfiltered.fasta
 
@@ -188,7 +188,7 @@ steps:
       reads:
         source:
           - qc_and_merge/motus_input
-          - motus_input
+          - input_for_motus
         pickValue: first_non_null
 
       # Global

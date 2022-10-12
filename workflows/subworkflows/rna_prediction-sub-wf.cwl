@@ -100,7 +100,7 @@ steps:
       clan_info: ncRNA_ribosomal_model_clans
     out: [ concatenate_matches, deoverlapped_matches ]
 
-  # extract coordinates for everything
+  # extract coordinates for everything - awk command
   extract_coords:
     run: ../../tools/RNA_prediction/extract-coords/extract-coords.cwl
     in:
@@ -110,7 +110,7 @@ steps:
         valueFrom: $(self.basename)
     out: [ matched_seqs_with_coords ]
 
-  # extract coords of SSU ans LSU for ITS
+  # extract coords of SSU ans LSU for ITS - python script
   extract_subunits_coords:
     run: ../../tools/RNA_prediction/get_subunits_coords/get_subunits_coords.cwl
     in:
