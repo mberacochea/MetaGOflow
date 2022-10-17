@@ -1,7 +1,6 @@
-# A workflow for marine Genomic Observatories data analysis
+# metaGOflow: A workflow for marine Genomic Observatories data analysis
+
 ## An EOSC-Life project
-
-
 
 [![Build Status](https://travis-ci.org/EBI-Metagenomics/pipeline-v5.svg?branch=master)](https://travis-ci.com/EBI-Metagenomics/pipeline-v5)
 
@@ -10,64 +9,27 @@ The workflows developed in the framework of this project are based on `pipeline-
 > This branch is a child of the [`pipeline_5.1`](https://github.com/hariszaf/pipeline-v5/tree/pipeline_5.1) branch 
 that contains all CWL descriptions of the MGnify pipeline version 5.1.
 
-The following comes from the initial repo and describes how to get the databases required.
-
----
-
-# pipeline-v5
-
-This repository contains all CWL descriptions of the MGnify pipeline version 5.0.
-
-## Documentation
-
-For a thorough read-the-docs, click [here](https://emg-docs.readthedocs.io/en/latest/analysis.html#overview). 
-
----
-
-We kindly recommend use the [MGnify resource](https://www.ebi.ac.uk/metagenomics/) for data processing.
-
-If you want to run pipeline locally, we recommend you use our pre-build docker containers. 
 
 ## Requirements to run pipeline 
 
-- python3 [v 3.6+]
-- docker [v 19.+] or singularity
-- cwltool [v 3.+] or toil [v 4.2+]
+- python3 [v 3.7+]
+- [Docker](https://www.docker.com) [v 19.+] or [Singularity](https://apptainer.org)
+- [cwltool](https://github.com/common-workflow-language/cwltool) [v 3.+] 
 
-- hdd for databases ~133G
-
-### Docker
-
-All the tools are containerized. 
-
-Unfortunately, antiSMASH and InterProScan containers are very big. We provide two options:
-1. Pre-install these tools. The instructions on how to setup the environment are [here](environment/README.md).
-
-2. Use containers. First of all you need to uncomment *hints* in **InterProScan-v5.cwl** and **antismash_v4.cwl**.
-Pre-pull containers from https://hub.docker.com/u/microbiomeinformatics
-```bash
-docker pull microbiomeinformatics/pipeline-v5.interproscan:v5.36-75.0
-docker pull microbiomeinformatics/pipeline-v5.antismash:v4.2.0
-```
-
-
-## Installation
-
-
-### Create `conda` environment 
-
-
+Depending on the analysis you are about to run, disk requirements vary. 
+Indicatively, you may have a look at~[]().
 
 
 
 ### Get the EOSC-Life marine GOs workflow
 
 ```bash
-git clone https://github.com/EBI-Metagenomics/pipeline-v5.git 
+git clone https://github.com/emo-bon/pipeline-v5.git
 cd pipeline-v5
 ```
 
-#### Download necessary dbs
+
+### Download necessary databases
 
 You can download databases for the EOSC-Life GOs workflow by running the
 `download_dbs.sh` script under the `Installation` folder.
@@ -76,43 +38,34 @@ at the `ref-dbs` folder.
 
 
 
-
-
-
-
-
 ## How to run
 
 
-- activate the conda env 
+- Edit the `config.yml` file to set the parameter values of your choice.
 
-- edit the `gos_wf.yml` file to set the parameter values of your choice
+- Make a job file (e.g., SBATCH file) and 
 
-- In case you are working in a HPC with Singularity, enable Singularity
+   - enable Singularity, e.g. `module load Singularity`
 
-- run 
+    - run: 
+        ```
+        ./run_wf.sh -n false -n osd-short -d short-test-case -f test_input/wgs-paired-SRR1620013_1.fastq.gz -r test_input/wgs-paired-SRR1620013_2.fastq.gz
+        ```
 
-```
-./run_wf.sh -n false -n osd-short -d short-test-case -f test_input/wgs-paired-SRR1620013_1.fastq.gz -r test_input/wgs-paired-SRR1620013_2.fastq.gz
-```
+## Hints and tips
 
-> In case you are using Docker, it is strongly recommended to **avoid** installing it through `snap`
+1. In case you are using Docker, it is strongly recommended to **avoid** installing it through `snap`.
 
-
-`RuntimeError`: slurm currently does not support shared caching, because it does not support cleaning up a worker after the last job finishes. 
+2. `RuntimeError`: slurm currently does not support shared caching, because it does not support cleaning up a worker after the last job finishes. 
 Set the `--disableCaching` flag if you want to use this batch system.
 
-
-In case you are having errors like: 
+3. In case you are having errors like: 
 ```
 wltool.errors.WorkflowException: Singularity is not available for this tool
 ```
-
-You may run the following script. 
-
+You may run the following command:
 ```
 singularity pull --force --name debian:stable-slim.sif docker://debian:stable-sli
-
 ```
 
 
