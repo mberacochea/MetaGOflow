@@ -48,8 +48,12 @@ inputs:
   base_correction: { type: boolean, default: false }
 
   # RNA prediction input vars
-  ssu_db: {type: File?, secondaryFiles: [.mscluster] }
-  lsu_db: {type: File?, secondaryFiles: [.mscluster] }
+  ssu_db: 
+    type: File?
+    secondaryFiles: [.mscluster] 
+  lsu_db: 
+    type: File? 
+    secondaryFiles: [.mscluster]
   ssu_tax: [string, File]
   lsu_tax: [string, File]
   ssu_otus: [string, File]
@@ -102,15 +106,15 @@ inputs:
   # Variables to be used for partial run of the wf
   processed_reads:
     type: File?
-    default: test_input/pseudo.merged.fasta
+    default: pseudo_files/pseudo.merged.fasta
 
   input_for_motus: 
     type: File?
-    default: test_input/pseudo.merged.unfiltered.fasta
+    default: pseudo_files/pseudo.merged.unfiltered.fasta
 
   maskfile: 
     type: File?
-    default: test_input/pseudo.merged.cmsearch.all.tblout.deoverlapped
+    default: pseudo_files/pseudo.merged.cmsearch.all.tblout.deoverlapped
 
   processed_read_files:
     type:
@@ -119,14 +123,14 @@ inputs:
         items: File
     default: 
       - class: File
-        path: classtest_input/pseudo_1_clean.fastq.trimmed.fasta
+        path: pseudo_files/pseudo_1_clean.fastq.trimmed.fasta
       - class: File
-        path: test_input/pseudo_2_clean.fastq.trimmed.fasta
+        path: pseudo_files/pseudo_2_clean.fastq.trimmed.fasta
 
   predicted_faa_from_previous_run: 
     type: File?
     format: edam:format_1929
-    default: test_input/pseudo.merged_CDS.faa
+    default: pseudo_files/pseudo.merged_CDS.faa
 
   count_faa_from_previous_run: {type: int?, default: 1}
 
@@ -481,7 +485,7 @@ $namespaces:
 $schemas:
  - http://edamontology.org/EDAM_1.16.owl
  - https://schema.org/version/latest/schemaorg-current-https.jsonld
-#  https://schema.org/version/latest/schemaorg-current-https.rdf
+
 s:license: "https://www.apache.org/licenses/LICENSE-2.0"
 s:copyrightHolder: "European Marine Biological Resource Centre"
 s:author: "Haris Zafeiropoulos"

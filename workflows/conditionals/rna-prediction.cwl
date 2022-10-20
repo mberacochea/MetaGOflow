@@ -12,8 +12,14 @@ inputs:
 
     filtered_fasta: File
 
-    ssu_db: {type: File, secondaryFiles: [.mscluster] }
-    lsu_db: {type: File, secondaryFiles: [.mscluster] }
+    ssu_db: 
+      type: File
+      secondaryFiles: [.mscluster] 
+
+    lsu_db: 
+      type: File
+      secondaryFiles: [.mscluster] 
+
     ssu_tax: [string, File]
     lsu_tax: [string, File]
     ssu_otus: [string, File]

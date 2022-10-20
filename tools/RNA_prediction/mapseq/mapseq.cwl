@@ -37,14 +37,22 @@ inputs:
     inputBinding:
       position: 2
     secondaryFiles: .mscluster
-    format: edam:format_1929  # FASTA
+    format: edam:format_1929  
 
   taxonomy:
     type: [string, File]
     inputBinding:
-      position: 3
+      position: 4
 
-arguments: ['-nthreads', '8', '-tophits', '80', '-topotus', '40', '-outfmt', 'simple']
+  threads: 
+    type: int?
+    default: 8
+    inputBinding:
+      prefix: "-nthreads"
+      position: 5
+
+
+arguments: ['-tophits', '80', '-topotus', '40', '-outfmt', 'simple']
 
 stdout: $(inputs.prefix.nameroot)_$(inputs.database.basename).mseq  # helps with cwltool's --cache
 
