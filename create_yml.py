@@ -31,19 +31,19 @@ db_fields = [
 
 
 def db_dir(db_path, tools_path, yaml_path):
-
     with open(yaml_path) as f:
         yaml = YAML(typ="safe")
         doc = yaml.load(f)
         for db_field in db_fields:
+            print(">", db_field)
             if isinstance(doc[db_field], (list, tuple)):
                 for el in doc[db_field]:
-                    if el == "go_config": 
-                        el["path"] = os.path.join(tools_paths, el["path"])
-                    else:    
-                        el["path"] = os.path.join(db_path, el["path"])
+                    el["path"] = os.path.join(db_path, el["path"])
             else:
-                doc[db_field]["path"] = os.path.join(db_path, doc[db_field]["path"])
+                if db_field == "go_config": 
+                    doc[db_field]["path"] = os.path.join(tools_path, doc[db_field]["path"])
+                else:
+                    doc[db_field]["path"] = os.path.join(db_path, doc[db_field]["path"])
     return doc
 
 if __name__ == "__main__":

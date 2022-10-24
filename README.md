@@ -10,15 +10,14 @@ The workflows developed in the framework of this project are based on `pipeline-
 that contains all CWL descriptions of the MGnify pipeline version 5.1.
 
 
-## Requirements to run pipeline 
+## Dependencies
 
 - python3 [v 3.7+]
 - [Docker](https://www.docker.com) [v 19.+] or [Singularity](https://apptainer.org)
 - [cwltool](https://github.com/common-workflow-language/cwltool) [v 3.+] 
 
 Depending on the analysis you are about to run, disk requirements vary. 
-Indicatively, you may have a look at~[]().
-
+Indicatively, you may have a look at the metaGOflow publication for computing resources used in various cases.
 
 
 ### Get the EOSC-Life marine GOs workflow
@@ -33,9 +32,9 @@ cd pipeline-v5
 
 You can download databases for the EOSC-Life GOs workflow by running the
 `download_dbs.sh` script under the `Installation` folder.
+
 If you have one or more already in your system, then create a symbolic link pointing 
 at the `ref-dbs` folder. 
-
 
 
 ## How to run
@@ -69,3 +68,12 @@ singularity pull --force --name debian:stable-slim.sif docker://debian:stable-sl
 ```
 
 
+## Contribution
+
+To make contribution to the project a bit easier, all the MGnify `conditionals` and `subworkflows` under the `workflows/` directory that are not used in the metaGOflow framework, have been removed.   
+However, all the MGnify `tools/` and `utils/` are available in this repo, even if they are not invoked in the current version of metaGOflow. 
+This way, we hope we encourage people to implement their own `conditionals` and/or `subworkflows` by exploiting the currently supported `tools` and `utils` as well as by developing new `tools` and/or `utils`. 
+
+
+
+<!-- cwltool --print-dot my-wf.cwl | dot -Tsvg > my-wf.svg -->

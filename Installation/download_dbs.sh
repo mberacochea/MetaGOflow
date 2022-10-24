@@ -103,10 +103,6 @@ wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/rfam_mo
 
 cd "${CWD}"/"${OUTPUT}"
 
-# --------------------------
-# ASSEMBLY - ANNOTATION DBs
-# --------------------------
-
 # download IPS #
 echo 'download IPS'
 wget ftp://ftp.ebi.ac.uk/pub/software/unix/iprscan/$IPR/$IPRSCAN/alt/interproscan-data-$IPRSCAN.tar.gz && \
@@ -146,11 +142,3 @@ wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/graphs-
 gunzip graphs.pkl.gz all_pathways_class.txt.gz all_pathways_names.txt.gz
 mkdir kegg_pathways && mv graphs.pkl all_pathways_class.txt all_pathways_names.txt kegg_pathways
 
-# antismash summary - doesn't need for docker version
-echo 'Download antismash_glossary'
-wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/antismash_glossary.tsv.gz
-gunzip antismash_glossary.tsv.gz
-
-# genome properties
-echo 'Download genome-properties flat files'
-wget https://github.com/ebi-pf-team/genome-properties/raw/master/flatfiles/genomeProperties.txt
