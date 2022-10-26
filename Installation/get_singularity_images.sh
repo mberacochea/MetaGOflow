@@ -20,3 +20,5 @@ singularity pull --force --name microbiomeinformatics_pipeline-v5.hmmer:v3.2.1.s
 singularity pull --force --name quay.io_biocontainers_megahit:1.2.9--h2e03b76_1.sif docker://quay.io/biocontainers/megahit:1.2.9--h2e03b76_1
 singularity pull --force --name microbiomeinformatics_pipeline-v5.motus:v2.5.1.sif docker://microbiomeinformatics/pipeline-v5.motus:v2.5.1
 singularity pull --force --name microbiomeinformatics_pipeline-v5.go-summary:v1.0.sif docker://microbiomeinformatics/pipeline-v5.go-summary:v1.0
+mkdir sif_images
+mv *.sif sif_images
