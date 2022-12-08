@@ -21,5 +21,6 @@ singularity pull --force --name quay.io_biocontainers_megahit:1.2.9--h2e03b76_1.
 singularity pull --force --name microbiomeinformatics_pipeline-v5.motus:v2.5.1.sif docker://microbiomeinformatics/pipeline-v5.motus:v2.5.1
 singularity pull --force --name microbiomeinformatics_pipeline-v5.go-summary:v1.0.sif docker://microbiomeinformatics/pipeline-v5.go-summary:v1.0
 singularity pull --force --name microbiomeinformatics_pipeline-v5.split-fasta:v2.sif docker://microbiomeinformatics/pipeline-v5.split-fasta:v2
+singularity pull --force --name microbiomeinformatics_krona:v2.7.1.sif docker://microbiomeinformatics/krona:v2.7.1
 mkdir sif_images
 mv *.sif sif_images
