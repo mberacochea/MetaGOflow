@@ -12,8 +12,14 @@ inputs:
 
     filtered_fasta: File
 
-    ssu_db: {type: File, secondaryFiles: [.mscluster] }
-    lsu_db: {type: File, secondaryFiles: [.mscluster] }
+    ssu_db: 
+      type: File
+      secondaryFiles: [.mscluster] 
+
+    lsu_db: 
+      type: File
+      secondaryFiles: [.mscluster] 
+
     ssu_tax: [string, File]
     lsu_tax: [string, File]
     ssu_otus: [string, File]
@@ -30,6 +36,8 @@ inputs:
     lsu_label: string
     5s_pattern: string
     5.8s_pattern: string
+
+    threads: {type: int?, default: 2}
 
 steps:
 
@@ -51,6 +59,7 @@ steps:
       pattern_LSU: lsu_label
       pattern_5S: 5s_pattern
       pattern_5.8S: 5.8s_pattern
+      threads: threads
     out:
       - ncRNA
       - cmsearch_result

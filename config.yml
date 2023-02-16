@@ -1,23 +1,17 @@
+# Steps to go for
+qc_and_merge_step: true
+taxonomic_inventory: false
+cgc_step: false
+reads_functional_annotation: false
+assemble: false
 
-# Global 
-run_qc: true
-rna_prediction_reads_level: true
-assemble: true
-rna_prediction_contigs_level: true
-funct_annot: false
-
+# Global
 threads: 20
-
-
-# Run wf partially
-processed_reads: 
-contigs_file: 
-
 
 # fastp parameters
 detect_adapter_for_pe: false
 overrepresentation_analysis: false
-min_length_required: 75
+min_length_required: 100
 force_polyg_tail_trimming: 
 base_correction: false
 qualified_phred_quality: 
@@ -27,24 +21,76 @@ overlap_len_require:
 cut_right: false
 correction: false
 
-# Functional annotation
+# Assembly
+memory: 550
+min-contig-len: 200
 
-cgc_chunk_size: 100
+# Combined Gene Caller // the size is in MB
+cgc_chunk_size: 200
+
+# Taxonomic inference using Diamond and the contigs
 diamond_maxTargetSeqs: 1
 
+# Functional annotation
+protein_chunk_size_IPS: 2000000
+protein_chunk_size_eggnog: 100000
+protein_chunk_size_hmm: 50000
 
-# Assembly
+# -----------------
+# Run wf partially
+# -----------------
 
-# memory: 550
-# min-contig-len: 250
-memory: 550
-min-contig-len: 50
+# The following variables should be considered only in case 
+# the user has already ran some of the first steps and wants to 
+# run the following parts of the workflow. 
+# For example, you have ran the quality contron and the rna prediction steps
+# and you would like to go just for the assembly step. 
+
+# Currently, because of CWL-limitations (see https://github.com/common-workflow-language/cwl-v1.3/issues/3)
+# you need to provide values to some of the following variables even if it is not to be used.
+# To that end, we provide pseudo-files under the /test_input folder you may use 
+
+# ATTENTION! 
+# Give full path of your files, NOT relative !
+
+# Mandatory for running any step; merged pre-processed reads (*.merged.fasta)
+processed_reads: {
+  class: File, 
+  format: "edam:format_1929",
+  path:  /home1/gmoro/pipeline-v5/test_input/pseudo.merged.fasta
+}
+
+# Mandatory for running the taxonomy inventory step
+input_for_motus: {
+  class: File, 
+  path:  /home1/gmoro/pipeline-v5/test_input/pseudo.merged.unfiltered.fasta
+}
 
 
+# Mandatory for running the functional annotation steps
+# If produced previously from metaGOflow, will have a suffix like: .cmsearch.all.tblout.deoverlapped 
+maskfile: {
+  class: File, 
+  path:  /home1/gmoro/pipeline-v5/test_input/pseudo.merged.cmsearch.all.tblout.deoverlapped
+}
 
-protein_chunk_size_IPS: 100
-protein_chunk_size_eggnog: 100
-protein_chunk_size_hmm: 20
-# protein_chunk_size_IPS: 10000
-# protein_chunk_size_eggnog: 100000
-# protein_chunk_size_hmm: 50000
+# Mandatory for the functional annotation step 
+# Give the number of the sequences included in the predicted_faa_from_previous_run file 
+# You may get this by running:
+# grep -c ">" <*..merged_CDS.faa>
+count_faa_from_previous_run: 
+
+# Mandatory for the functional annotation step
+predicted_faa_from_previous_run: {
+  class: File, 
+  format: "edam:format_1929",
+  path:  /home1/gmoro/pipeline-v5/test_input/pseudo.merged_CDS.faa
+}
+
+# Mandatory for running the assembly step 
+processed_read_files: 
+  - class: File
+    path:  /home1/gmoro/pipeline-v5/test_input/pseudo_1_clean.fastq.trimmed.fasta
+  - class: File
+    path:  /home1/gmoro/pipeline-v5/test_input/pseudo_2_clean.fastq.trimmed.fasta
+

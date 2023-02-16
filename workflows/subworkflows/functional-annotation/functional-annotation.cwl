@@ -29,10 +29,11 @@ inputs:
   InterProScan_applications: string[]  # ../tools/InterProScan/InterProScan-apps.yaml#apps[]?
   InterProScan_outputFormat: string[]  # ../tools/InterProScan/InterProScan-protein_formats.yaml#protein_formats[]?
 
-  chunk_size_eggnog: int?
+  chunk_size_eggnog: int
   EggNOG_db: [string?, File?]
   EggNOG_diamond_db: [string?, File?]
   EggNOG_data_dir: [string?, Directory?]
+  threads: int
 
 outputs:
   hmm_result:
@@ -49,26 +50,23 @@ outputs:
     type: File?
 
 steps:
-
-  # << Chunk faa file >>
+  # Chunk faa file
   split_seqs:
     in:
-      type_analysis: type
       seqs: CGC_predicted_proteins
       chunk_size: chunk_size_eggnog
     out: [ chunks ]
     run: ../../../tools/chunks/protein_chunker.cwl
 
-  # << EggNOG >>
+  # Annotation steps
   eggnog:
     run: ../assembly/eggnog-subwf.cwl
     in:
-      type_analysis: type
       fasta_file: split_seqs/chunks
       db_diamond: EggNOG_diamond_db
       db: EggNOG_db
       data_dir: EggNOG_data_dir
-      cpu: { default: 16 }
+      cpu: threads
       file_acc:
         source: CGC_predicted_proteins
         valueFrom: $(self.nameroot)
@@ -78,6 +76,7 @@ steps:
     run: ../chunking-subwf-IPS.cwl
     in:
       CGC_predicted_proteins: CGC_predicted_proteins
+      threads: threads
       chunk_size: chunk_size_IPS
       name_ips: name_ips
       InterProScan_databases: InterProScan_databases
@@ -98,7 +97,7 @@ steps:
       previous_step_result: run_IPS/ips_result
     out: [ hmm_result ]
 
-
+# Namespaces and schemas
 $namespaces:
  edam: http://edamontology.org/
  s: http://schema.org/

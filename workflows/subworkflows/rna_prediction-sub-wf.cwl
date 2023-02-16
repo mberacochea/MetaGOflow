@@ -32,13 +32,14 @@ inputs:
   pattern_LSU: string
   pattern_5S: string
   pattern_5.8S: string
-
+  threads: {type: int?, default: 2}
 
 outputs:
 
   ncRNA:
     type: File
     outputSource: find_ribosomal_ncRNAs/deoverlapped_matches
+  
   cmsearch_result:
     type: File
     outputSource: find_ribosomal_ncRNAs/concatenate_matches
@@ -93,12 +94,13 @@ steps:
     run: cmsearch/cmsearch-condition.cwl
     in:
       type: type
+      threads: threads
       query_sequences: input_sequences
       covariance_models: ncRNA_ribosomal_models
       clan_info: ncRNA_ribosomal_model_clans
     out: [ concatenate_matches, deoverlapped_matches ]
 
-  # extract coordinates for everything
+  # extract coordinates for everything - awk command
   extract_coords:
     run: ../../tools/RNA_prediction/extract-coords/extract-coords.cwl
     in:
@@ -108,7 +110,7 @@ steps:
         valueFrom: $(self.basename)
     out: [ matched_seqs_with_coords ]
 
-  # extract coords of SSU ans LSU for ITS
+  # extract coords of SSU ans LSU for ITS - python script
   extract_subunits_coords:
     run: ../../tools/RNA_prediction/get_subunits_coords/get_subunits_coords.cwl
     in:

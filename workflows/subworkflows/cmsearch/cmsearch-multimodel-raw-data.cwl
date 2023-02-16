@@ -15,6 +15,7 @@ inputs:
     - type: array
       items: [string, File]
   clan_info: [string, File]
+  threads: {type: int?, default: 2}
 
 outputs:
   concatenate_matches:
@@ -51,7 +52,7 @@ steps:
     in:
       query_sequences: split_fasta/chunks
       covariance_model_database: cat_models/result
-      cpu: { default: 8 }
+      cpu: threads
       omit_alignment_section: { default: true }
       only_hmm: { default: true }
       search_space_size: { default: 1000 }

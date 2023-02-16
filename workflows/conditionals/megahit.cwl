@@ -14,11 +14,6 @@ requirements:
 
 baseCommand: [ megahit ]
 
-# arguments:
-
-#   - valueFrom: $(runtime.tmpdir)
-#     prefix: --tmp-dir
-
 inputs:
 
   memory:

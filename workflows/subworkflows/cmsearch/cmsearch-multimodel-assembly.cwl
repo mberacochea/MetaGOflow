@@ -9,13 +9,13 @@ requirements:
   - class: ScatterFeatureRequirement
 
 inputs:
-  clan_info: [string, File]
-  threads: {type: int?, default: 2}
+  query_sequences: File
   covariance_models:
     type:
       - type: array
         items: [string, File]
-  query_sequences: File
+  clan_info: [string, File]
+  threads: {type: int?, default: 2}
 
 outputs:
   cmsearch_matches:

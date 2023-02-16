@@ -35,11 +35,6 @@ inputs:
       prefix: -t
     default: 4
 
-  db:
-    type: string?
-    inputBinding:
-      prefix: -db
-
 
 arguments: [profile, -c, -q]
 

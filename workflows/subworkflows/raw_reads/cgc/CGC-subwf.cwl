@@ -36,8 +36,10 @@ steps:
   split_seqs:
     in:
       infile: input_fasta
+      size_limit: chunk_size
     out: [ chunks ]
-    run: ../../../../utils/result-file-chunker/split_fasta.cwl  #tools/chunks/dna_chunker/fasta_chunker.cwl
+    run: ../../../../utils/result-file-chunker/split_fasta.cwl  
+    #tools/chunks/dna_chunker/fasta_chunker.cwl
 
   # << CGC >>
   combined_gene_caller:

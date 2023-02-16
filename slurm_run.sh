@@ -1,33 +1,25 @@
 #!/bin/bash
 
-#SBATCH --partition=batch
+#SBATCH --partition=fat
 #SBATCH --nodes=1
 #SBATCH --nodelist=
-#SBATCH --ntasks-per-node=20
+#SBATCH --ntasks-per-node=40
 #SBATCH --mem=
-# Memory per node specification is in MB. It is optional.
-# The default limit is 3000MB per core.
-#SBATCH --job-name="eosc-test"
-#SBATCH --output=test_rna_predict.output
 #SBATCH --mail-user=haris.zafr@gmail.com
 #SBATCH --mail-type=ALL
 #SBATCH --requeue
+#SBATCH --job-name="taxInv"
+#SBATCH --output=tax_invent_fat_water.output
 
+# Load module
+module load python/3.7.8
+module load singularity/3.7.1 
 
-# load miniconda
-module load miniconda3/default
+# Run the wf
+#./run_wf.sh -f test_input/wgs-paired-SRR1620013_1.fastq.gz -r test_input/wgs-paired-SRR1620013_2.fastq.gz -n wgs-SRR1620013 -d MOTUS -s
+./run_wf.sh -f test_input/DBB_AABVOSDA_1_1_HMNJKDSX3.UDI256_clean.fastq.gz -r test_input/DBB_AABVOSDA_1_2_HMNJKDSX3.UDI256_clean.fastq.gz -n water-sample-DBB_AABVOSDA_1_2_HMNJKDSX3.UDI256 -d WATER_SAMPLE_TAX_FAT -s
 
-# activate the conda env for our wf
-conda activate EOSC-CWL
+# ./run_wf.sh -e ERR855786 -d TEST_SIMPLIFIED_PFAM -n ERR855786 -s
 
-# load the Singularity module 
-module load singularity/3.7.1
-
-## run the wf
-./run_wf.sh -n toil -d cwl-TEST -f test_input/wgs-paired-SRR1620013_1.fastq.gz -r test_input/wgs-paired-SRR1620013_2.fastq.gz
-
-#cwltool --singularity --outdir cwltool-test-assembly workflows/gos_wf.cwl toil.yml
-
-# disable the 
+# Disable the module
 module purge
-
