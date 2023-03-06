@@ -125,6 +125,7 @@ wget $FTP_DBS/kofam_ko_desc.tsv
 echo 'Download eggnog dbs'
 wget http://eggnog5.embl.de/download/emapperdb-5.0.2/eggnog_proteins.dmnd.gz
 wget http://eggnog5.embl.de/download/emapperdb-5.0.2/eggnog.db.gz
+gunzip eggnog.db.gz eggnog_proteins.dmnd.gz
 mkdir eggnog && mv eggnog_proteins.dmnd eggnog.db eggnog
 
 # Diamond
