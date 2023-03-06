@@ -140,6 +140,5 @@ echo 'Download pathways data'
 wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/graphs-20200805.pkl.gz \
     ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/all_pathways_class.txt.gz \
     ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/all_pathways_names.txt.gz
-gunzip graphs.pkl.gz all_pathways_class.txt.gz all_pathways_names.txt.gz
-mkdir kegg_pathways && mv graphs.pkl all_pathways_class.txt all_pathways_names.txt kegg_pathways
-
+gunzip graphs-20200805.pkl.gz all_pathways_class.txt.gz all_pathways_names.txt.gz
+mkdir kegg_pathways && mv graphs-20200805.pkl all_pathways_class.txt all_pathways_names.txt kegg_pathways
