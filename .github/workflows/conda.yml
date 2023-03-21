@@ -15,7 +15,7 @@ jobs:
 
       - uses: actions/checkout@v2
       - run: | 
-          ls workflows/
+          ls
 
       - name: Validate workflow
         run: |
