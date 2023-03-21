@@ -11,7 +11,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get install -y python3-pip
-          pip install cwltool
+          pip install cwltool lockfile
 
       - uses: actions/checkout@v2
       - run: | 
