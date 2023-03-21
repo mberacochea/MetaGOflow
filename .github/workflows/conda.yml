@@ -15,11 +15,11 @@ jobs:
 
       - uses: actions/checkout@v2
       - run: | 
-          ls 
+          ls workflows/
 
       - name: Validate workflow
         run: |
-          cwltool --validate ../../workflows/gos_wf.cwl
+          cwltool --validate workflows/gos_wf.cwl
 
       # - uses: conda-incubator/setup-miniconda@v2
       #   with:
