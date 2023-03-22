@@ -125,9 +125,8 @@ export TMPDIR=${RUN_DIR}/tmp
 export OUT_DIR=${RUN_DIR}
 export LOG_DIR=${OUT_DIR}/log-dir/${NAME}
 export OUT_DIR_FINAL=${OUT_DIR}/results
-export PROV_DIR=${OUT_DIR}/prov 
 export CACHE_DIR=${OUT_DIR}/cache
-mkdir -p "${OUT_DIR_FINAL}" "${TMPDIR}" "${PROV_DIR}" 
+mkdir -p "${OUT_DIR_FINAL}" "${TMPDIR}"
 
 export EXTENDED_CONFIG_YAML_TMP=${RUN_DIR}/"${NAME}"_temp.yml
 export EXTENDED_CONFIG_YAML=${RUN_DIR}/"${NAME}".yml
@@ -190,7 +189,6 @@ TOIL_PARAMS+=(
   --preserve-entire-environment
   --batchSystem slurm
   --disableChaining
-  # --provenance "${PROV_DIR}"
   --disableCaching
   --logFile "${LOG_DIR}/${NAME}.log"
   --jobStore "${JOB_TOIL_FOLDER}/${NAME}"
@@ -215,10 +213,8 @@ TOIL_PARAMS+=(
 # echo "toil-cwl-runner" "${TOIL_PARAMS[@]}"
 # toil-cwl-runner "${TOIL_PARAMS[@]}"
 
-
 # Run the metaGOflow workflow using cwltool
-cwltool --debug ${SINGULARITY} --provenance ${PROV_DIR} --outdir ${OUT_DIR_FINAL} ${CWL} ${EXTENDED_CONFIG_YAML}
-
+cwltool --parallel ${SINGULARITY} --outdir ${OUT_DIR_FINAL} ${CWL} ${EXTENDED_CONFIG_YAML}
 
 # Build RO-crate 
 if [ -z "$ENA_RUN_ID" ]; then
