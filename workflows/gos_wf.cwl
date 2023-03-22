@@ -379,7 +379,8 @@ steps:
       - options
 
 outputs:
-  # QC FOR RNA PREDICTION
+
+  # QUALITY CONTROL
   # ---------------------
 
   qc_summary:
@@ -411,12 +412,14 @@ outputs:
 
   # mOTUs STEP
   # ----------------------
+
   motus:
     type: File
     outputSource: motus_taxonomy/motus
 
   # RNA PREDICTION STEP 
   # ----------------------
+
   sequence-categorisation_folder:
     type: Directory?
     outputSource: rna_prediction/sequence_categorisation_folder
