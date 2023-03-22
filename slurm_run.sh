@@ -8,8 +8,11 @@
 #SBATCH --mail-user=haris.zafr@gmail.com
 #SBATCH --mail-type=ALL
 #SBATCH --requeue
-#SBATCH --job-name="taxInv"
-#SBATCH --output=tax_invent_fat_water.output
+#SBATCH --job-name="rocr"
+#SBATCH --output=rocrates.output
+
+# Deactivate conda if already there
+conda deactivate
 
 # Load module
 module load python/3.7.8

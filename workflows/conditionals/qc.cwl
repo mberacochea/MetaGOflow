@@ -41,7 +41,7 @@ outputs:
     outputSource: m_qc-stats/output_dir
 
   m_qc_summary:
-    type: Directory?
+    type: File[]?
     outputSource: m_qc-stats/summary_out
 
   # this is the filtered merged seq file

@@ -64,15 +64,11 @@ inputs:
     doc: |
       metaGOflow will perform the functional annotation step
 
-
   assemble: 
     type: boolean
     default: false 
     doc: |
         metaGOflow will perform the assembly step using MEGAHIT
-
-  # # Files to run partially the wf
-  # ncrna_tab_file: {type: File?}
 
   # Pre-process
   overrepresentation_analysis: 
@@ -114,7 +110,6 @@ inputs:
     type: int?
     doc: |
         fastp parameter setting the percentage of bases allowed to be unqualified (0~100). Default 40 means 40%.
-
 
   min_length_required:
     type: int

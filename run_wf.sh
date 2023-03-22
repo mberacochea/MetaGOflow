@@ -165,7 +165,7 @@ fi
 echo "Writing yaml file"
 
 # DO NOT leave spaces after "\" in the end of a line
-python3.10 utils/create_yml.py \
+python utils/create_yml.py \
   -y "${YML}" \
   -o "${EXTENDED_CONFIG_YAML_TMP}" \
   -l "${PATH_ENA_RAW_DATA}" \
@@ -216,7 +216,7 @@ TOIL_PARAMS+=(
 # toil-cwl-runner "${TOIL_PARAMS[@]}"
 
 
-Run the metaGOflow workflow using cwltool
+# Run the metaGOflow workflow using cwltool
 cwltool --debug ${SINGULARITY} --provenance ${PROV_DIR} --outdir ${OUT_DIR_FINAL} ${CWL} ${EXTENDED_CONFIG_YAML}
 
 
@@ -224,4 +224,4 @@ cwltool --debug ${SINGULARITY} --provenance ${PROV_DIR} --outdir ${OUT_DIR_FINAL
 if [ -z "$ENA_RUN_ID" ]; then
   ENA_RUN_ID="None"
 fi
-# python3.10 utils/create-ro-crate.py ${OUT_DIR} ${METAGOFLOW_VERSION} ${NAME} ${ENA_RUN_ID}
+python utils/create-ro-crate.py ${OUT_DIR} ${METAGOFLOW_VERSION} ${NAME} ${ENA_RUN_ID}
