@@ -96,7 +96,6 @@ steps:
       - summary_ips
       - go_summary
       - go_summary_slim
-      - chunked_tsvs
 
   # << move to functional annotation >>
   move_to_functional_annotation_folder:
@@ -109,7 +108,6 @@ steps:
           - post_processing/summary_pfam
           - post_processing/go_summary
           - post_processing/go_summary_slim
-          - post_processing/chunked_tsvs
         linkMerge: merge_flattened
       dir_name: { default: functional-annotation }
     out: [ out ]

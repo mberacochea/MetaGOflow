@@ -1,5 +1,7 @@
 #!/bin/bash
 
+METAGOFLOW_VERSION="https://github.com/emo-bon/MetaGOflow/releases/tag/v1.0.0"
+
 # default values #
 SCRIPT_PATH=$(realpath "$0")
 PIPELINE_DIR=$(dirname "${SCRIPT_PATH}")
@@ -29,6 +31,7 @@ Script arguments.
 "
 }
 
+# [TODO] Consider adding a -t argument to run using toil.
 while getopts :y:f:r:e:u:k:c:d:m:n:l:sph option; do
   case "${option}" in
   y) YML=${OPTARG} ;;
@@ -82,10 +85,9 @@ _check_mandatory() {
 }
 
 _check_reads() {
-  #check forward and reverse reads both present
-  #check if single reads then no other readsgiven
-
-  #  BASH SYNTAX: 
+  # check forward and reverse reads both present
+  # check if single reads then no other readsgiven
+  # BASH SYNTAX: 
   # to check if a variable has value: 
   # [ -z "$var" ] && echo "Empty"
 
@@ -107,8 +109,6 @@ _check_mandatory "$NAME" "-n"
 _check_mandatory "$RUN_DIR" "-d"
 _check_reads "$FORWARD_READS" "$REVERSE_READS" 
 
-
-
 # ----------------------------- environment & variables ----------------------------- #
 
 # load required environments and packages before running
@@ -128,10 +128,9 @@ export OUT_DIR_FINAL=${OUT_DIR}/results
 export PROV_DIR=${OUT_DIR}/prov 
 export CACHE_DIR=${OUT_DIR}/cache
 mkdir -p "${OUT_DIR_FINAL}" "${TMPDIR}" "${PROV_DIR}" 
-	 #"${CACHE_DIR}" ${JOB_TOIL_FOLDER}" "${LOG_DIR}"
 
-export RENAMED_YML_TMP=${RUN_DIR}/"${NAME}"_temp.yml
-export RENAMED_YML=${RUN_DIR}/"${NAME}".yml
+export EXTENDED_CONFIG_YAML_TMP=${RUN_DIR}/"${NAME}"_temp.yml
+export EXTENDED_CONFIG_YAML=${RUN_DIR}/"${NAME}".yml
 
 # Get study id in case of ENA fetch tool
 if [[ $ENA_RUN_ID != "" ]];
@@ -161,15 +160,14 @@ then
 
 fi
 
-
 # ----------------------------- prepare yml file ----------------------------- #
 
 echo "Writing yaml file"
 
 # DO NOT leave spaces after "\" in the end of a line
-python3 utils/create_yml.py \
+python3.10 utils/create_yml.py \
   -y "${YML}" \
-  -o "${RENAMED_YML_TMP}" \
+  -o "${EXTENDED_CONFIG_YAML_TMP}" \
   -l "${PATH_ENA_RAW_DATA}" \
   -f "${PIPELINE_DIR}/${FORWARD_READS}" \
   -r "${PIPELINE_DIR}/${REVERSE_READS}" \
@@ -178,10 +176,10 @@ python3 utils/create_yml.py \
   -e "${ENA_RUN_ID}"
 
 mv eosc-wf.yml ${RUN_DIR}/
-cat ${RUN_DIR}/eosc-wf.yml ${RENAMED_YML_TMP} > ${RENAMED_YML}
-rm ${RENAMED_YML_TMP}
+cat ${RUN_DIR}/eosc-wf.yml ${EXTENDED_CONFIG_YAML_TMP} > ${EXTENDED_CONFIG_YAML}
+rm ${EXTENDED_CONFIG_YAML_TMP}
 rm ${RUN_DIR}/eosc-wf.yml
-
+cp config.yml ${RUN_DIR}/
 
 # ----------------------------- running pipeline ----------------------------- #
 
@@ -203,24 +201,27 @@ TOIL_PARAMS+=(
   --retryCount 2
   --logDebug
   "$CWL"
-  "$RENAMED_YML"
+  "$EXTENDED_CONFIG_YAML"
 )
 
-# Toil parameters documentation 
+# Toil parameters documentation  - just for your information
 # --disableChaining                Disables  chaining  of jobs (chaining uses one job's resource allocation for its successor job if possible).
 # --preserve-entire-environment    Need to propagate the env vars for Singularity, etc., into the HPC jobs
 # --disableProgress                Disables the progress bar shown when standard error is a terminal.
 # --retryCount                     Number of times to retry a failing job before giving up and labeling job failed. default=1
 # --disableCaching                 Disables caching in the file store. This flag must be set to use a batch  system that does not support caching such as Grid Engine, Parasol, LSF, or Slurm.
 
-
-#  # COMMENT IN TO RUN THE TOIL VERSION
+# COMMENT IN TO RUN THE TOIL VERSION and MUTE the cwltool case in line 222.
 # echo "toil-cwl-runner" "${TOIL_PARAMS[@]}"
 # toil-cwl-runner "${TOIL_PARAMS[@]}"
 
 
-cwltool --debug ${SINGULARITY} --provenance ${PROV_DIR} --outdir ${OUT_DIR_FINAL} ${CWL} ${RENAMED_YML}
+Run the metaGOflow workflow using cwltool
+cwltool --debug ${SINGULARITY} --provenance ${PROV_DIR} --outdir ${OUT_DIR_FINAL} ${CWL} ${EXTENDED_CONFIG_YAML}
 
-# --cachedir ${CACHE_DIR} 
-# --leave-tmpdir --leave-outputs
 
+# Build RO-crate 
+if [ -z "$ENA_RUN_ID" ]; then
+  ENA_RUN_ID="None"
+fi
+# python3.10 utils/create-ro-crate.py ${OUT_DIR} ${METAGOFLOW_VERSION} ${NAME} ${ENA_RUN_ID}

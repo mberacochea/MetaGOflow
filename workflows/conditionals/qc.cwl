@@ -40,6 +40,10 @@ outputs:
     type: Directory?
     outputSource: m_qc-stats/output_dir
 
+  m_qc_summary:
+    type: Directory?
+    outputSource: m_qc-stats/summary_out
+
   # this is the filtered merged seq file
   m_filtered_fasta:
     type: File
@@ -49,7 +53,7 @@ outputs:
     pickValue: first_non_null
 
   # outputs for each of the 2 trimmed seq file
-  fastp_filtering_json:
+  fastp_filtering_html:
     type: File?
     outputSource: fastp_trim_and_overlap/html_report
 
@@ -180,7 +184,7 @@ steps:
       QCed_reads: m_length_filter/filtered_file
       sequence_count: m_count_processed_reads/count
       out_dir_name: qc_stats_folder_for_merged
-    out: [ output_dir ]
+    out: [ output_dir, summary_out ]
 
 
   clean_merged_fasta_headers:

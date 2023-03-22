@@ -1,23 +1,21 @@
 #! /usr/bin/env python3
 
+"""
+If you invoked run_wf.sh like this, then the YAML configuration file will be
+named "green.yml in the "HWLTKDRXY.UDI210" directory:
+
+    $ run_wf.sh -n green -d  HWLTKDRXY.UDI210 \
+                -f input_data/${DATA_FORWARD} \
+                -r input_data/${DATA_REVERSE}
+
+run_parameter it the "-n" value in the config.yml file:
+"""
+
+
 desc = """
-Build a MetaGOflow Data Products ro-crate from a YAML configuration.
-
-Invoke
-$ create-ro-crate.py <target_directory> <yaml_configuration>
-
-where:
-    target_directory is the toplevel output directory of MetaGOflow
-        Note that the name of the directory cannot have a "." in it!
-    yaml_configuration is a YAML file of metadata specific to this ro-crate
-        a template is here:
-        https://raw.githubusercontent.com/emo-bon/MetaGOflow-Data-Products-RO-Crate/main/ro-crate-config.yaml
-
-e.g.
-
-$ create-ro-crate.py HWLTKDRXY-UDI210 config.yml
-
-This script expects to be pointed to directory of MetaGOflow output.
+Build a MetaGOflow Data Products ro-crate.
+This script is based on Cymon's J. Cox script you can find here: 
+https://github.com/emo-bon/MetaGOflow-Data-Products-RO-Crate/blob/main/create-ro-crate.py
 
 When invoked, the MetaGOflow run_wf.sh script writes all output to a directory specified by
 the "-d" parameter:
@@ -32,8 +30,6 @@ the "-d" parameter:
     └── tmp
 
     3 directories, 1 file
-
-Cymon J. Cox, Feb '23
 """
 
 import os
@@ -51,13 +47,14 @@ import glob
 import subprocess
 import logging as log
 
-#This is the workflow YAML file, the prefix is the "-n" parameter of the
-#"run_wf.sh" script:
+#This is the workflow YAML file, the prefix is the "-n" parameter of the "run_wf.sh" script:
 yaml_file = "{run_parameter}.yml"
+
 #InterProScan file(s) have to be dealt with separately until the wf is fixed
 interproscan_file = "{prefix}.merged_CDS.I5.tsv.gz"
-yaml_parameters = ["datePublished", "prefix", "run_parameter",
-    "ena_accession_raw_data", "metagoflow_version", "missing_files"]
+yaml_parameters = ["prefix", 
+                    "run_parameter",
+                   "ena_accession_raw_data", "metagoflow_version", "missing_files"]
 
 mandatory_files = [
     "fastp.html",
@@ -88,18 +85,10 @@ mandatory_files = [
     "taxonomy-summary/LSU/{prefix}.merged_LSU.fasta.mseq.txt"
     ]
 
-YAML_ERROR = """
-Cannot find the run YAML file. Bailing...
 
-If you invoked run_wf.sh like this, then the YAML configuration file will be
-named "green.yml in the "HWLTKDRXY.UDI210" directory:
 
-    $ run_wf.sh -n green -d  HWLTKDRXY.UDI210 \
-                -f input_data/${DATA_FORWARD} \
-                -r input_data/${DATA_REVERSE}
-
-Configure the "run_parameter" with "-n" parameter value in the config.yml file:
-"run_parameter": "green"
+VALIDATION_ERROR = """
+The RO-crate returned fails the validation test.
 """
 
 def writeHTMLpreview(tmpdirname):
@@ -185,7 +174,7 @@ def sequence_categorisation_stanzas(target_directory, template):
         template["@graph"].insert(sq_index+1, d)
     return template, seq_cat_files
 
-def main(target_directory, yaml_config, debug):
+def main(target_directory, metagoflow_version, run_parameter, ena_run_accession_id, debug):
 
     #Logging
     if debug:
@@ -193,6 +182,7 @@ def main(target_directory, yaml_config, debug):
     else:
         log_level = log.INFO
     log.basicConfig(format='\t%(levelname)s: %(message)s', level=log_level)
+    
 
     #Check the data directory name
     data_dir = os.path.split(target_directory)[1]
@@ -203,33 +193,27 @@ def main(target_directory, yaml_config, debug):
         sys.exit()
 
     #Read the YAML configuration
-    if not os.path.exists(yaml_config):
-        log.error(f"YAML configuration file does not exist at {yaml_config}")
-        log.error("Bailing...")
-        sys.exit()
-    with open(yaml_config, "r") as f:
+    user_yaml_config = "config.yml"
+    with open(user_yaml_config, "r") as f:
         conf = yaml.safe_load(f)
+
+
+    conf["dataPublished"] = datetime.datetime.now().strftime('%Y-%m-%d')
+
+    if ena_run_accession_id == "None":
+        print("hello friend")
+
+
+    sys.exit(0)
+
+
+
+
     #Check yaml parameters are formated correctly, but not necessarily sane
     for param in yaml_parameters:
         log.debug("Config paramater: %s" % conf[param])
-        if param == "datePublished":
-            if conf[param] == "None":
-                #No specified date, delete from conf
-                #Its absence will trigger formatting
-                #with today's date
-                del conf[param]
-                continue
-            else:
-                if not isinstance(conf[param], str):
-                    log.error("'dataPublished' should either be a string or 'None'. Bailing...")
-                    sys.exit()
-                try:
-                    datetime.datetime.fromisoformat(conf[param])
-                except ValueError:
-                    log.error(f"'datePublished' must conform to ISO 8601: {param}")
-                    log.error("Bailing...")
-                    sys.exit()
-        elif param == "missing_files":
+
+        if param == "missing_files":
             if not param in conf:
                 continue
             else:
@@ -244,14 +228,13 @@ def main(target_directory, yaml_config, debug):
                 log.error("Bailing...")
                 sys.exit()
 
-    #Check all files are present
 
-    #The workflow run YAML - lives in the toplevel dir not /results
-    filename = yaml_file.format(**conf)
-    path = os.path.join(target_directory, filename)
-    if not os.path.exists(path):
-        log.error(YAML_ERROR)
-        sys.exit()
+
+    #Check all files are present
+    # #The workflow run YAML - lives in the toplevel dir not /results
+    # filename = yaml_file.format(**conf)
+    # path = os.path.join(target_directory, filename)
+
 
     #format the filepaths:
     filepaths = [f.format(**conf) for f in mandatory_files]
@@ -297,21 +280,17 @@ def main(target_directory, yaml_config, debug):
         log.error("Bailing...")
         sys.exit()
 
-    #Metadata template on disk
-    #metadata_json_template = "ro-crate-metadata.json-template"
-    #with open(metadata_json_template, "r") as f:
-    #   template = json.load(f)
 
     log.info("Writing ro-crate-metadata.json...")
+
+
     #Deal with the ./ dataset stanza separately
     #"accession_number"
     template["@graph"][1]["name"] = template["@graph"][1]["name"].format(**conf)
     template["@graph"][1]["description"] = template["@graph"][1]["description"].format(**conf)
     #"datePublished"
-    if "datePublished" in conf:
-        template["@graph"][1]["datePublished"] = template["@graph"][1]["datePublished"].format(**conf)
-    else:
-        template["@graph"][1]["datePublished"] = datetime.datetime.now().strftime('%Y-%m-%d')
+    template["@graph"][1]["datePublished"] = template["@graph"][1]["datePublished"].format(**conf)
+
 
     # deal with sequence_categorisation separately
     template, seq_cat_files  = sequence_categorisation_stanzas(target_directory, template)
@@ -376,12 +355,22 @@ if __name__ == "__main__":
                         help="Name of target directory containing MetaGOflow" +\
                         "output"
                         )
-    parser.add_argument("yaml_config",
-                        help="Name of YAML config file for building RO-Crate"
+    parser.add_argument("metagoflow_version",
+                        help="URL pointing to the metaGOflow version used"
+                        )
+    parser.add_argument("run_parameter",
+                        help="Name of run and prefix to output files."
+                        )
+    parser.add_argument("ena_run_accession_id",
+                        help="Run accession id in ENA."
                         )
     parser.add_argument('-d', '--debug',
                     action='store_true',
                     help="DEBUG logging")
+
     args = parser.parse_args()
-    main(args.target_directory, args.yaml_config, args.debug)
+
+    
+
+    main(args.target_directory, args.metagoflow_version, args.run_parameter, args.ena_run_accession_id, args.debug)
 

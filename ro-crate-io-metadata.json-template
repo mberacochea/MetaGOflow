@@ -1,4 +1,4 @@
-{ "@context": "https://w3id.org/ro/crate/1.1/context", 
+https://github.com/emo-bon/MetaGOflow/blob/eosc-life-gos/config.yml{ "@context": "https://w3id.org/ro/crate/1.1/context", 
   "@graph": [
     {
         "@id": "ro-crate-metadata.json",
@@ -9,22 +9,22 @@
     {
         "@id": "./", 
         "@type": "Dataset",
-        "name" : "MetaGoFlow Results for ENA Run Accession Number {ena_accession_raw_data}",                       
+        "name" : "MetaGoFlow Results for ENA Run Accession Number {ena_accession_raw_data}",  
         "description" : "RO-Crate for the MetaGOflow analysis EMO BON ENA Accession {ena_accession_raw_data} data ",
-        "datePublished": "{datePublished}",                                              
-        "license": {"@id": "https://creativecommons.org/licenses/by/4.0/legalcode"},                      
-        "publisher": {"@id": "https://ror.org/0038zss60"},                          
+        "datePublished": "{datePublished}",
+        "license": {"@id": "https://creativecommons.org/licenses/by/4.0/legalcode"}, 
+        "publisher": {"@id": "https://ror.org/0038zss60"},
         "hasPart": [
-                        {"@id": "{ena_accession_raw_data}"},  
-                        {"@id": "{metagoflow_version}"},  
+                        {"@id": "{ena_accession_raw_data}"}, 
+                        {"@id": "{metagoflow_version}"}, 
                         {"@id": "{run_parameter}.yml"},
-                        {"@id": "fastp.html"},
+                        {"@id": "config.yml"},
+                        {"@id": "fastp.html"}
                         {"@id": "final.contigs.fa"},
                         {"@id": "functional_annotation/"},
                         {"@id": "sequence-categorisation/"},
                         {"@id": "taxonomic-summary/"},
                         {"@id": "RNA-counts"}
-
                     ] 
     },
     {
@@ -43,10 +43,10 @@
         "url": "https://www.embrc.eu/about-us/contact-us"
     },
     {
-        "@id": "https://creativecommons.org/licenses/by/4.0/legalcode",
+        "@id": "https://www.apache.org/licenses/LICENSE-2.0",
         "@type": "CreativeWork",
-        "identifier": "https://creativecommons.org/licenses/by/4.0/legalcode",
-        "name": "Creative Commons (CC-BY 4.0)"
+        "identifier": "https://www.apache.org/licenses/LICENSE-2.0",
+        "name": "Apache License 2.0"
     }, 
     {
         "@id": "{ena_accession_raw_data}", 
@@ -65,8 +65,15 @@
     {
         "@id": "{run_parameter}.yml",
         "@type": "File",                 
-        "name": "MetaGOflow YAML configuration file",
+        "name": "The YAML configuration file MetaGOflow builds",
         "description": "YAML configuration file for execution of MetaGOflow workflow.",
+        "encodingFormat": "text/yaml"
+    },
+    {
+        "@id": "config.yml",
+        "@type": "File",                 
+        "name": "MetaGOflow configuration file",
+        "description": "The configuration file through which the user sets the values of the metaGOflow parameters.",
         "encodingFormat": "text/yaml"
     },
     {
