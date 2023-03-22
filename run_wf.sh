@@ -167,7 +167,7 @@ fi
 echo "Writing yaml file"
 
 # DO NOT leave spaces after "\" in the end of a line
-python3 create_yml.py \
+python3 utils/create_yml.py \
   -y "${YML}" \
   -o "${RENAMED_YML_TMP}" \
   -l "${PATH_ENA_RAW_DATA}" \
