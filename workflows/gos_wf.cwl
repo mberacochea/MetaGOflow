@@ -39,6 +39,9 @@ inputs:
     doc: | 
         Number of threads to be used from each tool. User may set this to as many as the system can provide for faster performance.
 
+  # Interproscan
+  interproscan_threads: {type: int, default: 8}
+
   # Steps
   qc_and_merge_step: 
     type: boolean
@@ -464,6 +467,8 @@ steps:
        ko_file: ko_file
        threads: threads
 
+       interproscan_threads: interproscan_threads
+
     out:
       - functional_annotation_folder
       - stats
@@ -603,7 +608,7 @@ $namespaces:
  s: http://schema.org/
 
 $schemas:
- - http://edamontology.org/EDAM_1.16.owl
+ - https://raw.githubusercontent.com/edamontology/edamontology/main/releases/EDAM_1.16.owl
  - https://schema.org/version/latest/schemaorg-current-https.jsonld
 
 s:license: "https://www.apache.org/licenses/LICENSE-2.0"

@@ -34,6 +34,7 @@ inputs:
   EggNOG_diamond_db: [string?, File?]
   EggNOG_data_dir: [string?, Directory?]
   threads: int
+  interproscan_threads: int
 
 outputs:
   hmm_result:
@@ -82,6 +83,7 @@ steps:
       InterProScan_databases: InterProScan_databases
       InterProScan_applications: InterProScan_applications
       InterProScan_outputFormat: InterProScan_outputFormat
+      interproscan_threads: interproscan_threads
     out: [ ips_result ]
 
   run_hmmer:
@@ -102,7 +104,7 @@ $namespaces:
  edam: http://edamontology.org/
  s: http://schema.org/
 $schemas:
- - http://edamontology.org/EDAM_1.16.owl
+ - https://raw.githubusercontent.com/edamontology/edamontology/main/releases/EDAM_1.16.owl
  - https://schema.org/version/latest/schemaorg-current-http.rdf
 
 s:license: "https://www.apache.org/licenses/LICENSE-2.0"
