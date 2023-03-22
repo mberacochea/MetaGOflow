@@ -21,6 +21,7 @@ inputs:
   InterProScan_applications: string[]
   InterProScan_outputFormat: string[]
   threads: int?
+  interproscan_threads: int?
 
 outputs:
   ips_result:
@@ -44,7 +45,7 @@ steps:
       inputFile: split_seqs/chunks
       outputFormat: InterProScan_outputFormat
       databases: InterProScan_databases
-      cpu: threads
+      cpu: interproscan_threads
     out: [ i5Annotations ]
     run: ../../tools/InterProScan/InterProScan-v5.cwl
     label: "InterProScan: protein sequence classifier"
