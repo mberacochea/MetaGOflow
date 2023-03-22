@@ -39,6 +39,12 @@ inputs:
     doc: | 
         Number of threads to be used from each tool. User may set this to as many as the system can provide for faster performance.
 
+  #Interproscan
+  interproscan_threads: {type: int, default: 8}
+
+  #Interproscan
+  interproscan_threads: {type: int, default: 8}
+
   # Steps
   qc_and_merge_step: 
     type: boolean
@@ -467,6 +473,8 @@ steps:
        go_config: go_config
        ko_file: ko_file
        threads: threads
+
+       interproscan_threads: interproscan_threads
 
     out:
       - functional_annotation_folder
