@@ -85,7 +85,7 @@ inputs:
     type: boolean
     default: false
     doc: | 
-        >>>> CONSIDER REMOVING <<<
+        fastp argument for adapter sequence auto-detection. By default, it is disabled since the adapters can be trimmed by overlap analysis. however, it usually results in a slightly cleaner output, since the overlap analysis may fail due to sequencing errors or adapter dimers. You may use it only if your adapters are among Illumina TruSeq adapters; fastp contains a limited number of built-in known adapter sequences for better auto-detection. For more, see https://github.com/OpenGene/fastp.
 
   force_polyg_tail_trimming: 
     type: boolean
