@@ -13,7 +13,8 @@ conda create -n EOSC-CWL python=3.7
 Get `cwl` 
 
 ```
-pip install cwlref-runner cwltool
+pip install cwlref-runner
+pip install cwltool
 ```
 
 Get `cwltest`
@@ -46,8 +47,10 @@ cwltool raw-reads-wf--v.5-cond.cwl ymls/raw-reads--v.5-cond.yml
 
 
 ## Testing samples
-The samples are available in the `test_input` folder.
 
 We use 2 partial samples from the Human Metagenome Project ([SRR1620013](https://www.ebi.ac.uk/ena/browser/view/SRR1620013) and [SRR1620014](https://www.ebi.ac.uk/ena/browser/view/SRR1620014))
 They are partial as only a small part of their sequences have been kept, in terms for the pipeline to test in a fast way. 
+
+
+
 
