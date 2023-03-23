@@ -23,8 +23,8 @@ Indicatively, you may have a look at the metaGOflow publication for computing re
 ### Get the EOSC-Life marine GOs workflow
 
 ```bash
-git clone https://github.com/emo-bon/pipeline-v5.git
-cd pipeline-v5
+git clone https://github.com/emo-bon/MetaGOflow
+cd MetaGOflow
 ```
 
 
@@ -39,6 +39,20 @@ at the `ref-dbs` folder.
 
 ## How to run
 
+### Set up the environment
+
+#### Run once - Setup environment
+
+[Setup Environment](/dependencies.md#during-development)
+
+#### Run Every Time
+```bash
+conda activate EOSC-CWL
+``` 
+
+### Run the workflow
+
+```bash
 
 - Edit the `config.yml` file to set the parameter values of your choice.
 
@@ -60,7 +74,7 @@ Set the `--disableCaching` flag if you want to use this batch system.
 
 3. In case you are having errors like: 
 ```
-wltool.errors.WorkflowException: Singularity is not available for this tool
+cwltool.errors.WorkflowException: Singularity is not available for this tool
 ```
 You may run the following command:
 ```
