@@ -418,7 +418,7 @@ def main(target_directory, extended_config_yaml, ena_run_accession_id, metagoflo
             "@id": ena_accession_raw_data, 
             "@type": "File",
             "name": "ENA accession for run raw sequence data",
-            "description": "FAKE: Raw sequence data and laboratory sequence generation metadata",
+            "description": "Link to the ENA entry of the raw data used for this analysis.",
             "url": "https://www.ebi.ac.uk/ena/browser/view/" + ena_run_accession_id, 
             "encodingFormat": "text/xml"
         }))
