@@ -5,10 +5,21 @@ import argparse
 import textwrap
 from rocrate.rocrate import ROCrate
 from rocrate.model.person import Person
+import datetime
 
 ena_accession_raw_data= "Raw sequence data and laboratory sequence generation metadata",
 
 descriptions = [
+    {
+        "@id": "sequence-categorisation/",
+        "@type": "Dataset",
+        "name": "Sequence categorisation",
+        "description": "Identify specific loci in the sample."
+    },
+    {   "@id": "functional_annotation/",
+        "@type": "Dataset",
+        "name": "Functional annotation results",
+        "description": "Functional annotation of merged reads"},
     {
         "@id": "config.yml",
         "@type": "File",                 
@@ -179,10 +190,170 @@ descriptions = [
         "@type": "File",
         "name": "Text-based formatted taxon counts for SSU sequences",
         "encodingFormat": "application/json-ld"
+    },
+    {
+        "@id": ".all.tblout.deoverlapped",
+        "@type": "File",
+        "name": "Sequence hits against covariance model databases. Mandatory to run partially the functional annotation step of metaGOflow.",
+        "encodingFormat": "text/plain"
+    },
+    {
+        "@id": ".merged.fasta",
+        "@type": "File",
+        "name": "Merged filtered reads.",
+        "encodingFormat": "text/plain"
+    },
+    {
+        "@id": ".fastq.trimmed.fasta",
+        "@type": "File",
+        "name": "Filtered .fastq file of the single-end reads (forward/reverse).",
+        "encodingFormat": "text/plain"
+    },
+    {
+        "@id": ".fastq.trimmed.qc_summary",
+        "@type": "File",
+        "name": "Summary with statistics of the single-end reads (forward/reverse).",
+        "encodingFormat": "text/plain"
+    },
+    {
+        "@id": ".fastq.trimmed.qc_summary",
+        "@type": "File",
+        "name": "Summary with statistics of the single-end reads (forward/reverse).",
+        "encodingFormat": "text/plain"
+    },
+    {
+        "@id": ".all.tblout.deoverlapped",
+        "@type": "File",
+        "name": "Sequence hits against covariance model databases",
+        "encodingFormat": "text/plain"
+    },
+    {
+        "@id": ".merged.unfiltered_fasta",
+        "@type": "File",
+        "name": "",
+        "encodingFormat": "text/plain"
+    },
+    {
+        "@id": ".motus.tsv",
+        "@type": "File",
+        "name": "",
+        "encodingFormat": "text/plain"
+    },
+    {
+        "@id": ".merged.qc_summary",
+        "@type": "File",
+        "name": "Summary with statistics of the merged reads.",
+        "encodingFormat": "text/plain"
+    },
+    {
+        "@id": "SSU.fasta.gz",
+        "@type": "File",
+        "name": "SSU sequences.",
+        "encodingFormat": "application/zip"
+    },
+    {
+        "@id": "SSU_rRNA_archaea.RF01959.fa.gz",
+        "@type": "File",
+        "name": "SSU sequences mapping to Archaea.",
+        "encodingFormat": "application/zip"
+    },
+    {
+        "@id": "SSU_rRNA_bacteria.RF00177.fa.gz",
+        "@type": "File",
+        "name": "SSU sequences mapping to Bacteria.",
+        "encodingFormat": "application/zip"
+    },
+    {
+        "@id": "SSU_rRNA_eukarya.RF01960.fa.gz",
+        "@type": "File",
+        "name": "SSU sequences mapping to Eukaryotes.",
+        "encodingFormat": "application/zip"
+    },
+    {
+        "@id": "tmRNA.RF00023.fasta.gz",
+        "@type": "File",
+        "name": "Sequences mapping to transfer-messenger RNAs",
+        "encodingFormat": "application/zip"
+    },
+    {
+        "@id": "tRNA.RF00005.fasta.gz",
+        "@type": "File",
+        "name": "Sequences mapping to tranfer RNAs",
+        "encodingFormat": "application/zip"
+    },
+    {
+        "@id": "tRNA-Sec.RF01852.fasta.gz",
+        "@type": "File",
+        "name": "Sequences mapping to selenocysteine tRNAs.",
+        "encodingFormat": "application/zip"
+    },
+    {
+        "@id": "LSU.fasta.gz",
+        "@type": "File",
+        "name": "LSU sequences.",
+        "encodingFormat": "application/zip"
+    },
+    {
+        "@id": "LSU_rRNA_archaea.RF02540.fa.gz",
+        "@type": "File",
+        "name": "LSU sequences mapping to Archaea.",
+        "encodingFormat": "application/zip"
+    },
+    {
+        "@id": "LSU_rRNA_bacteria.RF02541.fa.gz",
+        "@type": "File",
+        "name": "LSU sequences mapping to Bacteria.",
+        "encodingFormat": "application/zip"
+    },
+    {
+        "@id": "LSU_rRNA_eukarya.RF02543.fa.gz",
+        "@type": "File",
+        "name": "LSU sequences mapping to Eukaryotes.",
+        "encodingFormat": "application/zip"
+    },
+    {
+        "@id": "RNaseP_bact_a.RF00010.fasta.gz",
+        "@type": "File",
+        "name": "Sequences mapping to ribonucleus P bacterial sequences.",
+        "encodingFormat": "application/zip"
+    },
+    {
+        "@id": "5_8S.fa.gz",
+        "@type": "File",
+        "name": "Sequences mapping to ribonucleus 5_8S rRNA gene.",
+        "encodingFormat": "application/zip"
+    },
+    {
+        "@id": "alpha_tmRNA.RF01849.fasta.gz",
+        "@type": "File",
+        "name": "Sequences mapping to alpha transfer-messenger RNA.",
+        "encodingFormat": "application/zip"
+    },
+    {
+        "@id": "Bacteria_large_SRP.RF01854.fasta.gz",
+        "@type": "File",
+        "name": "Sequences mapping to bacterial large signal recognition particle RNAs.",
+        "encodingFormat": "application/zip"
+    },
+    {
+        "@id": "Bacteria_small_SRP.RF00169.fasta.gz",
+        "@type": "File",
+        "name": "Sequences mapping to bacterial small signal recognition particle RNAs.",
+        "encodingFormat": "application/zip"
+    },
+    {
+        "@id": ".merged_CDS.faa",
+        "@type": "File",
+        "name": "Coding sequences with amino acids.",
+        "encodingFormat": "text/plain"
+    },
+    {
+        "@id": ".merged_CDS.ffn",
+        "@type": "File",
+        "name": "Coding sequences with nucleotides.",
+        "encodingFormat": "text/plain"
     }
 ]
-
-
 
 
 def main(target_directory, extended_config_yaml, ena_run_accession_id, metagoflow_version ):
@@ -190,33 +361,19 @@ def main(target_directory, extended_config_yaml, ena_run_accession_id, metagoflo
     crate = ROCrate(target_directory) # here we use a complete directory, could we use just the json..?
 
     for entry in crate.get_entities():
-
         for description in descriptions:
-
             try:
                 pk = description["@id"] in entry.id
             except:
-                # new_crate.add(entry)
                 pass
             finally:
                 if pk :                    
                     for k,v in description.items():
                         if k not in entry.properties().keys():
-                            entry.append_to(k, v)
-
-    print("export...")
-
-    crate.write_zip("exp_crate.zip")
-
-    print(".. goodbye friend")
-
-
-    sys.exit(0)
-
+                            entry.properties()[k] = v
 
     metagoflow_id = "workflow/metaGOflow"
     license_id    = "https://www.apache.org/licenses/LICENSE-2.0"
-
 
     metagoflow_id = crate.add(Person(crate, metagoflow_id, properties={
         "@type": ["File", "SoftwareSourceCode", "ComputationalWorkflow"],
@@ -227,7 +384,7 @@ def main(target_directory, extended_config_yaml, ena_run_accession_id, metagoflo
         "license": { "@id": "https://www.apache.org/licenses/LICENSE-2.0"},
         "hasPart": [
             {"@id": "config.yml"},
-            {"@id": "mini_dataset.yml"}
+            {"@id": extended_config_yaml}
         ]
     }))
 
@@ -235,6 +392,27 @@ def main(target_directory, extended_config_yaml, ena_run_accession_id, metagoflo
         "@type": "CreativeWork",
         "name": "Apache License 2.0"
     }))
+
+
+    if ena_run_accession_id != "None":
+
+        ena_id = crate.add(Person(crate, ena_run_accession_id, properties={
+
+            "@id": ena_accession_raw_data, 
+            "@type": "File",
+            "name": "ENA accession for run raw sequence data",
+            "description": "FAKE: Raw sequence data and laboratory sequence generation metadata",
+            "url": "https://www.ebi.ac.uk/ena/browser/view/" + ena_run_accession_id, 
+            "encodingFormat": "text/xml"
+        }))
+
+
+    print("export...")
+
+    crate.write_zip("exp_crate.zip")
+
+    print(".. ro-crate as .zip ready.")
+
 
 
 if __name__ == "__main__":
@@ -260,34 +438,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     
-    print(args.target_directory)
-
+    # Run main function
     main(args.target_directory, args.extended_config_yaml, args.ena_run_accession_id, args.metagoflow_version)
-
-
-
-
-    """
-    {
-        "@id": "workflow/metaGOflow",  
-        "@type": ["File", "SoftwareSourceCode", "ComputationalWorkflow"],
-        "author": {"@id": "EMO BON"},
-        "name": "metaGOflow",
-        "description": "Metagenomics analysis based on MGnify for the needs of the EMO BON community",
-        "license": { "@id": "https://www.apache.org/licenses/LICENSE-2.0"},
-        "url": "https://www.imagemagick.org/",
-        "hasPart": [
-            {"@id": "config.yml"},
-            {"@id": "mini_dataset.yml"}
-
-        ] 
-    },
-    {
-        "@id": "https://www.apache.org/licenses/LICENSE-2.0",
-        "@type": "CreativeWork",
-        "name": "Apache License 2.0"
-    },
-    """
-
-
 

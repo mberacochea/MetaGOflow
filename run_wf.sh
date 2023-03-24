@@ -217,7 +217,12 @@ TOIL_PARAMS+=(
 cwltool --parallel ${SINGULARITY} --outdir ${OUT_DIR_FINAL} ${CWL} ${EXTENDED_CONFIG_YAML}
 
 # Build RO-crate 
+rm -rf ${TMPDIR}
+
+rocrate init -c ${RUN_DIR}
+
 if [ -z "$ENA_RUN_ID" ]; then
   ENA_RUN_ID="None"
 fi
-python utils/create-ro-crate.py ${OUT_DIR} ${METAGOFLOW_VERSION} ${NAME} ${ENA_RUN_ID}
+python utils/edit-ro-crate.py ${OUT_DIR} ${EXTENDED_CONFIG_YAML} ${ENA_RUN_ID} ${METAGOFLOW_VERSION}
+
