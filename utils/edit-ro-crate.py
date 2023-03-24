@@ -216,12 +216,6 @@ descriptions = [
         "encodingFormat": "text/plain"
     },
     {
-        "@id": ".fastq.trimmed.qc_summary",
-        "@type": "File",
-        "name": "Summary with statistics of the single-end reads (forward/reverse).",
-        "encodingFormat": "text/plain"
-    },
-    {
         "@id": ".all.tblout.deoverlapped",
         "@type": "File",
         "name": "Sequence hits against covariance model databases",
@@ -355,8 +349,12 @@ descriptions = [
     }
 ]
 
-
 def main(target_directory, extended_config_yaml, ena_run_accession_id, metagoflow_version ):
+    """
+    Edit the output of the `rocrate init` tool. 
+    Map files descriptions ; should be done through the cwl descriptions but we go that way at a later point.
+    Add extra ids on the ro-crate describing the metaGOflow workflow and the ENA data (if used). 
+    """
 
     crate = ROCrate(target_directory) # here we use a complete directory, could we use just the json..?
 
@@ -373,9 +371,28 @@ def main(target_directory, extended_config_yaml, ena_run_accession_id, metagoflo
                             entry.properties()[k] = v
 
     metagoflow_id = "workflow/metaGOflow"
-    license_id    = "https://www.apache.org/licenses/LICENSE-2.0"
+    mg_license_id = "https://www.apache.org/licenses/LICENSE-2.0"
+    embrc_id      = "https://ror.org/0038zss60"
+    mail_id       = "mailto:help@embrc.org"
 
-    metagoflow_id = crate.add(Person(crate, metagoflow_id, properties={
+    embrc_mail = crate.add(Person(crate, mail_id, properties={
+        "@type": "ContactPoint",
+        "contactType": "Help Desk",
+        "email": "help@embrc.org",
+        "identifier": "help@embrc.org",
+        "url": "https://www.embrc.eu/about-us/contact-us"
+    }))
+
+
+    embrc = crate.add(Person(crate, embrc_id, properties={
+        "@type": "Organization",
+        "name": "European Marine Biological Resource Centre",
+        "url": "https://ror.org/0038zss60",
+        "contactPoint": {"@id": "mailto:help@embrc.org"}
+    }))
+
+
+    metagoflow = crate.add(Person(crate, metagoflow_id, properties={
         "@type": ["File", "SoftwareSourceCode", "ComputationalWorkflow"],
         "name": "metaGOflow",
         "affiliation": "University of Flatland", 
@@ -388,7 +405,7 @@ def main(target_directory, extended_config_yaml, ena_run_accession_id, metagoflo
         ]
     }))
 
-    license_id = crate.add(Person(crate, license_id, properties={
+    mg_license = crate.add(Person(crate, mg_license_id, properties={
         "@type": "CreativeWork",
         "name": "Apache License 2.0"
     }))
