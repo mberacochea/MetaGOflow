@@ -156,7 +156,6 @@ then
 
   export PATH_ENA_RAW_DATA=${PIPELINE_DIR}/${OUT_DIR}/raw_data_from_ENA/${ENA_STUDY_ID}/raw/
 
-
 fi
 
 # ----------------------------- prepare yml file ----------------------------- #
@@ -213,12 +212,43 @@ TOIL_PARAMS+=(
 # echo "toil-cwl-runner" "${TOIL_PARAMS[@]}"
 # toil-cwl-runner "${TOIL_PARAMS[@]}"
 
+# --------------------------------------------
+
 # Run the metaGOflow workflow using cwltool
 cwltool --parallel ${SINGULARITY} --outdir ${OUT_DIR_FINAL} ${CWL} ${EXTENDED_CONFIG_YAML}
 
-# Build RO-crate 
+# --------------------------------------------
+
+# Edit output structure 
 rm -rf ${TMPDIR}
 
+cd ${OUT_DIR}/results/functional-annotation/
+
+count=`ls -1 *.chunks 2>/dev/null | wc -l`
+if [ $count != 0 ]
+then 
+  rm *.chunks
+fi 
+
+count=`ls -1 *CDS.I5_001.tsv.gz 2>/dev/null | wc -l`
+if [ $count != 0 ]
+then 
+
+  fullfile=*.merged.CDS.I5_001.tsv.gz
+  prefix=$(echo $fullfile | sed 's/[^_]*$//')
+  prefix=${prefix::-1}
+
+  ls *.merged.CDS.I5_*.tsv.gz | xargs -I {} cat  {} > allfiles.gz
+  ls *.merged.CDS.I5_*.tsv.gz | xargs -I {} rm {}
+  mv allfiles.gz ${prefix}".tsv.gz"
+fi 
+
+cd ../../../
+
+
+# --------------------------------------------
+
+# Build RO-crate
 rocrate init -c ${RUN_DIR}
 
 if [ -z "$ENA_RUN_ID" ]; then
@@ -226,3 +256,4 @@ if [ -z "$ENA_RUN_ID" ]; then
 fi
 python utils/edit-ro-crate.py ${OUT_DIR} ${EXTENDED_CONFIG_YAML} ${ENA_RUN_ID} ${METAGOFLOW_VERSION}
 
+# --------------------------------------------
