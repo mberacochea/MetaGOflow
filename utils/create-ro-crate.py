@@ -201,7 +201,7 @@ def main(target_directory, metagoflow_version, run_parameter, ena_run_accession_
     conf["dataPublished"] = datetime.datetime.now().strftime('%Y-%m-%d')
 
     if ena_run_accession_id == "None":
-        print("hello friend")
+        print("hi from the ro-crate.py")
 
 
     sys.exit(0)
