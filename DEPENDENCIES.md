@@ -14,7 +14,15 @@
 
 - ```bash
   pip install cwlref-runner cwltool[all]
+
   ```
+ 
+### To create the ro-crates
+
+- ```bash
+  pip install rocrate
+  ```
+
 - The `tabix` package is also required. To get it please run:
 
     ###### DEBIAN/UBUNTU
