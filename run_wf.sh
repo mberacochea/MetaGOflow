@@ -1,5 +1,7 @@
 #!/bin/bash
 
+METAGOFLOW_VERSION="https://github.com/emo-bon/MetaGOflow/releases/tag/v1.0.0"
+
 # default values #
 SCRIPT_PATH=$(realpath "$0")
 PIPELINE_DIR=$(dirname "${SCRIPT_PATH}")
@@ -29,6 +31,7 @@ Script arguments.
 "
 }
 
+# [TODO] Consider adding a -t argument to run using toil.
 while getopts :y:f:r:e:u:k:c:d:m:n:l:sph option; do
   case "${option}" in
   y) YML=${OPTARG} ;;
@@ -82,10 +85,9 @@ _check_mandatory() {
 }
 
 _check_reads() {
-  #check forward and reverse reads both present
-  #check if single reads then no other readsgiven
-
-  #  BASH SYNTAX: 
+  # check forward and reverse reads both present
+  # check if single reads then no other readsgiven
+  # BASH SYNTAX: 
   # to check if a variable has value: 
   # [ -z "$var" ] && echo "Empty"
 
@@ -107,11 +109,11 @@ _check_mandatory "$NAME" "-n"
 _check_mandatory "$RUN_DIR" "-d"
 _check_reads "$FORWARD_READS" "$REVERSE_READS" 
 
-
-
 # ----------------------------- environment & variables ----------------------------- #
 
 # load required environments and packages before running
+
+export CWD=$(pwd)
 
 export TOIL_SLURM_ARGS="--array=1-${LIMIT_QUEUE}%20" #schedule 100 jobs 20 running at one time
 export CWL="${PIPELINE_DIR}/workflows/gos_wf.cwl"
@@ -125,13 +127,11 @@ export TMPDIR=${RUN_DIR}/tmp
 export OUT_DIR=${RUN_DIR}
 export LOG_DIR=${OUT_DIR}/log-dir/${NAME}
 export OUT_DIR_FINAL=${OUT_DIR}/results
-export PROV_DIR=${OUT_DIR}/prov 
 export CACHE_DIR=${OUT_DIR}/cache
-mkdir -p "${OUT_DIR_FINAL}" "${TMPDIR}" "${PROV_DIR}" 
-	 #"${CACHE_DIR}" ${JOB_TOIL_FOLDER}" "${LOG_DIR}"
+mkdir -p "${OUT_DIR_FINAL}" "${TMPDIR}"
 
-export RENAMED_YML_TMP=${RUN_DIR}/"${NAME}"_temp.yml
-export RENAMED_YML=${RUN_DIR}/"${NAME}".yml
+export EXTENDED_CONFIG_YAML_TMP=${RUN_DIR}/"${NAME}"_temp.yml
+export EXTENDED_CONFIG_YAML=${RUN_DIR}/"${NAME}".yml
 
 # Get study id in case of ENA fetch tool
 if [[ $ENA_RUN_ID != "" ]];
@@ -158,18 +158,16 @@ then
 
   export PATH_ENA_RAW_DATA=${PIPELINE_DIR}/${OUT_DIR}/raw_data_from_ENA/${ENA_STUDY_ID}/raw/
 
-
 fi
-
 
 # ----------------------------- prepare yml file ----------------------------- #
 
 echo "Writing yaml file"
 
 # DO NOT leave spaces after "\" in the end of a line
-python3 create_yml.py \
+python utils/create_yml.py \
   -y "${YML}" \
-  -o "${RENAMED_YML_TMP}" \
+  -o "${EXTENDED_CONFIG_YAML_TMP}" \
   -l "${PATH_ENA_RAW_DATA}" \
   -f "${PIPELINE_DIR}/${FORWARD_READS}" \
   -r "${PIPELINE_DIR}/${REVERSE_READS}" \
@@ -178,10 +176,10 @@ python3 create_yml.py \
   -e "${ENA_RUN_ID}"
 
 mv eosc-wf.yml ${RUN_DIR}/
-cat ${RUN_DIR}/eosc-wf.yml ${RENAMED_YML_TMP} > ${RENAMED_YML}
-rm ${RENAMED_YML_TMP}
+cat ${RUN_DIR}/eosc-wf.yml ${EXTENDED_CONFIG_YAML_TMP} > ${EXTENDED_CONFIG_YAML}
+rm ${EXTENDED_CONFIG_YAML_TMP}
 rm ${RUN_DIR}/eosc-wf.yml
-
+cp config.yml ${RUN_DIR}/
 
 # ----------------------------- running pipeline ----------------------------- #
 
@@ -192,7 +190,6 @@ TOIL_PARAMS+=(
   --preserve-entire-environment
   --batchSystem slurm
   --disableChaining
-  # --provenance "${PROV_DIR}"
   --disableCaching
   --logFile "${LOG_DIR}/${NAME}.log"
   --jobStore "${JOB_TOIL_FOLDER}/${NAME}"
@@ -203,24 +200,64 @@ TOIL_PARAMS+=(
   --retryCount 2
   --logDebug
   "$CWL"
-  "$RENAMED_YML"
+  "$EXTENDED_CONFIG_YAML"
 )
 
-# Toil parameters documentation 
+# Toil parameters documentation  - just for your information
 # --disableChaining                Disables  chaining  of jobs (chaining uses one job's resource allocation for its successor job if possible).
 # --preserve-entire-environment    Need to propagate the env vars for Singularity, etc., into the HPC jobs
 # --disableProgress                Disables the progress bar shown when standard error is a terminal.
 # --retryCount                     Number of times to retry a failing job before giving up and labeling job failed. default=1
 # --disableCaching                 Disables caching in the file store. This flag must be set to use a batch  system that does not support caching such as Grid Engine, Parasol, LSF, or Slurm.
 
-
-#  # COMMENT IN TO RUN THE TOIL VERSION
+# COMMENT IN TO RUN THE TOIL VERSION and MUTE the cwltool case in line 222.
 # echo "toil-cwl-runner" "${TOIL_PARAMS[@]}"
 # toil-cwl-runner "${TOIL_PARAMS[@]}"
 
+# --------------------------------------------
 
-cwltool --debug ${SINGULARITY} --provenance ${PROV_DIR} --outdir ${OUT_DIR_FINAL} ${CWL} ${RENAMED_YML}
+# Run the metaGOflow workflow using cwltool
+cwltool --parallel ${SINGULARITY} --outdir ${OUT_DIR_FINAL} ${CWL} ${EXTENDED_CONFIG_YAML}
 
-# --cachedir ${CACHE_DIR} 
-# --leave-tmpdir --leave-outputs
+# --------------------------------------------
 
+# Edit output structure 
+rm -rf ${TMPDIR}
+
+cd ${OUT_DIR}/results/functional-annotation/
+
+count=`ls -1 *.chunks 2>/dev/null | wc -l`
+if [ $count != 0 ]
+then 
+  rm *.chunks
+fi 
+
+count=`ls -1 *CDS.I5_001.tsv.gz 2>/dev/null | wc -l`
+if [ $count != 0 ]
+then 
+
+  fullfile=*.merged.CDS.I5_001.tsv.gz
+  prefix=$(echo $fullfile | sed 's/[^_]*$//')
+  prefix=${prefix::-1}
+
+  ls *.merged.CDS.I5_*.tsv.gz | xargs -I {} cat  {} > allfiles.gz
+  ls *.merged.CDS.I5_*.tsv.gz | xargs -I {} rm {}
+  mv allfiles.gz ${prefix}".tsv.gz"
+fi 
+
+cd ${CWD}
+
+
+# --------------------------------------------
+
+# Build RO-crate
+rocrate init -c ${RUN_DIR}
+
+if [ -z "$ENA_RUN_ID" ]; then
+  ENA_RUN_ID="None"
+fi
+python utils/edit-ro-crate.py ${OUT_DIR} ${EXTENDED_CONFIG_YAML} ${ENA_RUN_ID} ${METAGOFLOW_VERSION}
+
+# --------------------------------------------
+
+rm -r ${OUT_DIR}
