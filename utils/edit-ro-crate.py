@@ -365,7 +365,7 @@ def main(target_directory, extended_config_yaml, ena_run_accession_id, metagoflo
             except:
                 pass
             finally:
-                if pk :                    
+                if pk :
                     for k,v in description.items():
                         if k not in entry.properties().keys():
                             entry.properties()[k] = v
@@ -374,6 +374,20 @@ def main(target_directory, extended_config_yaml, ena_run_accession_id, metagoflo
     mg_license_id = "https://www.apache.org/licenses/LICENSE-2.0"
     embrc_id      = "https://ror.org/0038zss60"
     mail_id       = "mailto:help@embrc.org"
+    metagoflow_product_license_id = "https://creativecommons.org/licenses/by/4.0/legalcode"
+    
+
+    mg_license = crate.add(Person(crate, mg_license_id, properties={
+        "@type": "CreativeWork",
+        "name": "Apache License 2.0",
+        "identifier": "https://spdx.org/licenses/Apache-2.0.html"
+    }))
+
+    metagoflow_product_license = crate.add(Person(crate,metagoflow_product_license_id, properties={
+        "@type": "CreativeWork",
+        "name": "Creative Commons (CC-BY 4.0)",
+        "identifier": "https://spdx.org/licenses/CC-BY-4.0.html"
+    }))
 
     embrc_mail = crate.add(Person(crate, mail_id, properties={
         "@type": "ContactPoint",
@@ -387,8 +401,8 @@ def main(target_directory, extended_config_yaml, ena_run_accession_id, metagoflo
     embrc = crate.add(Person(crate, embrc_id, properties={
         "@type": "Organization",
         "name": "European Marine Biological Resource Centre",
-        "url": "https://ror.org/0038zss60",
-        "contactPoint": {"@id": "mailto:help@embrc.org"}
+        "url": embrc_id,
+        "contactPoint": {"@id": mail_id}
     }))
 
 
@@ -398,16 +412,11 @@ def main(target_directory, extended_config_yaml, ena_run_accession_id, metagoflo
         "affiliation": "University of Flatland", 
         "author": {"@id": "EMO BON"}, 
         "url": metagoflow_version,
-        "license": { "@id": "https://www.apache.org/licenses/LICENSE-2.0"},
+        "license": { "@id": mg_license_id},
         "hasPart": [
             {"@id": "config.yml"},
             {"@id": extended_config_yaml}
         ]
-    }))
-
-    mg_license = crate.add(Person(crate, mg_license_id, properties={
-        "@type": "CreativeWork",
-        "name": "Apache License 2.0"
     }))
 
 
@@ -422,6 +431,10 @@ def main(target_directory, extended_config_yaml, ena_run_accession_id, metagoflo
             "url": "https://www.ebi.ac.uk/ena/browser/view/" + ena_run_accession_id, 
             "encodingFormat": "text/xml"
         }))
+
+    crate.root_dataset.properties()["name"]      = "MetaGoFlow Results"
+    # crate.root_dataset.properties()["license"]   = {"@id": metagoflow_product_license_id}
+    crate.root_dataset.properties()["publisher"] =  {"@id": embrc_id}
 
     print("export...")
 
