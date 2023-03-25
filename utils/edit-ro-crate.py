@@ -423,13 +423,11 @@ def main(target_directory, extended_config_yaml, ena_run_accession_id, metagoflo
             "encodingFormat": "text/xml"
         }))
 
-
     print("export...")
 
-    crate.write_zip("exp_crate.zip")
-
-    print(".. ro-crate as .zip ready.")
-
+    crate.write_zip("".join([target_directory,".zip"]))
+    
+    print("..ro-crate as .zip ready.")
 
 
 if __name__ == "__main__":
@@ -457,4 +455,3 @@ if __name__ == "__main__":
     
     # Run main function
     main(args.target_directory, args.extended_config_yaml, args.ena_run_accession_id, args.metagoflow_version)
-

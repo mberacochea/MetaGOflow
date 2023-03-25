@@ -257,3 +257,5 @@ fi
 python utils/edit-ro-crate.py ${OUT_DIR} ${EXTENDED_CONFIG_YAML} ${ENA_RUN_ID} ${METAGOFLOW_VERSION}
 
 # --------------------------------------------
+
+# rm -r ${OUT_DIR}
