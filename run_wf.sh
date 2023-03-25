@@ -260,4 +260,4 @@ python utils/edit-ro-crate.py ${OUT_DIR} ${EXTENDED_CONFIG_YAML} ${ENA_RUN_ID} $
 
 # --------------------------------------------
 
-
+rm -r ${OUT_DIR}
