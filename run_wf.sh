@@ -113,6 +113,8 @@ _check_reads "$FORWARD_READS" "$REVERSE_READS"
 
 # load required environments and packages before running
 
+export CWD=$(pwd)
+
 export TOIL_SLURM_ARGS="--array=1-${LIMIT_QUEUE}%20" #schedule 100 jobs 20 running at one time
 export CWL="${PIPELINE_DIR}/workflows/gos_wf.cwl"
 
@@ -243,7 +245,7 @@ then
   mv allfiles.gz ${prefix}".tsv.gz"
 fi 
 
-cd ../../../
+cd ${CWD}
 
 
 # --------------------------------------------
@@ -258,4 +260,4 @@ python utils/edit-ro-crate.py ${OUT_DIR} ${EXTENDED_CONFIG_YAML} ${ENA_RUN_ID} $
 
 # --------------------------------------------
 
-# rm -r ${OUT_DIR}
+
