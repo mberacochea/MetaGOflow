@@ -10,7 +10,7 @@ The workflows developed in the framework of this project are based on `pipeline-
 ## Dependencies
 
 - python3 [v 3.8+]
-- [Docker](https://www.docker.com) [v 19.+] or [Singularity](https://apptainer.org) [v. 3.7.+]
+- [Docker](https://www.docker.com) [v 19.+] or [Singularity](https://apptainer.org) [v 3.7.+]/[Apptainer](https://apptainer.org) [v 1.+]
 - [cwltool](https://github.com/common-workflow-language/cwltool) [v 3.+]
 - [rdflib](https://rdflib.readthedocs.io/en/stable/) [v 6.+]
 - [rdflib-jsonld](https://pypi.org/project/rdflib-jsonld/) [v 0.6.2]
