@@ -16,7 +16,7 @@ The workflows developed in the framework of this project are based on `pipeline-
 - [rdflib-jsonld](https://pypi.org/project/rdflib-jsonld/) [v 0.6.2]
 - [ro-crate-py](https://github.com/ResearchObject/ro-crate-py) [v 0.7.0]
 - [pyyaml](https://pypi.org/project/PyYAML/) [v 6.0]
-- [Node.js](https://nodejs.org/)[v 10.24.0+]
+- [Node.js](https://nodejs.org/) [v 10.24.0+]
 - Available storage ~235GB for databases
 
 ### Storage while running
