@@ -41,6 +41,7 @@ inputs:
   protein_chunk_size_eggnog: int
 
   threads: int
+  interproscan_threads: int
 
 outputs:
   functional_annotation_folder:
@@ -74,6 +75,7 @@ steps:
       EggNOG_data_dir: EggNOG_data_dir
       EggNOG_db: EggNOG_db
       threads: threads
+      interproscan_threads: interproscan_threads
     out: [ hmm_result, ips_result ]
 
   # GO SUMMARY; PFAM; summaries and stats IPS, HMMScan, Pfam; add header; chunking TSV
@@ -119,7 +121,7 @@ $namespaces:
  edam: http://edamontology.org/
  s: http://schema.org/
 $schemas:
- - http://edamontology.org/EDAM_1.16.owl
+ - https://raw.githubusercontent.com/edamontology/edamontology/main/releases/EDAM_1.16.owl
  - https://schema.org/version/latest/schemaorg-current-http.rdf
 
 s:license: "https://www.apache.org/licenses/LICENSE-2.0"

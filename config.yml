@@ -1,12 +1,15 @@
 # Steps to go for
 qc_and_merge_step: true
-taxonomic_inventory: false
-cgc_step: false
-reads_functional_annotation: false
+taxonomic_inventory: true
+cgc_step: true
+reads_functional_annotation: true
 assemble: false
 
 # Global
-threads: 20
+threads: 40
+
+# As a rule of thumb keep that as floor(threads/8) where threads the previous parameter
+interproscan_threads: 4
 
 # fastp parameters
 detect_adapter_for_pe: false
@@ -28,8 +31,8 @@ min-contig-len: 200
 # Combined Gene Caller // the size is in MB
 cgc_chunk_size: 200
 
-# Taxonomic inference using Diamond and the contigs
-diamond_maxTargetSeqs: 1
+# # Taxonomic inference using Diamond and the contigs
+# diamond_maxTargetSeqs: 1
 
 # Functional annotation
 protein_chunk_size_IPS: 2000000
@@ -57,13 +60,13 @@ protein_chunk_size_hmm: 50000
 processed_reads: {
   class: File, 
   format: "edam:format_1929",
-  path:  /home1/gmoro/pipeline-v5/test_input/pseudo.merged.fasta
+  path:  workflows/pseudo_files/pseudo.merged.fasta
 }
 
 # Mandatory for running the taxonomy inventory step
 input_for_motus: {
   class: File, 
-  path:  /home1/gmoro/pipeline-v5/test_input/pseudo.merged.unfiltered.fasta
+  path:  workflows/pseudo_files/pseudo.merged.unfiltered.fasta
 }
 
 
@@ -71,7 +74,7 @@ input_for_motus: {
 # If produced previously from metaGOflow, will have a suffix like: .cmsearch.all.tblout.deoverlapped 
 maskfile: {
   class: File, 
-  path:  /home1/gmoro/pipeline-v5/test_input/pseudo.merged.cmsearch.all.tblout.deoverlapped
+  path:  workflows/pseudo_files/pseudo.merged.cmsearch.all.tblout.deoverlapped
 }
 
 # Mandatory for the functional annotation step 
@@ -84,13 +87,13 @@ count_faa_from_previous_run:
 predicted_faa_from_previous_run: {
   class: File, 
   format: "edam:format_1929",
-  path:  /home1/gmoro/pipeline-v5/test_input/pseudo.merged_CDS.faa
+  path:  workflows/pseudo_files/pseudo.merged_CDS.faa
 }
 
 # Mandatory for running the assembly step 
 processed_read_files: 
   - class: File
-    path:  /home1/gmoro/pipeline-v5/test_input/pseudo_1_clean.fastq.trimmed.fasta
+    path:  workflows/pseudo_files/pseudo_1_clean.fastq.trimmed.fasta
   - class: File
-    path:  /home1/gmoro/pipeline-v5/test_input/pseudo_2_clean.fastq.trimmed.fasta
+    path:  workflows/pseudo_files/pseudo_2_clean.fastq.trimmed.fasta
 

@@ -30,12 +30,12 @@ inputs:
     doc: >
       Number of originally submitted sequences as in the user
       submitted FASTQ file - single end FASTQ or pair end merged FASTQ file.
-  stats_file_name:
-    type: string
-    default: stats_summary
-    label: 'Post QC stats output file name'
-    doc: >
-      Give a name for the file which will hold the stats after QC.
+  # stats_file_name:
+  #   type: string
+  #   default: stats_summary
+  #   label: 'Post QC stats output file name'
+  #   doc: >
+  #     Give a name for the file which will hold the stats after QC.
   min_length:
     type: int
     default: 100 # For assemblies we need to set this in the input YAML to 500
@@ -56,13 +56,13 @@ outputs:
     label: Stats summary output file
     type: File
     outputBinding:
-      glob: $(inputs.stats_file_name)
+      glob: $(inputs.seq_file.nameroot).qc_summary
 
 arguments:
    - position: 2
      valueFrom: $(inputs.seq_file.nameroot).fasta
    - position: 3
-     valueFrom: $(inputs.stats_file_name)
+     valueFrom: $(inputs.seq_file.nameroot).qc_summary
    - position: 4
      valueFrom: $(inputs.submitted_seq_count)
    - position: 5
@@ -77,7 +77,7 @@ $namespaces:
  iana: https://www.iana.org/assignments/media-types/
  s: http://schema.org/
 $schemas:
- - http://edamontology.org/EDAM_1.16.owl
+ - https://raw.githubusercontent.com/edamontology/edamontology/main/releases/EDAM_1.16.owl
  - https://schema.org/version/latest/schemaorg-current-http.rdf
 
 s:license: "https://www.apache.org/licenses/LICENSE-2.0"

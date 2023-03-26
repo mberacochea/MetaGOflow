@@ -134,7 +134,7 @@ steps:
     in:
       file_list:
         source:
-          - tax_chunking/chunked_by_size_files
+          # - tax_chunking/chunked_by_size_files
           - rna_prediction/compressed_rnas
           - other_ncrnas/ncrnas
         linkMerge: merge_flattened
@@ -182,7 +182,7 @@ $namespaces:
  edam: http://edamontology.org/
  s: http://schema.org/
 $schemas:
- - http://edamontology.org/EDAM_1.16.owl
+ - https://raw.githubusercontent.com/edamontology/edamontology/main/releases/EDAM_1.16.owl
  - https://schema.org/version/latest/schemaorg-current-http.rdf
 
 s:license: "https://www.apache.org/licenses/LICENSE-2.0"
