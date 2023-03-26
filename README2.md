@@ -1,5 +1,8 @@
 # metaGOflow: A workflow for marine Genomic Observatories' data analysis
 
+![logo](https://raw.githubusercontent.com/hariszaf/metaGOflow-use-case/gh-pages/assets/img/metaGOflow_logo_italics.png)
+
+
 ## An EOSC-Life project
 
 The workflows developed in the framework of this project are based on `pipeline-v5` of the MGnify resource.
@@ -8,6 +11,8 @@ The workflows developed in the framework of this project are based on `pipeline-
 > that contains all CWL descriptions of the MGnify pipeline version 5.1.
 
 ## Dependencies
+
+To run metaGOflow you need to make sure you have the following set on your computing environmnet first:
 
 - python3 [v 3.8+]
 - [Docker](https://www.docker.com) [v 19.+] or [Singularity](https://apptainer.org) [v 3.7.+]/[Apptainer](https://apptainer.org) [v 1.+]
@@ -47,6 +52,7 @@ at the `ref-dbs` folder or at one of its subfolders/files.
 The final structure of the DB directory should be like the following:
 
 ````bash
+user@server:~/MetaGOflow: ls ref-dbs/
 db_kofam/  diamond/  eggnog/  GO-slim/  interproscan-5.57-90.0/  kegg_pathways/  kofam_ko_desc.tsv  Rfam/  silva_lsu/  silva_ssu/
 ````
 
