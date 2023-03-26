@@ -2,8 +2,6 @@
 
 ## An EOSC-Life project
 
-[![Build Status](https://travis-ci.org/EBI-Metagenomics/pipeline-v5.svg?branch=master)](https://travis-ci.com/EBI-Metagenomics/pipeline-v5)
-
 The workflows developed in the framework of this project are based on `pipeline-v5` of the MGnify resource.
 
 > This branch is a child of the [`pipeline_5.1`](https://github.com/hariszaf/pipeline-v5/tree/pipeline_5.1) branch
