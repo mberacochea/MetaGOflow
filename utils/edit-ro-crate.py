@@ -373,10 +373,9 @@ def main(target_directory, extended_config_yaml, ena_run_accession_id, metagoflo
     metagoflow_id = "workflow/metaGOflow"
     mg_license_id = "https://www.apache.org/licenses/LICENSE-2.0"
     embrc_id      = "https://ror.org/0038zss60"
-    mail_id       = "mailto:help@embrc.org"
+    mail_id       = "mailto:haris.zafeiropoulos@kuleuven.be"
     metagoflow_product_license_id = "https://creativecommons.org/licenses/by/4.0/legalcode"
     
-
     mg_license = crate.add(Person(crate, mg_license_id, properties={
         "@type": "CreativeWork",
         "name": "Apache License 2.0",
@@ -389,22 +388,19 @@ def main(target_directory, extended_config_yaml, ena_run_accession_id, metagoflo
         "identifier": "https://spdx.org/licenses/CC-BY-4.0.html"
     }))
 
-    embrc_mail = crate.add(Person(crate, mail_id, properties={
+    developer = crate.add(Person(crate, mail_id, properties={
         "@type": "ContactPoint",
         "contactType": "Help Desk",
-        "email": "help@embrc.org",
-        "identifier": "help@embrc.org",
-        "url": "https://www.embrc.eu/about-us/contact-us"
+        "email": "haris.zafeiropoulos@kuleuven.be",
+        "identifier": "haris.zafeiropoulos@kuleuven.be",
+        "url": "hariszaf.github.io/"
     }))
-
 
     embrc = crate.add(Person(crate, embrc_id, properties={
         "@type": "Organization",
         "name": "European Marine Biological Resource Centre",
         "url": embrc_id,
-        "contactPoint": {"@id": mail_id}
     }))
-
 
     metagoflow = crate.add(Person(crate, metagoflow_id, properties={
         "@type": ["File", "SoftwareSourceCode", "ComputationalWorkflow"],
