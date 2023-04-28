@@ -8,8 +8,8 @@
 #SBATCH --mail-user=haris.zafr@gmail.com
 #SBATCH --mail-type=ALL
 #SBATCH --requeue
-#SBATCH --job-name="rocr-tax"
-#SBATCH --output=rocrates_tax.output
+#SBATCH --job-name="low-chunk"
+#SBATCH --output=low_chunk_numb.output
 
 # Deactivate conda if already there
 conda deactivate
