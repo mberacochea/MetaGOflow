@@ -356,7 +356,7 @@ def main(target_directory, extended_config_yaml, ena_run_accession_id, metagoflo
     Add extra ids on the ro-crate describing the metaGOflow workflow and the ENA data (if used). 
     """
 
-    crate = ROCrate(target_directory) # here we use a complete directory, could we use just the json..?
+    crate = ROCrate(target_directory) 
 
     for entry in crate.get_entities():
         for description in descriptions:

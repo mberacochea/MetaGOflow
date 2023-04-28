@@ -223,27 +223,31 @@ cwltool --parallel ${SINGULARITY} --outdir ${OUT_DIR_FINAL} ${CWL} ${EXTENDED_CO
 
 # Edit output structure 
 rm -rf ${TMPDIR}
+export FUNCTIONAL_ANNOTATION=${OUT_DIR}/results/functional-annotation/
 
-cd ${OUT_DIR}/results/functional-annotation/
+if [ -z "$FUNCTIONAL_ANNOTATION" ]; then
 
-count=`ls -1 *.chunks 2>/dev/null | wc -l`
-if [ $count != 0 ]
-then 
-  rm *.chunks
-fi 
+  cd ${OUT_DIR}/results/functional-annotation/
 
-count=`ls -1 *CDS.I5_001.tsv.gz 2>/dev/null | wc -l`
-if [ $count != 0 ]
-then 
+  count=`ls -1 *.chunks 2>/dev/null | wc -l`
+  if [ $count != 0 ]
+  then 
+    rm *.chunks
+  fi 
 
-  fullfile=*.merged.CDS.I5_001.tsv.gz
-  prefix=$(echo $fullfile | sed 's/[^_]*$//')
-  prefix=${prefix::-1}
+  count=`ls -1 *CDS.I5_001.tsv.gz 2>/dev/null | wc -l`
+  if [ $count != 0 ]
+  then 
 
-  ls *.merged.CDS.I5_*.tsv.gz | xargs -I {} cat  {} > allfiles.gz
-  ls *.merged.CDS.I5_*.tsv.gz | xargs -I {} rm {}
-  mv allfiles.gz ${prefix}".tsv.gz"
-fi 
+    fullfile=*.merged.CDS.I5_001.tsv.gz
+    prefix=$(echo $fullfile | sed 's/[^_]*$//')
+    prefix=${prefix::-1}
+
+    ls *.merged.CDS.I5_*.tsv.gz | xargs -I {} cat  {} > allfiles.gz
+    ls *.merged.CDS.I5_*.tsv.gz | xargs -I {} rm {}
+    mv allfiles.gz ${prefix}".tsv.gz"
+  fi 
+fi
 
 cd ${CWD}
 
@@ -251,11 +255,16 @@ cd ${CWD}
 # --------------------------------------------
 
 # Build RO-crate
-rocrate init -c ${RUN_DIR}
-
 if [ -z "$ENA_RUN_ID" ]; then
   ENA_RUN_ID="None"
+else
+  rm -r ${OUT_DIR}/raw_data_from_ENA
+  # mv ${OUT_DIR}/raw_data_from_ENA .
+  # mv raw_data_from_ENA ${ENA_RUN_ID}
 fi
+
+rocrate init -c ${RUN_DIR}
+
 python utils/edit-ro-crate.py ${OUT_DIR} ${EXTENDED_CONFIG_YAML} ${ENA_RUN_ID} ${METAGOFLOW_VERSION}
 
 # --------------------------------------------
