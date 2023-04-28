@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
-import sys
+import os, sys
+import shutil
 import argparse 
 import textwrap
 from rocrate.rocrate import ROCrate
@@ -373,7 +374,7 @@ def main(target_directory, extended_config_yaml, ena_run_accession_id, metagoflo
     metagoflow_id = "workflow/metaGOflow"
     mg_license_id = "https://www.apache.org/licenses/LICENSE-2.0"
     embrc_id      = "https://ror.org/0038zss60"
-    mail_id       = "mailto:haris.zafeiropoulos@kuleuven.be"
+    mail_id       = "mailto:emobon@embrc.eu"
     metagoflow_product_license_id = "https://creativecommons.org/licenses/by/4.0/legalcode"
     
     mg_license = crate.add(Person(crate, mg_license_id, properties={
@@ -388,18 +389,19 @@ def main(target_directory, extended_config_yaml, ena_run_accession_id, metagoflo
         "identifier": "https://spdx.org/licenses/CC-BY-4.0.html"
     }))
 
-    developer = crate.add(Person(crate, mail_id, properties={
+    embrc_mail = crate.add(Person(crate, mail_id, properties={
         "@type": "ContactPoint",
         "contactType": "Help Desk",
-        "email": "haris.zafeiropoulos@kuleuven.be",
-        "identifier": "haris.zafeiropoulos@kuleuven.be",
-        "url": "hariszaf.github.io/"
+        "email": "emobon@embrc.eu",
+        "identifier": "emobon@embrc.eu",
+        "url": "https://www.embrc.eu/about-us/contact-us"
     }))
 
     embrc = crate.add(Person(crate, embrc_id, properties={
         "@type": "Organization",
         "name": "European Marine Biological Resource Centre",
         "url": embrc_id,
+        "contactPoint": {"@id": mail_id}
     }))
 
     metagoflow = crate.add(Person(crate, metagoflow_id, properties={
@@ -432,18 +434,30 @@ def main(target_directory, extended_config_yaml, ena_run_accession_id, metagoflo
     # crate.root_dataset.properties()["license"]   = {"@id": metagoflow_product_license_id}
     crate.root_dataset.properties()["publisher"] =  {"@id": embrc_id}
 
-    print("export...")
 
-    crate.write_zip("".join([target_directory,".zip"]))
     
+    # Checking if the results folder is empty or not
+    results_path = os.path.join(target_directory, "results")
+    results_dir  = os.listdir(results_path)
+
+    # If empty, keep the output folder but do not build a .zip with the final RO-Crate
+    assert len(results_dir) != 0,'''The results folder is empty. metaGOflow did not perform as expected. \nPlease check the log file for further information\nRemember that the ro-crate-metadata.json file in the output directory is not the one of an actual RO-Crate and it's there only to help you find the error on your run.'''
+
+    # If not empty, build a .zip with the RO-Crate and remove the output directory with the tmp
+    crate.write_zip("".join([target_directory,".zip"]))
     print("..ro-crate as .zip ready.")
+    shutil.rmtree(target_directory)
+
+    return 0
 
 
 if __name__ == "__main__":
 
+    desc = '''This script parses the output of the ro-crate tool to add metadata describing metaGOflow and the data used in this run.'''
+
     parser = argparse.ArgumentParser(
-            formatter_class=argparse.RawDescriptionHelpFormatter
-            # description=textwrap.dedent(desc),
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            description=textwrap.dedent(desc),
             )
     parser.add_argument("target_directory",
                         help="Name of target directory containing MetaGOflow" +\
