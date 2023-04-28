@@ -35,8 +35,8 @@ cgc_chunk_size: 200
 # diamond_maxTargetSeqs: 1
 
 # Functional annotation
-protein_chunk_size_IPS: 2000000
-protein_chunk_size_eggnog: 100000
+protein_chunk_size_IPS: 1000
+protein_chunk_size_eggnog: 1000
 protein_chunk_size_hmm: 50000
 
 # -----------------
