@@ -53,7 +53,7 @@ outputs:
 
 steps:
 
-  # << FUNCTIONAL ANNOTATION: hmmscan, IPS, eggNOG >>
+  # Performs: 1. eggNOG, 2. hmmscan, 3. IPS 
   functional_annotation:
     run: ../subworkflows/functional-annotation/functional-annotation.cwl
     in:
@@ -76,7 +76,7 @@ steps:
       EggNOG_db: EggNOG_db
       threads: threads
       interproscan_threads: interproscan_threads
-    out: [ hmm_result, ips_result ]
+    out: [ hmm_result, ips_result, eggnog_annotations ]
 
   # GO SUMMARY; PFAM; summaries and stats IPS, HMMScan, Pfam; add header; chunking TSV
   post_processing:
@@ -112,6 +112,7 @@ steps:
           - post_processing/go_summary
           - post_processing/go_summary_slim
           - post_processing/chunked_tsvs
+          - functional_annotation/eggnog_annotations
         linkMerge: merge_flattened
       dir_name: { default: functional-annotation }
     out: [ out ]
