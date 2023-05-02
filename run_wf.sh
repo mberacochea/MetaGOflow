@@ -28,11 +28,12 @@ Script arguments.
   -n                  Name of run and prefix to output files.
   -d                  Path to run directory.
   -s                  Run workflow using Singularity (docker is the by default container technology) ('true' or 'false')
+  -b                  Keep tmp folder. 
 "
 }
 
 # [TODO] Consider adding a -t argument to run using toil.
-while getopts :y:f:r:e:u:k:c:d:m:n:l:sph option; do
+while getopts :y:f:r:e:u:k:c:d:m:n:l:bsph option; do
   case "${option}" in
   y) YML=${OPTARG} ;;
   f)
@@ -51,6 +52,7 @@ while getopts :y:f:r:e:u:k:c:d:m:n:l:sph option; do
   m) MEMORY=${OPTARG} ;;
   n) NAME=${OPTARG} ;;
   l) LIMIT_QUEUE=${OPTARG} ;;
+  b) KEEP_TMP="--keep-tmp" ;;
   s) SINGULARITY="--singularity" ;;
   p) PRIVATE_DATA="-p" ;;
   h)
@@ -203,6 +205,7 @@ TOIL_PARAMS+=(
   "$EXTENDED_CONFIG_YAML"
 )
 
+
 # Toil parameters documentation  - just for your information
 # --disableChaining                Disables  chaining  of jobs (chaining uses one job's resource allocation for its successor job if possible).
 # --preserve-entire-environment    Need to propagate the env vars for Singularity, etc., into the HPC jobs
@@ -214,10 +217,12 @@ TOIL_PARAMS+=(
 # echo "toil-cwl-runner" "${TOIL_PARAMS[@]}"
 # toil-cwl-runner "${TOIL_PARAMS[@]}"
 
+
+
 # --------------------------------------------
 
 # Run the metaGOflow workflow using cwltool
-cwltool --parallel ${SINGULARITY} --outdir ${OUT_DIR_FINAL} ${CWL} ${EXTENDED_CONFIG_YAML}
+# cwltool --parallel ${SINGULARITY} --outdir ${OUT_DIR_FINAL} ${CWL} ${EXTENDED_CONFIG_YAML}
 
 # --------------------------------------------
 
@@ -265,5 +270,13 @@ fi
 
 rocrate init -c ${RUN_DIR}
 
-python utils/edit-ro-crate.py ${OUT_DIR} ${EXTENDED_CONFIG_YAML} ${ENA_RUN_ID} ${METAGOFLOW_VERSION}
+echo ">>>" $KEEP_TMP "<<<<<"
+if [[ $KEEP_TMP != "" ]];
+then 
+  export KEEP_TMP="True"
+else
+  export KEEP_TMP="False"
+fi
+
+python utils/edit-ro-crate.py ${OUT_DIR} ${EXTENDED_CONFIG_YAML} ${ENA_RUN_ID} ${METAGOFLOW_VERSION} ${KEEP_TMP}
 

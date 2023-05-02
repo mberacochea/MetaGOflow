@@ -350,7 +350,7 @@ descriptions = [
     }
 ]
 
-def main(target_directory, extended_config_yaml, ena_run_accession_id, metagoflow_version ):
+def main(target_directory, extended_config_yaml, ena_run_accession_id, metagoflow_version, keep_tmp):
     """
     Edit the output of the `rocrate init` tool. 
     Map files descriptions ; should be done through the cwl descriptions but we go that way at a later point.
@@ -446,7 +446,12 @@ def main(target_directory, extended_config_yaml, ena_run_accession_id, metagoflo
     # If not empty, build a .zip with the RO-Crate and remove the output directory with the tmp
     crate.write_zip("".join([target_directory,".zip"]))
     print("..ro-crate as .zip ready.")
-    shutil.rmtree(target_directory)
+    print(keep_tmp) 
+    sys.exit(0)
+    if keep_tmp:
+        print("hello friend")
+    else:
+        shutil.rmtree(target_directory)
 
     return 0
 
@@ -473,8 +478,19 @@ if __name__ == "__main__":
     parser.add_argument("metagoflow_version",
                         help="URL pointing to the metaGOflow version used"
                         )
+    parser.add_argument("keep_tmp",
+                        help="Remove metaGOflow's output directory to keep only a .zip file with the final RO-Crate",
+                        )
 
     args = parser.parse_args()
-    
+
+    print(args.keep_tmp)
+
+    if args.keep_tmp == "True":
+        args.keep_tmp = True
+    else:
+        args.keep_tmp = False
+
+
     # Run main function
-    main(args.target_directory, args.extended_config_yaml, args.ena_run_accession_id, args.metagoflow_version)
+    main(args.target_directory, args.extended_config_yaml, args.ena_run_accession_id, args.metagoflow_version, args.keep_tmp)
