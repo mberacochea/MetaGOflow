@@ -100,7 +100,15 @@ steps:
       - go_summary_slim
       - chunked_tsvs
 
-  # << move to functional annotation >>
+  # Summary for EggNOG
+  eggnog_summary:
+    run: ../../tools/EggNOG-Parse/eggnog_annotations.cwl
+    in:
+      eggnog_annotations: functional_annotation/eggnog_annotations
+    out:
+      [summary_eggnog]
+
+  # Move to functional annotation
   move_to_functional_annotation_folder:
     run: ../../utils/return_directory/return_directory.cwl
     in:
@@ -112,12 +120,12 @@ steps:
           - post_processing/go_summary
           - post_processing/go_summary_slim
           - post_processing/chunked_tsvs
-          - functional_annotation/eggnog_annotations
+          - eggnog_summary/summary_eggnog
         linkMerge: merge_flattened
       dir_name: { default: functional-annotation }
     out: [ out ]
 
-
+# Schenas
 $namespaces:
  edam: http://edamontology.org/
  s: http://schema.org/

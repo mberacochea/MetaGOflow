@@ -20,10 +20,9 @@ inputs:
     label: eggnog annotations TSV format
 
 outputs:
-  out:
+  summary_eggnog:
     type: File
     outputSource: format_output_step/formatted
-
 
 steps:
 
@@ -63,7 +62,6 @@ steps:
 
   # STEP B
   sed_step:
-
     in:
       two_cols:
         source: awk_step/out
@@ -72,7 +70,6 @@ steps:
 
     run:
       class: CommandLineTool
-
       inputs:
         two_cols: 
           type: File
@@ -81,7 +78,6 @@ steps:
       stdout: trimmed.tsv
 
       outputs:
-
         trimmed:
           type: File
           outputBinding:
@@ -92,8 +88,6 @@ steps:
       arguments:
         - sed
         - 's/|.*\t/\t/g ; s/@1//g' 
-
-
 
   # STEP C
   sort_step:
@@ -106,7 +100,6 @@ steps:
 
     run:
       class: CommandLineTool
-
       inputs:
         trimmed_two_cols: 
           type: File
@@ -115,7 +108,6 @@ steps:
       stdout: sorted.tsv
 
       outputs:
-
         sorted:
           type: File
           outputBinding:
@@ -125,7 +117,6 @@ steps:
 
   # STEP D
   uniq_step:
-
     in:
       sorted_two_cols:
         source: sort_step/sorted
@@ -143,7 +134,6 @@ steps:
       stdout: uniq.tsv
 
       outputs:
-
         uniq:
           type: File
           outputBinding:
@@ -154,10 +144,8 @@ steps:
       arguments:
         - -c
 
-
   # STEP E
   sort_uniq_step:
-
     in:
       uniq_two_cols:
         source: uniq_step/uniq
@@ -188,7 +176,6 @@ steps:
 
   # STEP F
   format_output_step:
-
     requirements: 
       StepInputExpressionRequirement: {}
 
@@ -198,7 +185,7 @@ steps:
 
       outputname:
         source: eggnog_annotations
-        valueFrom: $(self.nameroot).formatted.tsv
+        valueFrom: $(self.nameroot).summary.eggnog
 
     out: [formatted]
 
@@ -206,19 +193,15 @@ steps:
       class: CommandLineTool
 
       inputs:
-
         uniq_sorted: 
           type: File
           inputBinding: {}
-
         outputname:
           type: string
-
 
       stdout: $(inputs.outputname)
 
       outputs:
-
         formatted:
           type: stdout
 
@@ -228,4 +211,3 @@ steps:
         - -F
         - " "
         - '{print "\"" $1 "\",\"" $2 "\",\""  substr($0,index($0,$3)) "\""}'
-
