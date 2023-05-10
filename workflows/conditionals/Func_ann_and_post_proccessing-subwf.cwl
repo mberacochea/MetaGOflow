@@ -76,7 +76,7 @@ steps:
       EggNOG_db: EggNOG_db
       threads: threads
       interproscan_threads: interproscan_threads
-    out: [ hmm_result, ips_result, eggnog_annotations ]
+    out: [ hmm_result, ips_result, eggnog_annotations ]  
 
   # GO SUMMARY; PFAM; summaries and stats IPS, HMMScan, Pfam; add header; chunking TSV
   post_processing:

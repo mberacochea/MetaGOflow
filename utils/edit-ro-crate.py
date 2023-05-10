@@ -444,14 +444,15 @@ def main(target_directory, extended_config_yaml, ena_run_accession_id, metagoflo
     assert len(results_dir) != 0,'''The results folder is empty. metaGOflow did not perform as expected. \nPlease check the log file for further information\nRemember that the ro-crate-metadata.json file in the output directory is not the one of an actual RO-Crate and it's there only to help you find the error on your run.'''
 
     # If not empty, build a .zip with the RO-Crate and remove the output directory with the tmp
+    print("Writing the RO-Crate .zip file")
     crate.write_zip("".join([target_directory,".zip"]))
     print("..ro-crate as .zip ready.")
-    print(keep_tmp) 
-    sys.exit(0)
+
     if keep_tmp:
-        print("hello friend")
+        print("Keep the tmp folder.")
     else:
         shutil.rmtree(target_directory)
+        print("Remove the tmp folder.")
 
     return 0
 
@@ -484,13 +485,11 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    print(args.keep_tmp)
-
     if args.keep_tmp == "True":
         args.keep_tmp = True
     else:
         args.keep_tmp = False
 
-
     # Run main function
+    print("Editing the RO-Crate JSON-LD")
     main(args.target_directory, args.extended_config_yaml, args.ena_run_accession_id, args.metagoflow_version, args.keep_tmp)
