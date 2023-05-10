@@ -28,11 +28,12 @@ Script arguments.
   -n                  Name of run and prefix to output files.
   -d                  Path to run directory.
   -s                  Run workflow using Singularity (docker is the by default container technology) ('true' or 'false')
+  -b                  Keep tmp folder. 
 "
 }
 
 # [TODO] Consider adding a -t argument to run using toil.
-while getopts :y:f:r:e:u:k:c:d:m:n:l:sph option; do
+while getopts :y:f:r:e:u:k:c:d:m:n:l:bsph option; do
   case "${option}" in
   y) YML=${OPTARG} ;;
   f)
@@ -51,6 +52,7 @@ while getopts :y:f:r:e:u:k:c:d:m:n:l:sph option; do
   m) MEMORY=${OPTARG} ;;
   n) NAME=${OPTARG} ;;
   l) LIMIT_QUEUE=${OPTARG} ;;
+  b) KEEP_TMP="--keep-tmp" ;;
   s) SINGULARITY="--singularity" ;;
   p) PRIVATE_DATA="-p" ;;
   h)
@@ -132,6 +134,8 @@ mkdir -p "${OUT_DIR_FINAL}" "${TMPDIR}"
 
 export EXTENDED_CONFIG_YAML_TMP=${RUN_DIR}/"${NAME}"_temp.yml
 export EXTENDED_CONFIG_YAML=${RUN_DIR}/"${NAME}".yml
+export FUNCTIONAL_ANNOTATION=${OUT_DIR}/results/functional-annotation/
+
 
 # Get study id in case of ENA fetch tool
 if [[ $ENA_RUN_ID != "" ]];
@@ -183,52 +187,24 @@ cp config.yml ${RUN_DIR}/
 
 # ----------------------------- running pipeline ----------------------------- #
 
-# IMPORTANT! 
-# To work with slurm, add "--batchSystem slurm", "--disableChaining" and "--disableCaching" in the TOIL_PARMS object
-TOIL_PARAMS+=(
-  --singularity
-  --preserve-entire-environment
-  --batchSystem slurm
-  --disableChaining
-  --disableCaching
-  --logFile "${LOG_DIR}/${NAME}.log"
-  --jobStore "${JOB_TOIL_FOLDER}/${NAME}"
-  --outdir "${OUT_DIR_FINAL}"
-  --maxCores 20
-  --defaultMemory "${MEMORY}"
-  --defaultCores "${NUM_CORES}"
-  --retryCount 2
-  --logDebug
-  "$CWL"
-  "$EXTENDED_CONFIG_YAML"
-)
-
-# Toil parameters documentation  - just for your information
-# --disableChaining                Disables  chaining  of jobs (chaining uses one job's resource allocation for its successor job if possible).
-# --preserve-entire-environment    Need to propagate the env vars for Singularity, etc., into the HPC jobs
-# --disableProgress                Disables the progress bar shown when standard error is a terminal.
-# --retryCount                     Number of times to retry a failing job before giving up and labeling job failed. default=1
-# --disableCaching                 Disables caching in the file store. This flag must be set to use a batch  system that does not support caching such as Grid Engine, Parasol, LSF, or Slurm.
-
-# COMMENT IN TO RUN THE TOIL VERSION and MUTE the cwltool case in line 222.
-# echo "toil-cwl-runner" "${TOIL_PARAMS[@]}"
-# toil-cwl-runner "${TOIL_PARAMS[@]}"
-
-# --------------------------------------------
-
 # Run the metaGOflow workflow using cwltool
 cwltool --parallel ${SINGULARITY} --outdir ${OUT_DIR_FINAL} ${CWL} ${EXTENDED_CONFIG_YAML}
 
-# --------------------------------------------
 
-# Edit output structure 
-rm -rf ${TMPDIR}
-export FUNCTIONAL_ANNOTATION=${OUT_DIR}/results/functional-annotation/
+# -----------------------  edit output structure   --------------------------- #
+
+if [[ $KEEP_TMP != "" ]];
+then 
+  echo "Keep temporary output directory."
+  mv ${TMPDIR} ${CWD}
+else
+  rm -rf ${TMPDIR}
+fi
+
 
 if [ -z "$FUNCTIONAL_ANNOTATION" ]; then
 
-  cd ${OUT_DIR}/results/functional-annotation/
-
+  cd ${FUNCTIONAL_ANNOTATION}
   count=`ls -1 *.chunks 2>/dev/null | wc -l`
   if [ $count != 0 ]
   then 
@@ -252,21 +228,35 @@ fi
 cd ${CWD}
 
 
-# --------------------------------------------
+# -----------------------  build RO-crate   --------------------------- #
 
-# Build RO-crate
 if [ -z "$ENA_RUN_ID" ]; then
   ENA_RUN_ID="None"
 else
   rm -r ${OUT_DIR}/raw_data_from_ENA
-  # mv ${OUT_DIR}/raw_data_from_ENA .
-  # mv raw_data_from_ENA ${ENA_RUN_ID}
 fi
 
+# Init the RO-Crate
 rocrate init -c ${RUN_DIR}
 
-python utils/edit-ro-crate.py ${OUT_DIR} ${EXTENDED_CONFIG_YAML} ${ENA_RUN_ID} ${METAGOFLOW_VERSION}
+# Edit the RO-Crate
+if [[ $KEEP_TMP != "" ]];
+then 
+  export KEEP_TMP="True"
+else
+  export KEEP_TMP="False"
+fi
 
-# --------------------------------------------
+python utils/edit-ro-crate.py ${OUT_DIR} ${EXTENDED_CONFIG_YAML} ${ENA_RUN_ID} ${METAGOFLOW_VERSION} ${KEEP_TMP}
 
-rm -r ${OUT_DIR}
+
+# Bring back temporary folder if kept.
+if [[ $KEEP_TMP != "True" ]];
+then 
+  echo "Keep temporary output directory."
+  mv ${CWD}/tmp ${TMPDIR}
+fi
+
+echo "metaGOflow has been completed."
+
+
