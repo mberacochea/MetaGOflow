@@ -251,7 +251,7 @@ python utils/edit-ro-crate.py ${OUT_DIR} ${EXTENDED_CONFIG_YAML} ${ENA_RUN_ID} $
 
 
 # Bring back temporary folder if kept.
-if [[ $KEEP_TMP != "True" ]];
+if [[ $KEEP_TMP == "True" ]];
 then 
   echo "Keep temporary output directory."
   mv ${CWD}/tmp ${TMPDIR}
