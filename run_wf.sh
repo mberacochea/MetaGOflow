@@ -141,6 +141,8 @@ export FUNCTIONAL_ANNOTATION=${OUT_DIR}/results/functional-annotation/
 if [[ $ENA_RUN_ID != "" ]];
 then 
 
+  echo "metaGOflow is about to fetch data from ENA" 
+
   # Run cwl for the ENA fetch tool
   cp tools/fetch-tool/get_raw_data_run.cwl .
 
@@ -187,8 +189,9 @@ cp config.yml ${RUN_DIR}/
 
 # ----------------------------- running pipeline ----------------------------- #
 
-# Run the metaGOflow workflow using cwltool
-cwltool --parallel ${SINGULARITY} --outdir ${OUT_DIR_FINAL} ${CWL} ${EXTENDED_CONFIG_YAML}
+# Run the metaGOflow workflow using cwl-runner (could use instead cwltool)  
+echo "metaGOflow is ready to go!"
+cwl-runner --parallel ${SINGULARITY} --outdir ${OUT_DIR_FINAL} ${CWL} ${EXTENDED_CONFIG_YAML}
 
 
 # -----------------------  edit output structure   --------------------------- #
