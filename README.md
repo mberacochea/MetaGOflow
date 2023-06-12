@@ -75,9 +75,8 @@ db_kofam/  diamond/  eggnog/  GO-slim/  interproscan-5.57-90.0/  kegg_pathways/ 
 
   ```
   
-  - ```bash
+- ```bash
   conda install -c conda-forge nodejs
-  
   ```
 
 #### Run every time
