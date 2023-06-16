@@ -22,7 +22,7 @@ To run metaGOflow you need to make sure you have the following set on your compu
 - [ro-crate-py](https://github.com/ResearchObject/ro-crate-py) [v 0.7.0]
 - [pyyaml](https://pypi.org/project/PyYAML/) [v 6.0]
 - [Node.js](https://nodejs.org/) [v 10.24.0+]
-- Available storage ~235GB for databases
+- Available storage ~160GB for databases
 
 ### Storage while running
 
@@ -58,21 +58,6 @@ db_kofam/  diamond/  eggnog/  GO-slim/  interproscan-5.57-90.0/  kegg_pathways/ 
 
 ## How to run
 
-### Ensure that `Node.js` is installed on your system before running metaGOflow
-
-If you have root access on your system, you can run the commands below to install it:
-
-##### DEBIAN/UBUNTU
-```bash
-sudo apt-get update -y
-sudo apt-get install -y nodejs
-```
-
-##### RH/CentOS
-```bash
-sudo yum install rh-nodejs<stream version> (e.g. rh-nodejs10)
-```
-
 ### Set up the environment
 
 #### Run once - Setup environment
@@ -88,6 +73,10 @@ sudo yum install rh-nodejs<stream version> (e.g. rh-nodejs10)
 - ```bash
   pip install cwlref-runner cwltool[all] rdflib-jsonld rocrate pyyaml
 
+  ```
+  
+- ```bash
+  conda install -c conda-forge nodejs
   ```
 
 #### Run every time
