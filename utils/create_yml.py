@@ -34,7 +34,6 @@ def db_dir(db_path, tools_path, yaml_path):
         yaml = YAML(typ="safe")
         doc = yaml.load(f)
         for db_field in db_fields:
-            print(">", db_field)
             if isinstance(doc[db_field], (list, tuple)):
                 for el in doc[db_field]:
                     el["path"] = os.path.join(db_path, el["path"])
