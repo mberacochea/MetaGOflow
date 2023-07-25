@@ -23,4 +23,4 @@ Contents
 
    installation
    usage
-   api
+   faq
