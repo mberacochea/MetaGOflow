@@ -47,7 +47,7 @@ are provded through the  ``config.yml``  file [`url <https://github.com/emo-bon/
 
 
 ``metaGOflow`` does not need to perform all its steps at once; one may run the first 
-$$ n $$ steps
+.. math:: n  steps
 On top of that, it can use the output of previous steps to run the next ones without the need of re-running the first ones. 
 
 The steps to be performed are selected by setting ``True`` or ``False`` the following parameters in the ``config.yml`` file.
@@ -55,19 +55,19 @@ The steps to be performed are selected by setting ``True`` or ``False`` the foll
 
 
 
-+------------------+-------------------------------------------------------------------------------------+
-|**Parameter**       |**Description**                                                                    |
-+------------------+-------------------------------------------------------------------------------------+
-|``qc_and_merge_step``       | Performs a quality control of the raw reads, filters and merges them |
-+------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|``taxonomic_inventory``     |  Using the filtered and merged sequences, it returns a taxonomic inventory                                        |
-+------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|``cgc_step``    |  Exports coding sequences                                                                                                     |
-+------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|``reads_functional_annotation``     |  Performs functionall annotation on the coding genes found using a list of resources (InterPro, KEGG, )   |
-+------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|``assemble``                    |  Assembles the filtered and merged sequences to contigs                                                       |
-+------------------+-----------------------------------------------------------------------------------------------------------------------------+
++---------------------------------+----------------------------------------------------------------------------------------------------------+
+|**Parameter**                    |**Description**                                                                                           |
++---------------------------------+----------------------------------------------------------------------------------------------------------+
+|``qc_and_merge_step``            | Performs a quality control of the raw reads, filters and merges them                                     |
++---------------------------------+----------------------------------------------------------------------------------------------------------+
+|``taxonomic_inventory``          |  Using the filtered and merged sequences, it returns a taxonomic inventory                               |
++---------------------------------+----------------------------------------------------------------------------------------------------------+
+|``cgc_step``                     |  Exports coding sequences                                                                                |
++---------------------------------+----------------------------------------------------------------------------------------------------------+
+|``reads_functional_annotation``  |  Performs functionall annotation on the coding genes found using a list of resources: InterPro, KEGG     |
++---------------------------------+----------------------------------------------------------------------------------------------------------+
+|``assemble``                     |  Assembles the filtered and merged sequences to contigs                                                  |
++---------------------------------+----------------------------------------------------------------------------------------------------------+
 
 
 
