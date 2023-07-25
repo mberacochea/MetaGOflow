@@ -77,7 +77,7 @@ In the root of the output folder there are 4 data products:
 +---------------------------------+-------------------------------------------------------------+
 |**Data product**                 |**Description**                                              |
 +---------------------------------+-------------------------------------------------------------+
-| **``results``**                 | Folder with the metaGOflow findings                         |
+| ``results``                     | Folder with the metaGOflow findings                         |
 +---------------------------------+-------------------------------------------------------------+
 | ``ro-crate-metadata.json``      | JSON-LD file describing the structure of the RO-Crate       |
 +---------------------------------+-------------------------------------------------------------+
@@ -143,7 +143,7 @@ The taxonomic inventory related data products can be found in a subfolder inside
 +---------------------------------------+-------------------------------------------------------------------+
 | ``*.merged_LSU.fasta.mseq.txt``       | Text-based taxon counts for LSU rRNA sequences                    |
 +---------------------------------------+-------------------------------------------------------------------+
-| krona.html                            | Ιnteractive krona charts for LSU rRNA taxonomic inventory         |
+| krona.html                            | Interactive krona charts for LSU rRNA taxonomic inventory         |
 +---------------------------------------+-------------------------------------------------------------------+
 | SSU	                                  |                                                                   |
 +---------------------------------------+-------------------------------------------------------------------+
@@ -170,7 +170,7 @@ including:
 +-------------------------------------+---------------------------------------------------------------------+
 | ``*.merged_CDS.I5.tsv.gz``          | 	Merged contigs CDS I5 summary                                     | 
 +-------------------------------------+---------------------------------------------------------------------+
-| ``*.merged.hmm.tsv.chunks``         | 	                                                                  |
+| ``*.merged.hmm.tsv.chunks``         | 	            d                                                     |
 +-------------------------------------+---------------------------------------------------------------------+
 | ``*.merged.hmm.tsv.gz``             | 	Merged contigs HMM summary                                        | 
 +-------------------------------------+---------------------------------------------------------------------+
@@ -207,21 +207,36 @@ including information about specific reads assigned in various categories.
 |**Data product**                       |**Description**                                                      |
 +---------------------------------------+---------------------------------------------------------------------+
 | 5_8S.fa.gz	                         | 5.8S ribosomal RNA sequences                                        | 
++---------------------------------------+---------------------------------------------------------------------+
 | alpha_tmRNA.RF01849.fasta.gz	       | Predicted Alphaproteobacteria transfer-messenger RNA (RF01849)      | 
++---------------------------------------+---------------------------------------------------------------------+
 | Bacteria_large_SRP.RF01854.fasta.gz   | Predicted Bacterial large signal recognition particle RNA (RF01854) | 
++---------------------------------------+---------------------------------------------------------------------+
 | Bacteria_small_SRP.RF00169.fasta.gz	 | Predicted Bacterial small signal recognition particle RNA (RF00169) | 
++---------------------------------------+---------------------------------------------------------------------+
 | cyano_tmRNA.RF01851.fasta.gz          | Predicted Cyanobacteria transfer-messenger RNA (RF01851)            | 
++---------------------------------------+---------------------------------------------------------------------+
 | LSU_rRNA_archaea.RF02540.fa.gz        | Predicted Archaeal large subunit ribosomal RNA (RF02540)            | 
++---------------------------------------+---------------------------------------------------------------------+
 | LSU_rRNA_bacteria.RF02541.fa.gz       | Predicted Bacterial large subunit ribosomal RNA (RF02541)           | 
++---------------------------------------+---------------------------------------------------------------------+
 | LSU_rRNA_eukarya.RF02543.fa.gz        | Predicted Eukaryotic large subunit ribosomal RNA (RF02543)          | 
++---------------------------------------+---------------------------------------------------------------------+
 | RNaseP_bact_a.RF00010.fasta.gz	       | Predicted Bacterial RNase P class A (RF00010)                       | 
++---------------------------------------+---------------------------------------------------------------------+
 | SSU_rRNA_archaea.RF01959.fa.gz        | Predicted Archaeal small subunit ribosomal RNA (RF01959)            | 
-| SSU_rRNA_bacteria.RF00177.fa.gz       | 	Predicted Bacterial small subunit ribosomal RNA (RF00177)        | 
++---------------------------------------+---------------------------------------------------------------------+
+| SSU_rRNA_bacteria.RF00177.fa.gz       | Predicted Bacterial small subunit ribosomal RNA (RF00177)           | 
++---------------------------------------+---------------------------------------------------------------------+
 | SSU_rRNA_eukarya.RF01960.fa.gz        | Predicted Eukaryotic small subunit ribosomal RNA (RF01960)          | 
++---------------------------------------+---------------------------------------------------------------------+
 | tmRNA.RF00023.fasta.gz	             | Predicted transfer-messenger RNA (RF00023)                          | 
++---------------------------------------+---------------------------------------------------------------------+
 | tRNA.RF00005.fasta.gz	                | Predicted transfer RNA (RF00005)                                    | 
++---------------------------------------+---------------------------------------------------------------------+
 | tRNA-Sec.RF01852.fasta.gz	          | Predicted Selenocysteine transfer RNA (RF01852)                     | 
-| taxonomy-summary	                   | | 
++---------------------------------------+---------------------------------------------------------------------+
+| taxonomy-summary	                   | sd                                                                  | 
 +---------------------------------------+---------------------------------------------------------------------+
 
 
