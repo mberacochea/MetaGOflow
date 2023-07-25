@@ -2,7 +2,7 @@ Welcome to metaGOflow's documentation!
 ===================================
 
 **metaGOflow** is a 
-`Common Workflow Language (CWL) <commonwl.org>`_
+`Common Workflow Language (CWL) <https://commonwl.org>`_
 based pipelines
 for the analysis of shotgun metagenomic data at the sample level.
 It is built to address the needs of the 
@@ -21,5 +21,6 @@ Contents
 
 .. toctree::
 
+   installation
    usage
    api
