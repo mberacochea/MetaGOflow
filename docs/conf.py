@@ -2,9 +2,9 @@
 
 # -- Project information
 
-project = 'Lumache'
+project = 'metaGOflow'
 copyright = '2021, Graziella'
-author = 'Graziella'
+author = 'EMO BON bioinformatics working group'
 
 release = '0.1'
 version = '0.1.0'
