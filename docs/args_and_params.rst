@@ -42,8 +42,7 @@ The steps to be performed in a ``metaGOflow`` run and the parameters of the soft
 are provded through the  ``config.yml``  file [`url <https://github.com/emo-bon/MetaGOflow/blob/eosc-life-gos/config.yml>`_].
 
 
-``metaGOflow`` does not need to perform all its steps at once; one may run the first 
-.. math:: n  steps
+``metaGOflow`` does not need to perform all its steps at once; one may run the first *n* steps. 
 On top of that, it can use the output of previous steps to run the next ones without the need of re-running the first ones. 
 
 
@@ -167,11 +166,10 @@ certain files that were produced (in the first run) are required, based on the s
 +-----------------------------------+------------------------------------------------------------------------------------------------------------+
 
 
-.. caution:: Up to now, due to CWL limitations, the ``config.yml`` file **requires** the parameters that point to a 
+.. caution:: Up to now, due to `CWL limitations <https://github.com/common-workflow-language/cwl-v1.3/issues/3>`_, the ``config.yml`` file **requires** the parameters that point to a 
    file that would be used for a partial run to be non-empty. Thus, we provide these ``pseudo*`` files. 
    Remember to always include those in your config file. 
    If these parameters are empty, ``metaGOflow`` will fail.
-
 
 
 Example of the ``config.yml`` file
@@ -188,13 +186,10 @@ An example of the ``config.yml`` file to perform all the steps.
    reads_functional_annotation: true
    assemble: true
 
-   # Global
+   # Parameters
    threads: 40
-
-   # As a rule of thumb keep that as floor(threads/8) where threads the previous parameter
    interproscan_threads: 5
 
-   # fastp parameters
    detect_adapter_for_pe: false
    overrepresentation_analysis: false
    min_length_required: 108
@@ -207,73 +202,42 @@ An example of the ``config.yml`` file to perform all the steps.
    cut_right: false
    correction: false
 
-   # Assembly
+
    memory: 0.9
    min-contig-len: 500
 
-   # Combined Gene Caller // the size is in MB
    cgc_chunk_size: 200
-
-   # # Taxonomic inference using Diamond and the contigs
-   # diamond_maxTargetSeqs: 1
-
-   # Functional annotation
    protein_chunk_size_IPS: 1000000 # 20000000
    protein_chunk_size_eggnog: 4000000
    protein_chunk_size_hmm: 4000000
 
-   # -----------------
-   # Run wf partially
-   # -----------------
-
-   # The following variables should be considered only in case 
-   # the user has already ran some of the first steps and wants to 
-   # run the following parts of the workflow. 
-   # For example, you have ran the quality contron and the rna prediction steps
-   # and you would like to go just for the assembly step. 
-
-   # Currently, because of CWL-limitations (see https://github.com/common-workflow-language/cwl-v1.3/issues/3)
-   # you need to provide values to some of the following variables even if it is not to be used.
-   # To that end, we provide pseudo-files under the /test_input folder you may use 
-
-   # ATTENTION! 
-   # Give full path of your files, NOT relative !
-
-   # Mandatory for running any step; merged pre-processed reads (*.merged.fasta)
+   # Files for running partially
    processed_reads: {
    class: File, 
    format: "edam:format_1929",
    path:  results/ERR599171.merged.fasta
    }
 
-   # Mandatory for running the taxonomy inventory step
    input_for_motus: {
    class: File, 
    path:  workflows/pseudo_files/pseudo.merged.unfiltered.fasta
    }
 
 
-   # Mandatory for running the functional annotation steps
-   # If produced previously from metaGOflow, will have a suffix like: .cmsearch.all.tblout.deoverlapped 
    maskfile: {
    class: File, 
    path:  results/ERR599171.merged.cmsearch.all.tblout.deoverlapped
    }
 
-   # Mandatory for the functional annotation step 
-   # Give the number of the sequences included in the predicted_faa_from_previous_run file 
-   # You may get this by running:
-   # grep -c ">" <*..merged_CDS.faa>
    count_faa_from_previous_run: 18934897
 
-   # Mandatory for the functional annotation step
+
    predicted_faa_from_previous_run: {
    class: File, 
    format: "edam:format_1929",
    path:  results/ERR599171.merged_CDS.faa
    }
 
-   # Mandatory for running the assembly step 
    processed_read_files: 
    - class: File
       path:  workflows/pseudo_files/pseudo_1_clean.fastq.trimmed.fasta

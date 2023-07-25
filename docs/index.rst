@@ -9,6 +9,9 @@ It is built to address the needs of the
 `EMO B0N community <https://www.embrc.eu/services/emo-bon>`_
 but it can be used for any type of shotgun data. 
 
+It produces a `Research Object Crate (RO-Crate) <https://www.researchobject.org/ro-crate/>`_
+including the taxonomic inventory and the functional profile of the sample. 
+
 Check out the :doc:`usage` section for further information, including
 how to :ref:`installation` the project.
 

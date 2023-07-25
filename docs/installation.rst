@@ -51,7 +51,7 @@ Get dependencies to run metaGOflow:
 
 
 This will create a ``conda`` environment called ``metagoflow``.
-By running `:bash: conda env list` you will see your new environment.
+By running :rst:`.. conda env list`  you will see your new environment.
 In case `conda` is not already installed on your computing system, you may follow 
 the instructions to get it `here <https://conda.io/projects/conda/en/latest/user-guide/install/index.html>`_.
 

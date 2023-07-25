@@ -54,7 +54,6 @@ while getopts :y:f:r:e:u:k:c:d:m:n:l:bsph option; do
   l) LIMIT_QUEUE=${OPTARG} ;;
   b) KEEP_TMP="--keep-tmp" ;;
   s) SINGULARITY="--singularity" ;;
-  p) PRIVATE_DATA="-p" ;;
   h)
     _usage
     exit 0
