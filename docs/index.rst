@@ -22,5 +22,6 @@ Contents
 .. toctree::
 
    installation
+   args_and_params
    usage
    faq
