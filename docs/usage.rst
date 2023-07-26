@@ -96,27 +96,27 @@ In the same place, the output of the assembly step (``final.contigs.fa``) will b
 +----------------------------------------------+------------------------------------------------------+
 |**Data product**                              |**Description**                                       |
 +----------------------------------------------+------------------------------------------------------+
-| ``_1.fastq.trimmed.fasta``                  | Filtered .fastq file of the forward (R1) reads       |
+| ``*_1.fastq.trimmed.fasta``                  | Filtered .fastq file of the forward (R1) reads       |
 +----------------------------------------------+------------------------------------------------------+
-| ``_2.fastq.trimmed.fasta``                  | Filtered .fastq file of the reverse (R2) reads       |
+| ``*_2.fastq.trimmed.fasta``                  | Filtered .fastq file of the reverse (R2) reads       |
 +----------------------------------------------+------------------------------------------------------+
-| ``_1.fastq.trimmed.qc_summary``	           | Summary with statistics of the forward (R1) reads    |
+| ``*_1.fastq.trimmed.qc_summary``	           | Summary with statistics of the forward (R1) reads    |
 +----------------------------------------------+------------------------------------------------------+
-| ``_2.fastq.trimmed.qc_summary``	           | Summary with statistics of the reverse (R2) reads    |
+| ``*_2.fastq.trimmed.qc_summary``	           | Summary with statistics of the reverse (R2) reads    |
 +----------------------------------------------+------------------------------------------------------+
-|``merged_CDS.faa``	                          | Aminoacid coding sequences                           |
+|``*merged_CDS.faa``	                          | Aminoacid coding sequences                           |
 +----------------------------------------------+------------------------------------------------------+
-|``.merged_CDS.ffn``	                       | Nucleotide coding sequences                          |
+|``*.merged_CDS.ffn``	                       | Nucleotide coding sequences                          |
 +----------------------------------------------+------------------------------------------------------+
-|``.merged.cmsearch.all.tblout.deoverlapped`` | Sequence hits against covariance model databases     |
+|``*.merged.cmsearch.all.tblout.deoverlapped`` | Sequence hits against covariance model databases     |
 +----------------------------------------------+------------------------------------------------------+
-|``.merged.fasta``                            | Merged filtered sequences                            |
+|``*.merged.fasta``                            | Merged filtered sequences                            |
 +----------------------------------------------+------------------------------------------------------+
-|``.merged.motus.tsv``	                       | Merged sequences MOTUs                               |
+|``*.merged.motus.tsv``	                       | Merged sequences MOTUs                               |
 +----------------------------------------------+------------------------------------------------------+
-|``.merged.qc_summary``                       | Quality control (QC) summary of the merged sequences |
+|``*.merged.qc_summary``                       | Quality control (QC) summary of the merged sequences |
 +----------------------------------------------+------------------------------------------------------+
-|``.merged.unfiltered_fasta``                 | Merged sequences that did not pass the filtering     |
+|``*.merged.unfiltered_fasta``                 | Merged sequences that did not pass the filtering     |
 +----------------------------------------------+------------------------------------------------------+
 |``fastp.html``                                | FASTP analysis of raw sequence data                  |
 +----------------------------------------------+------------------------------------------------------+
@@ -133,29 +133,29 @@ The taxonomic inventory related data products can be found in a subfolder inside
 +---------------------------------------+-------------------------------------------------------------------+
 | LSU	                                  |                                                                   |
 +---------------------------------------+-------------------------------------------------------------------+
-| ``.merged_LSU.fasta.mseq.gz``	       | LSU rRNA sequences used for taxonomic indentification             |
+| ``*.merged_LSU.fasta.mseq.gz``	       | LSU rRNA sequences used for taxonomic indentification             |
 +---------------------------------------+-------------------------------------------------------------------+
-| ``.merged_LSU.fasta.mseq_hdf5.biom`` | OTUs and taxonomic assignments for LSU rRNA (hdf5 formatted BIOM) |
+| ``*.merged_LSU.fasta.mseq_hdf5.biom`` | OTUs and taxonomic assignments for LSU rRNA (hdf5 formatted BIOM) |
 +---------------------------------------+-------------------------------------------------------------------+
-| ``.merged_LSU.fasta.mseq_json.biom`` | OTUs and taxonomic assignments for LSU rRNA (json formatted BIOM) |
+| ``*.merged_LSU.fasta.mseq_json.biom`` | OTUs and taxonomic assignments for LSU rRNA (json formatted BIOM) |
 +---------------------------------------+-------------------------------------------------------------------+
-| ``.merged_LSU.fasta.mseq.tsv``	    | Tab-separated formatted taxon counts for LSU rRNA sequences       |
+| ``*.merged_LSU.fasta.mseq.tsv``	    | Tab-separated formatted taxon counts for LSU rRNA sequences       |
 +---------------------------------------+-------------------------------------------------------------------+
-| ``.merged_LSU.fasta.mseq.txt``       | Text-based taxon counts for LSU rRNA sequences                    |
+| ``*.merged_LSU.fasta.mseq.txt``       | Text-based taxon counts for LSU rRNA sequences                    |
 +---------------------------------------+-------------------------------------------------------------------+
 | krona.html                            | Interactive krona charts for LSU rRNA taxonomic inventory         |
 +---------------------------------------+-------------------------------------------------------------------+
 | SSU	                                  |                                                                   |
 +---------------------------------------+-------------------------------------------------------------------+
-| ``.merged_SSU.fasta.mseq.gz``	       | SSU rRNA sequences used for taxonomic indentification             |
+| ``*.merged_SSU.fasta.mseq.gz``	       | SSU rRNA sequences used for taxonomic indentification             |
 +---------------------------------------+-------------------------------------------------------------------+
-| ``.merged_SSU.fasta.mseq_hdf5.biom`` | OTUs and taxonomic assignments for SSU rRNA (hdf5 formatted BIOM) |
+| ``*.merged_SSU.fasta.mseq_hdf5.biom`` | OTUs and taxonomic assignments for SSU rRNA (hdf5 formatted BIOM) |
 +---------------------------------------+-------------------------------------------------------------------+
-| ``.merged_SSU.fasta.mseq_json.biom`` | OTUs and taxonomic assignments for SSU rRNA (json formatted BIOM) |
+| ``*.merged_SSU.fasta.mseq_json.biom`` | OTUs and taxonomic assignments for SSU rRNA (json formatted BIOM) |
 +---------------------------------------+-------------------------------------------------------------------+
-| ``.merged_SSU.fasta.mseq.tsv``       | Tab-separated formatted taxon counts for SSU rRNA sequences       |
+| ``*.merged_SSU.fasta.mseq.tsv``       | Tab-separated formatted taxon counts for SSU rRNA sequences       |
 +---------------------------------------+-------------------------------------------------------------------+
-| ``.merged_SSU.fasta.mseq.txt``       | Text-based taxon counts for SSU rRNA sequences                    |
+| ``*.merged_SSU.fasta.mseq.txt``       | Text-based taxon counts for SSU rRNA sequences                    |
 +---------------------------------------+-------------------------------------------------------------------+
 | ``krona.html``                        | Interactive krona charts for SSU rRNA taxonomic inventory         |
 +---------------------------------------+-------------------------------------------------------------------+
@@ -166,25 +166,25 @@ including:
 +-------------------------------------+---------------------------------------------------------------------+
 |**Data product**                     |**Description**                                                      |
 +-------------------------------------+---------------------------------------------------------------------+
-| ``.merged_CDS.I5.tsv``              | .chunks	                                                            | 
+| ``*.merged_CDS.I5.tsv``             | .chunks	                                                            | 
 +-------------------------------------+---------------------------------------------------------------------+
-| ``.merged_CDS.I5.tsv.gz``           | 	Merged contigs CDS I5 summary                                     | 
+| ``*.merged_CDS.I5.tsv.gz``          | 	Merged contigs CDS I5 summary                                     | 
 +-------------------------------------+---------------------------------------------------------------------+
-| ``.merged.hmm.tsv.chunks``          | 	            d                                                     |
+| ``*.merged.hmm.tsv.chunks``         | 	            d                                                     |
 +-------------------------------------+---------------------------------------------------------------------+
-| ``.merged.hmm.tsv.gz``              | 	Merged contigs HMM summary                                        | 
+| ``*.merged.hmm.tsv.gz``             | 	Merged contigs HMM summary                                        | 
 +-------------------------------------+---------------------------------------------------------------------+
-| ``.merged.summary.go``              | 	Gene Ontology annotation summary                                  | 
+| ``*.merged.summary.go``             | 	Gene Ontology annotation summary                                  | 
 +-------------------------------------+---------------------------------------------------------------------+
-| ``.merged.summary.go_slim``         | 	GO slim annotation summary                                        | 
+| ``*.merged.summary.go_slim``        | 	GO slim annotation summary                                        | 
 +-------------------------------------+---------------------------------------------------------------------+
-| ``.merged.summary.ips``	           | InterProScan annotation summary                                     | 
+| ``*.merged.summary.ips``	           | InterProScan annotation summary                                     | 
 +-------------------------------------+---------------------------------------------------------------------+
-| ``.merged.summary.ko``              | KO annotation summary                                               | 
+| ``*.merged.summary.ko``             | KO annotation summary                                               | 
 +-------------------------------------+---------------------------------------------------------------------+
-| ``.merged.summary.pfam``            |  Pfam annotation summary                                            | 
+| ``*.merged.summary.pfam``           |  Pfam annotation summary                                            | 
 +-------------------------------------+---------------------------------------------------------------------+
-| ``.merged.emapper.summary.eggnog``  | eggNOG annotation summary                                           | 
+| ``*.merged.emapper.summary.eggnog`` | eggNOG annotation summary                                           | 
 +-------------------------------------+---------------------------------------------------------------------+
 | ``stats``                           |                                                                     |  
 +-------------------------------------+---------------------------------------------------------------------+
@@ -240,7 +240,14 @@ including information about specific reads assigned in various categories.
 +---------------------------------------+---------------------------------------------------------------------+
 
 
+.. list-table:: seqcategorisation
+   :widths: 25 75
+   :header-rows: 1
 
-
-
+   * - Data product
+     - Description
+   * - 5_8S.fa.gz
+     - 5.8S ribosomal RNA sequences
+   * - alpha_tmRNA.RF01849.fasta.gz
+     - Predicted Alphaproteobacteria transfer-messenger RNA (RF01849) 
 
