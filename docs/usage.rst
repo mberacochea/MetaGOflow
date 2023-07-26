@@ -19,7 +19,7 @@ Fill in the ``config.yml`` file and set the parameters as described in the :doc:
 Run ``metaGOflow``
 -------------------
 
-Assuming ``metaGOflow`` is about to perform in a HPC environment where `Singularity <>`_ is set
+Assuming ``metaGOflow`` is about to perform in a HPC environment where `Singularity <https://apptainer.org>`_ is set
 and that we have built a ``conda`` environment as shown in :doc:`/installation` 
 let's break down how we would execute a run given the ``config.yml`` is set. 
 
