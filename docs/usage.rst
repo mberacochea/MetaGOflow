@@ -163,91 +163,87 @@ The taxonomic inventory related data products can be found in a subfolder inside
 Likewise, the data products of the functional annotation step can be found in the ``functional-annotation`` subfolder
 including:
 
-+-------------------------------------+---------------------------------------------------------------------+
-|**Data product**                     |**Description**                                                      |
-+-------------------------------------+---------------------------------------------------------------------+
-| ``*.merged_CDS.I5.tsv``             | .chunks	                                                            | 
-+-------------------------------------+---------------------------------------------------------------------+
-| ``*.merged_CDS.I5.tsv.gz``          | 	Merged contigs CDS I5 summary                                     | 
-+-------------------------------------+---------------------------------------------------------------------+
-| ``*.merged.hmm.tsv.chunks``         | 	            d                                                     |
-+-------------------------------------+---------------------------------------------------------------------+
-| ``*.merged.hmm.tsv.gz``             | 	Merged contigs HMM summary                                        | 
-+-------------------------------------+---------------------------------------------------------------------+
-| ``*.merged.summary.go``             | 	Gene Ontology annotation summary                                  | 
-+-------------------------------------+---------------------------------------------------------------------+
-| ``*.merged.summary.go_slim``        | 	GO slim annotation summary                                        | 
-+-------------------------------------+---------------------------------------------------------------------+
-| ``*.merged.summary.ips``	           | InterProScan annotation summary                                     | 
-+-------------------------------------+---------------------------------------------------------------------+
-| ``*.merged.summary.ko``             | KO annotation summary                                               | 
-+-------------------------------------+---------------------------------------------------------------------+
-| ``*.merged.summary.pfam``           |  Pfam annotation summary                                            | 
-+-------------------------------------+---------------------------------------------------------------------+
-| ``*.merged.emapper.summary.eggnog`` | eggNOG annotation summary                                           | 
-+-------------------------------------+---------------------------------------------------------------------+
-| ``stats``                           |                                                                     |  
-+-------------------------------------+---------------------------------------------------------------------+
-| ``go.stats``                        | Gene Ontology (GO) annotation summary statistics                    |   
-+-------------------------------------+---------------------------------------------------------------------+
-| ``interproscan.stats``              | InterProScan annotation summary statistics                          | 
-+-------------------------------------+---------------------------------------------------------------------+
-| ``ko.stats``	                       | Kegg Orthology (KO) annotation summary statistics                   |  
-+-------------------------------------+---------------------------------------------------------------------+
-| ``orf.stats``                       | Open Reading Frame (ORF) annotation summary statistics              | 
-+-------------------------------------+---------------------------------------------------------------------+
-| ``pfam.stats``                      | Pfam annotation summary statistics                                  | 
-+-------------------------------------+---------------------------------------------------------------------+
-
-Last, a subfolder called ``sequence-categorisation`` is also part of the ``results`` folder 
-including information about specific reads assigned in various categories.
-
-
-+---------------------------------------+---------------------------------------------------------------------+
-|**Data product**                       |**Description**                                                      |
-+---------------------------------------+---------------------------------------------------------------------+
-| 5_8S.fa.gz	                         | 5.8S ribosomal RNA sequences                                        | 
-+---------------------------------------+---------------------------------------------------------------------+
-| alpha_tmRNA.RF01849.fasta.gz	       | Predicted Alphaproteobacteria transfer-messenger RNA (RF01849)      | 
-+---------------------------------------+---------------------------------------------------------------------+
-| Bacteria_large_SRP.RF01854.fasta.gz   | Predicted Bacterial large signal recognition particle RNA (RF01854) | 
-+---------------------------------------+---------------------------------------------------------------------+
-| Bacteria_small_SRP.RF00169.fasta.gz	 | Predicted Bacterial small signal recognition particle RNA (RF00169) | 
-+---------------------------------------+---------------------------------------------------------------------+
-| cyano_tmRNA.RF01851.fasta.gz          | Predicted Cyanobacteria transfer-messenger RNA (RF01851)            | 
-+---------------------------------------+---------------------------------------------------------------------+
-| LSU_rRNA_archaea.RF02540.fa.gz        | Predicted Archaeal large subunit ribosomal RNA (RF02540)            | 
-+---------------------------------------+---------------------------------------------------------------------+
-| LSU_rRNA_bacteria.RF02541.fa.gz       | Predicted Bacterial large subunit ribosomal RNA (RF02541)           | 
-+---------------------------------------+---------------------------------------------------------------------+
-| LSU_rRNA_eukarya.RF02543.fa.gz        | Predicted Eukaryotic large subunit ribosomal RNA (RF02543)          | 
-+---------------------------------------+---------------------------------------------------------------------+
-| RNaseP_bact_a.RF00010.fasta.gz	       | Predicted Bacterial RNase P class A (RF00010)                       | 
-+---------------------------------------+---------------------------------------------------------------------+
-| SSU_rRNA_archaea.RF01959.fa.gz        | Predicted Archaeal small subunit ribosomal RNA (RF01959)            | 
-+---------------------------------------+---------------------------------------------------------------------+
-| SSU_rRNA_bacteria.RF00177.fa.gz       | Predicted Bacterial small subunit ribosomal RNA (RF00177)           | 
-+---------------------------------------+---------------------------------------------------------------------+
-| SSU_rRNA_eukarya.RF01960.fa.gz        | Predicted Eukaryotic small subunit ribosomal RNA (RF01960)          | 
-+---------------------------------------+---------------------------------------------------------------------+
-| tmRNA.RF00023.fasta.gz	             | Predicted transfer-messenger RNA (RF00023)                          | 
-+---------------------------------------+---------------------------------------------------------------------+
-| tRNA.RF00005.fasta.gz	                | Predicted transfer RNA (RF00005)                                    | 
-+---------------------------------------+---------------------------------------------------------------------+
-| tRNA-Sec.RF01852.fasta.gz	          | Predicted Selenocysteine transfer RNA (RF01852)                     | 
-+---------------------------------------+---------------------------------------------------------------------+
-| taxonomy-summary	                   | sd                                                                  | 
-+---------------------------------------+---------------------------------------------------------------------+
-
-
-.. list-table:: seqcategorisation
+.. list-table::
    :widths: 25 75
    :header-rows: 1
 
    * - Data product
      - Description
-   * - 5_8S.fa.gz
+   * - ``*.merged_CDS.I5.tsv``
+     - .chunks
+   * - ``*.merged_CDS.I5.tsv.gz``
+     - Merged contigs CDS I5 summary 
+   * - ``*.merged.hmm.tsv.chunks``
+     - d
+   * - ``*.merged.hmm.tsv.gz``
+     - Merged contigs HMM summary
+   * - ``*.merged.summary.go``
+     - Gene Ontology annotation summary  
+   * - ``*.merged.summary.go_slim``
+     - GO slim annotation summary
+   * - ``*.merged.summary.ips``
+     - InterProScan annotation summary
+   * - ``*.merged.summary.ko``
+     - KO annotation summary
+   * - ``*.merged.summary.pfam``
+     - Pfam annotation summary
+   * - ``*.merged.emapper.summary.eggnog``
+     - eggNOG annotation summary
+   * - **``stats``**
+     - Folder containing files with statistics on each annotation approach
+   * - ``go.stats``
+     - Gene Ontology (GO) annotation summary statistics 
+   * - ``interproscan.stats``
+     - InterProScan annotation summary statistics
+   * - ``ko.stats``
+     - Kegg Orthology (KO) annotation summary statistics 
+   * - ``orf.stats``
+     - Open Reading Frame (ORF) annotation summary statistics
+   * - ``pfam.stats``
+     - Pfam annotation summary statistics
+
+
+Last, a subfolder called ``sequence-categorisation`` is also part of the ``results`` folder 
+including information about specific reads assigned in various categories.
+
+
+.. list-table::
+   :widths: 25 75
+   :header-rows: 1
+
+   * - Data product
+     - Description
+   * - ``5_8S.fa.gz``
      - 5.8S ribosomal RNA sequences
-   * - alpha_tmRNA.RF01849.fasta.gz
-     - Predicted Alphaproteobacteria transfer-messenger RNA (RF01849) 
+   * - ``alpha_tmRNA.RF01849.fasta.gz``
+     - Predicted Alphaproteobacteria transfer-messenger RNA (`RF01849 <https://rfam.org/family/RF01849>`_)
+   * - ``Bacteria_large_SRP.RF01854.fasta.gz``
+     - Predicted Bacterial large signal recognition particle RNA (`RF01854 <https://rfam.org/family/RF01854>`_)
+   * - ``Bacteria_small_SRP.RF00169.fasta.gz``
+     - Predicted Bacterial small signal recognition particle RNA (`RF00169 <https://rfam.org/family/RF00169>`_)
+   * - ``cyano_tmRNA.RF01851.fasta.gz``
+     - Predicted Cyanobacteria transfer-messenger RNA (`RF01851 <https://rfam.org/family/RF01851>`_)
+   * - ``LSU_rRNA_archaea.RF02540.fa.gz``
+     - Predicted Archaeal large subunit ribosomal RNA (`RF02540 <https://rfam.org/family/RF02540>`_)
+   * - ``LSU_rRNA_bacteria.RF02541.fa.gz``
+     - Predicted Bacterial large subunit ribosomal RNA (`RF02541 <https://rfam.org/family/RF02541>`_)
+   * - ``LSU_rRNA_eukarya.RF02543.fa.gz``
+     - Predicted Eukaryotic large subunit ribosomal RNA (`RF02543 <https://rfam.org/family/RF02543>`_)
+   * - ``RNaseP_bact_a.RF00010.fasta.gz``
+     - Predicted Bacterial RNase P class A (`RF00010 <https://rfam.org/family/RF00010>`_)
+   * - ``SSU_rRNA_archaea.RF01959.fa.gz``
+     - Predicted Archaeal small subunit ribosomal RNA (`RF01959 <https://rfam.org/family/RF01959>`_)
+   * - ``SSU_rRNA_bacteria.RF00177.fa.gz``
+     - Predicted Bacterial small subunit ribosomal RNA (`RF00177 <https://rfam.org/family/RF00177>`_) 
+   * - ``SSU_rRNA_eukarya.RF01960.fa.gz``
+     - Predicted Eukaryotic small subunit ribosomal RNA (`RF01960 <https://rfam.org/family/RF01960>`_)
+   * - ``tmRNA.RF00023.fasta.gz``
+     - Predicted transfer-messenger RNA (`RF00023 <https://rfam.org/family/RF00023>`_) 
+   * - ``tRNA.RF00005.fasta.gz``
+     - Predicted transfer RNA (`RF00005 <https://rfam.org/family/RF00005>`_)
+   * - ``tRNA-Sec.RF01852.fasta.gz``
+     - Predicted Selenocysteine transfer RNA (`RF01852 <https://rfam.org/family/RF01852>`_) 
+   * - ``taxonomy-summary``
+     - sd
+
 
