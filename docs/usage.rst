@@ -12,8 +12,7 @@ Raw data
 The sequences file can be provided to ``metaGOflow`` directly or an ENA accession id of the run of intereste can be provided and 
 ``metaGOflow`` will fetch the data automatically. 
 
-
-Fill in the ``config.yml`` file and set the parameters as described in the :doc:`/args_and_params`.
+.. attention:: ``metaGOflow`` is not valid for the analysis of long reads samples
 
 
 Run ``metaGOflow``
@@ -22,6 +21,8 @@ Run ``metaGOflow``
 Assuming ``metaGOflow`` is about to perform in a HPC environment where `Singularity <https://apptainer.org>`_ is set
 and that we have built a ``conda`` environment as shown in :doc:`/installation` 
 let's break down how we would execute a run given the ``config.yml`` is set. 
+
+About the ``config.yml`` file and how to set the parameters on it, you may see the :doc:`/args_and_params` section.
 
 
 .. code-block:: bash
@@ -117,11 +118,11 @@ In the same place, the output of the assembly step (``final.contigs.fa``) will b
    * - ``*.merged.fasta``
      - Merged filtered sequences 
    * - ``*.merged.motus.tsv``
-     - Merged sequences MOTUs
+     - mOTUs along with their taxonomic assignment and their abundance
    * - ``*.merged.qc_summary``
      - Quality control (QC) summary of the merged sequences
    * - ``*.merged.unfiltered_fasta`` 
-     - Merged sequences that did not pass the filtering
+     - Merged sequences with clean headers
    * - ``fastp.html``
      - FASTP analysis of raw sequence data
    * - ``final.contigs.fa``
