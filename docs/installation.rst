@@ -56,4 +56,13 @@ In case ``conda`` is not already installed on your computing system, you may fol
 the instructions to get it `here <https://conda.io/projects/conda/en/latest/user-guide/install/index.html>`_.
 
 
+In case Singularity runs fail with an error message mentioning that a `.sif` file is missing, 
+you need to force-pull the images to be used from metaGOflow. 
+To do so, you may run the ``get_singularity_images.sh`` [`url <https://github.com/emo-bon/pipeline-v5/blob/develop/Installation/get_singularity_images.sh>`_] script
+that you shall find under the ``Installation`` folder.
+
+.. code-bloc:: bash
+    cd Installation
+    bash get_singularity_images.sh
+
 
