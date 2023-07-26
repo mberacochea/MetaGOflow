@@ -12,7 +12,9 @@ Arguments
 ``metaGOflow`` has 2 levels where the user sets arguments. 
 Inline, a few technical arguments are provided as described below:
 
-.. code-block:: bash
+
+.. code-block:: console
+
    -f                  Forward reads fasta file path (mandatory if and olny if -e not used).
    -r                  Reverse reads fasta file path (mandatory if and olny if -e not used).
    -e                  ENA run accession number. Its raw data will be fetched and then analysed (if used, -f and -r should not me set). 
@@ -100,11 +102,16 @@ as well as, some resources-to-be-used related ones.
 |``cut_right``                    | Moves a sliding window from front to tail, if meet one window with mean quality < threshold, drops the     |
 |                                 | bases in the window and the right part, and then stop.                                                     |
 +---------------------------------+------------------------------------------------------------------------------------------------------------+
+|``min-contig-len``               | Minimum length of a contig to be returned                                                                  |
++---------------------------------+------------------------------------------------------------------------------------------------------------+
 
 For more information about how the different analysis of ``fastp`` is performed, you may 
 have a look at its `GitHub repository <https://github.com/OpenGene/fastp>`_.
 
-Finally, a number of syst
+Finally, a number of system related parameters need to be set. 
+These parameters do not affect the final data products but they play a crucial role in the time efficiency 
+of ``metaGOflow``. The size of the sample and the computing resources available need to be taken into account 
+for the best tuning of those. 
 
 +---------------------------------+------------------------------------------------------------------------------------------------------------+
 |**Parameter**                    |**Description**                                                                                             |
@@ -115,8 +122,6 @@ Finally, a number of syst
 |``threads``                      | Number of threads to be used in all tasks of the steps to be performed except of the InterProScan          |
 +---------------------------------+------------------------------------------------------------------------------------------------------------+
 |``interproscan_threads``         | Number of threads to be used for the InterProScan task.                                                    |
-+---------------------------------+------------------------------------------------------------------------------------------------------------+
-|``min-contig-len``               | Minimum length of a contig to be returned                                                                  |
 +---------------------------------+------------------------------------------------------------------------------------------------------------+
 |``cgc_chunk_size``               | Size of each chunk to which filtered sequences will be split to to perform the ``cgc_step``                |
 +---------------------------------+------------------------------------------------------------------------------------------------------------+
