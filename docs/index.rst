@@ -27,4 +27,5 @@ Contents
    installation
    args_and_params
    usage
+   data_products
    faq
