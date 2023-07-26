@@ -3,17 +3,24 @@ Welcome to metaGOflow's documentation!
 
 **metaGOflow** is a 
 `Common Workflow Language (CWL) <https://commonwl.org>`_
-based pipelines
+based pipeline
 for the analysis of shotgun metagenomic data at the sample level.
 It is built to address the needs of the 
 `EMO B0N community <https://www.embrc.eu/services/emo-bon>`_
-but it can be used for any type of shotgun data. 
+but it can be used for any type of shotgun data.
+``metaGOflow`` is based on the tools and subworkflow implemented in the 
+framework of `MGnify <https://github.com/EBI-Metagenomics/pipeline-v5>`_.
 
 It produces a `Research Object Crate (RO-Crate) <https://www.researchobject.org/ro-crate/>`_
-including the taxonomic inventory and the functional profile of the sample. 
+as its main output that includes the taxonomic inventory and/or the functional profile of the sample
+based on the user's settings. 
 
 Check out the :doc:`usage` section for further information, including
 how to :ref:`installation` the project.
+
+.. image:: images/pipeline.png
+   :width: 500
+
 
 .. note::
 
