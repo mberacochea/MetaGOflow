@@ -162,17 +162,124 @@ A hierarchical visual component of the taxonomic profile based on the LSU and th
 
 
 
+- **Files** under the ``sequence-categorisation`` folder
+
+A list of compressed .fasta files  (:ref:`usage/sequence-categorisation`) of the same notion is returned under the `sequence-categorisation` folder. 
+Each file consists of the filtered and merged reads of the sample that are related to a specific `RNA family <https://rfam.org>`_.
+
+For example, the ``tmRNA.RF00023.fasta.gz`` includes reads that are related to the  
+transfer-messenger RNA (`RF00023 <https://rfam.org/family/RF00023>`_).
+
+
+
+
 
 Gene prediction step 
 --------------------
+
+- ``*.merged_CDS.ffn`` **file**
+
+Nucleotide coding sequences in a .fasta format,
+that correspond to coding genes as returned by `FragGeneScan <https://pubmed.ncbi.nlm.nih.gov/20805240/>`_.
+
+.. code-block:: bash
+
+    >SRR1620013.54-C038EACXX:5:1101:02684:02629-1-merged-101-1_3_101_-
+    GACAAGATCGACCGCATCATCGAGTTGTGCATCGCGCTGGAAGCGGACTTTGTTGAGCTCGCGACGTGCCAGTTCTACGGCTGGGCGCAGCTCAATCGT
+
+
+- ``*.merged_CDS.faa`` **file**
+
+.. code-block:: bash
+
+Aminoacid coding sequences that correspond to the coding genes in the ``*.merged_CDS.ffn`` file.
+
+    >SRR1620013.54-C038EACXX:5:1101:02684:02629-1-merged-101-1_3_101_-
+    DKIDRIIELCIALEADFVELATCQFYGWAQLNR
+
 
 
 Functional annotation step 
 --------------------------
 
 
+
+- ``*.merged_CDS.I5.tsv.gz`` **file**
+
+Main output of the InterPro annotation. 
+A compressed tab separated file consisting of 15 columns. 
+The ``protein_accession`` is the id with which the protein can be found in the samples' reads. 
+In the ``analysis`` column, it is mentioned which of the InterProScan analysis the entry is refferring to 
+(i.e., Pfam, TIGRFAM, PrositePatterns, ProSiteProfiles).
+In the ``go`` column, the corresponding Gene Ontology term is mentioned, 
+while in the last column ("``pathways_annotations``") annotations linked to the origingal, from resources such as MetaCYC, Reactome etc are mentioned. 
+
+.. code-block:: bash
+
+    protein_accession	sequence_md5_digest	sequence_length	analysis	signature_accession	signature_description	start_location	stop_location	score	status	date	accession	description	go	pathways_annotations
+    SRR1620013.24594-C038EACXX:5:1101:20780:152561-1-merged-101-9_1_108_-	e9cde5b71a9a05b6f5140c51a445a8f4	36	Pfam	PF00742	Homoserine dehydrogenase	3	36	3.3E-10	T	28-04-2023IPR001342	Homoserine dehydrogenase, catalytic	GO:0006520	MetaCyc: PWY-2941|MetaCyc: PWY-2942|MetaCyc: PWY-5097|MetaCyc: PWY-6160|MetaCyc: PWY-6559|MetaCyc: PWY-6562|MetaCyc: PWY-7153|MetaCyc: PWY-7977
+
+
+
+- ``*.merged.hmm.tsv.gz`` **file**
+
+Similarly to the ``*.merged_CDS.I5.tsv.gz`` file, this is the main output file of the HMMER annotation. 
+When decompressed, this tab separated files includes the HMM hits of the samples filtered reads to KEGG ORTHOLOGY terms
+along with their scores. 
+
+
+.. code-block:: bash
+    query_name	query_accession	tlen	target_name	target_accession	qlen	full_sequence_e-value	full_sequence_score	full_sequence_bias	#	of	c-evalue	i-evalue	domain_score	domain_bias	hmm_coord_from	hmm_coord_to	ali_coord_from	ali_coord_to	env_coord_from	env_coord_to	acc	description_of_target
+    SRR1620013.78392-C038EACXX:5:1103:10865:63862-1-merged-101-2_2_100_-	-	33	K00426	-	447	1.2e-09	36.2	0.1	1	1	1.6e-13	1.2e-09	36.1	0.1	136	168	1	33133	0.97	-
+
+
+
+
+- The ``*.merged.summary.*`` **files**
+
+Based on the ``*.merged.hmm.tsv`` and the ``*.merged_CDS.I5.tsv`` files, a list of summary files are returned 
+including resource-specific information. 
+All of them are 3 column tab separated files, including the annotation id, its description and the number of hits in the samples' reads.
+
+For example, the first lines of a ``*.merged.summary.pfam`` would be:
+
+.. code-block:: bash
+    
+    "26","PF00005","ABC transporter"
+    "11","PF00012","Hsp70 protein"
+    "8","PF00133","tRNA synthetases class I (I, L, M and V)"
+    "7","PF00361","Proton-conducting membrane transporter"
+
+where in the first column is the number of hits, in the second the Pfam id and in the third one its description.
+
+The ``*.merged.summary.go_slim``, ``*.merged.summary.ips``, ``*.merged.summary.ko`` and ``*.merged.emapper.summary.eggnog``
+have the same notion.
+
+
+- **Files** under the ``stats`` subfolder in the ``functional-annotation`` folder
+
+A list of text files including statistics about the number of matches with each annotation resource. 
+For example, 
+
+.. code-block:: bash 
+
+    user@server:~/my_analysis/results/functional-annotation/stats/$ cat ko.stats
+    Total KO matches	75
+    Predicted CDS with KO match	75
+    Reads with KO match	75
+
+
+
+
+
+
+
 Assembly step 
 -------------
+
+- ``final.contigs.fa`` **file**
+
+A .fasta file where each entry is a contig as returned from `MEGAHIT <https://doi.org/10.1093/bioinformatics/btv033>`_.
 
 
 

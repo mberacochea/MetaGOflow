@@ -217,7 +217,7 @@ Last, a subfolder called ``sequence-categorisation`` is also part of the ``resul
 including information about specific reads assigned in various categories.
 
 
-.. list-table::
+.. list-table:: sequence-categorisation
    :widths: 25 75
    :header-rows: 1
 
@@ -253,7 +253,5 @@ including information about specific reads assigned in various categories.
      - Predicted transfer RNA (`RF00005 <https://rfam.org/family/RF00005>`_)
    * - ``tRNA-Sec.RF01852.fasta.gz``
      - Predicted Selenocysteine transfer RNA (`RF01852 <https://rfam.org/family/RF01852>`_) 
-   * - ``taxonomy-summary``
-     - sd
 
 
