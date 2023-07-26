@@ -65,7 +65,6 @@ The steps to be performed are selected by setting ``True`` or ``False`` the foll
 
 .. Attention:: The intermediate files produced in a complete run of ``metaGOflow`` depending 
    on the sample size, may reach 1 TB of storage.
-
 .. tip:: If you want to run only the first steps and at a later point the rest of those, you do not need to use the ``-b`` parameter.
    It is the end products of each step that are required for any following step.
 
@@ -96,7 +95,7 @@ as well as, some resources-to-be-used related ones.
 |``disable_trim_poly_g``          | Enables the detection of polyG in read tails and trims them                                                |
 +---------------------------------+------------------------------------------------------------------------------------------------------------+
 |``overlap_len_require``          | The minimum length to detect overlapped region of PE reads. This will affect overlap analysis based        |
-|                                 | merge, adapter trimming and correction. 30 by default. (int [=30])                                         |
+|                                 | merge, adhttps://apptainer.orgapter trimming and correction. 30 by default. (int [=30])                                         |
 +---------------------------------+------------------------------------------------------------------------------------------------------------+
 |``cut_right``                    | Moves a sliding window from front to tail, if meet one window with mean quality < threshold, drops the     |
 |                                 | bases in the window and the right part, and then stop.                                                     |
@@ -110,7 +109,7 @@ Finally, a number of syst
 +---------------------------------+------------------------------------------------------------------------------------------------------------+
 |**Parameter**                    |**Description**                                                                                             |
 +---------------------------------+------------------------------------------------------------------------------------------------------------+
-|``memory``                       | Memory to run assembly. When 0 < ``memory`` < 1, fraction of all available memory of the machine is used,   
+|``memory``                       | Memory to run assembly. When 0 < ``memory`` < 1, fraction of all available memory of the machine is used,  | 
 |                                 | otherwise it specifies the memory in BYTE.                                                                 |
 +---------------------------------+------------------------------------------------------------------------------------------------------------+
 |``threads``                      | Number of threads to be used in all tasks of the steps to be performed except of the InterProScan          |
@@ -159,7 +158,7 @@ certain files that were produced (in the first run) are required, based on the s
 | ``count_faa_from_previous_run``   | Number of the sequences included in the ``*merged_CDS.faa`` file. Mandatory for the                        |
 |                                   | ``reads_functional_annotation`` step;    You may get this by running: ``grep -c ">" <*..merged_CDS.faa>``  |
 +-----------------------------------+------------------------------------------------------------------------------------------------------------+
-|``predicted_faa_from_previous_run``| Mandatory for the functional annotation step; file suffix: ``.merged_CDS.faa``                                                               |
+|``predicted_faa_from_previous_run``| Mandatory for the functional annotation step; file suffix: ``.merged_CDS.faa``                             |                                  |
 +-----------------------------------+------------------------------------------------------------------------------------------------------------+
 | ``processed_read_files``          | Forward and reverse files with unmergerd filteres sequences. Mandatory for running the assembly step;      |
 |                                   | file suffix: ``clean.fastq.trimmed.fasta``                                                                 |
