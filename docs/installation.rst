@@ -22,7 +22,7 @@ To run metaGOflow you need to make sure you have the following set on your compu
 - `Node.js <https://nodejs.org/>`_ [v 10.24.0+]
 - Available storage ~160GB for databases
 
-You may either ensure you have those locally or you may use a conda environment we have built including them (.. autofunction:: conda_environment.yml). 
+You may either ensure you have those locally or you may use a conda environment we have built including them (``conda_environment.yml``, `url <https://github.com/emo-bon/MetaGOflow/blob/eosc-life-gos/conda_environment.yml>`_). 
 
 On top of those, disk requirements need to be considered and depending on the analysis you are about to run they vary.
 Indicatively, you may have a look at the metaGOflow publication for computing resources used in various cases.
@@ -51,8 +51,8 @@ Get dependencies to run metaGOflow:
 
 
 This will create a ``conda`` environment called ``metagoflow``.
-By running :rst:`.. conda env list`  you will see your new environment.
-In case `conda` is not already installed on your computing system, you may follow 
+By running ``conda env list``  you will see your new environment.
+In case ``conda`` is not already installed on your computing system, you may follow 
 the instructions to get it `here <https://conda.io/projects/conda/en/latest/user-guide/install/index.html>`_.
 
 

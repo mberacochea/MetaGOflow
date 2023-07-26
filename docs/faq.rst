@@ -17,6 +17,11 @@ Does my PCR protocol affect the ``metaGOflow`` performance?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
+What is an RO-Crate and how it benefits?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
 Docker or Singularity?
 ~~~~~~~~~~~~~~~~~~~~~~
 

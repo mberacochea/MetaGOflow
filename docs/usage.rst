@@ -93,72 +93,81 @@ If the ``-b`` flag was used, asking to save the ``tmp`` folder, then a folder ca
 The data products of the ``qc_and_merge`` step can be found in the root of the ``results`` directory.
 In the same place, the output of the assembly step (``final.contigs.fa``) will be found, if asked to be performed.
 
-+----------------------------------------------+------------------------------------------------------+
-|**Data product**                              |**Description**                                       |
-+----------------------------------------------+------------------------------------------------------+
-| ``*_1.fastq.trimmed.fasta``                  | Filtered .fastq file of the forward (R1) reads       |
-+----------------------------------------------+------------------------------------------------------+
-| ``*_2.fastq.trimmed.fasta``                  | Filtered .fastq file of the reverse (R2) reads       |
-+----------------------------------------------+------------------------------------------------------+
-| ``*_1.fastq.trimmed.qc_summary``	           | Summary with statistics of the forward (R1) reads    |
-+----------------------------------------------+------------------------------------------------------+
-| ``*_2.fastq.trimmed.qc_summary``	           | Summary with statistics of the reverse (R2) reads    |
-+----------------------------------------------+------------------------------------------------------+
-|``*merged_CDS.faa``	                          | Aminoacid coding sequences                           |
-+----------------------------------------------+------------------------------------------------------+
-|``*.merged_CDS.ffn``	                       | Nucleotide coding sequences                          |
-+----------------------------------------------+------------------------------------------------------+
-|``*.merged.cmsearch.all.tblout.deoverlapped`` | Sequence hits against covariance model databases     |
-+----------------------------------------------+------------------------------------------------------+
-|``*.merged.fasta``                            | Merged filtered sequences                            |
-+----------------------------------------------+------------------------------------------------------+
-|``*.merged.motus.tsv``	                       | Merged sequences MOTUs                               |
-+----------------------------------------------+------------------------------------------------------+
-|``*.merged.qc_summary``                       | Quality control (QC) summary of the merged sequences |
-+----------------------------------------------+------------------------------------------------------+
-|``*.merged.unfiltered_fasta``                 | Merged sequences that did not pass the filtering     |
-+----------------------------------------------+------------------------------------------------------+
-|``fastp.html``                                | FASTP analysis of raw sequence data                  |
-+----------------------------------------------+------------------------------------------------------+
-|``final.contigs.fa``                          | FASTA formatted contig sequences                     |
-+----------------------------------------------+------------------------------------------------------+
-| RNA-counts                                   | Numbers of RNAs counted                              |
-+----------------------------------------------+------------------------------------------------------+
+
+.. list-table::
+   :widths: 25 75
+   :header-rows: 1
+
+   * - Data product
+     - Description
+   * - ``*_1.fastq.trimmed.fasta``
+     - Filtered .fastq file of the forward (R1) reads
+   * - ``*_2.fastq.trimmed.fasta``
+     - Filtered .fastq file of the reverse (R2) reads
+   * - ``*_1.fastq.trimmed.qc_summary``
+     - Summary with statistics of the forward (R1) reads
+   * - ``*_2.fastq.trimmed.qc_summary``
+     - Summary with statistics of the reverse (R2) reads
+   * - ``*merged_CDS.faa``
+     - Aminoacid coding sequences
+   * - ``*.merged_CDS.ffn``
+     - Nucleotide coding sequences  
+   * - ``*.merged.cmsearch.all.tblout.deoverlapped``
+     - Sequence hits against covariance model databases
+   * - ``*.merged.fasta``
+     - Merged filtered sequences 
+   * - ``*.merged.motus.tsv``
+     - Merged sequences MOTUs
+   * - ``*.merged.qc_summary``
+     - Quality control (QC) summary of the merged sequences
+   * - ``*.merged.unfiltered_fasta`` 
+     - Merged sequences that did not pass the filtering
+   * - ``fastp.html``
+     - FASTP analysis of raw sequence data
+   * - ``final.contigs.fa``
+     - FASTA formatted contig sequences  
+   * - ``RNA-counts``
+     - Numbers of RNAs counted
 
 
 The taxonomic inventory related data products can be found in a subfolder inside the ``results`` folder called ``taxonomy-summary``.
 
-+---------------------------------------+-------------------------------------------------------------------+
-|**Data product**                       |**Description**                                                    |
-+---------------------------------------+-------------------------------------------------------------------+
-| LSU	                                  |                                                                   |
-+---------------------------------------+-------------------------------------------------------------------+
-| ``*.merged_LSU.fasta.mseq.gz``	       | LSU rRNA sequences used for taxonomic indentification             |
-+---------------------------------------+-------------------------------------------------------------------+
-| ``*.merged_LSU.fasta.mseq_hdf5.biom`` | OTUs and taxonomic assignments for LSU rRNA (hdf5 formatted BIOM) |
-+---------------------------------------+-------------------------------------------------------------------+
-| ``*.merged_LSU.fasta.mseq_json.biom`` | OTUs and taxonomic assignments for LSU rRNA (json formatted BIOM) |
-+---------------------------------------+-------------------------------------------------------------------+
-| ``*.merged_LSU.fasta.mseq.tsv``	    | Tab-separated formatted taxon counts for LSU rRNA sequences       |
-+---------------------------------------+-------------------------------------------------------------------+
-| ``*.merged_LSU.fasta.mseq.txt``       | Text-based taxon counts for LSU rRNA sequences                    |
-+---------------------------------------+-------------------------------------------------------------------+
-| krona.html                            | Interactive krona charts for LSU rRNA taxonomic inventory         |
-+---------------------------------------+-------------------------------------------------------------------+
-| SSU	                                  |                                                                   |
-+---------------------------------------+-------------------------------------------------------------------+
-| ``*.merged_SSU.fasta.mseq.gz``	       | SSU rRNA sequences used for taxonomic indentification             |
-+---------------------------------------+-------------------------------------------------------------------+
-| ``*.merged_SSU.fasta.mseq_hdf5.biom`` | OTUs and taxonomic assignments for SSU rRNA (hdf5 formatted BIOM) |
-+---------------------------------------+-------------------------------------------------------------------+
-| ``*.merged_SSU.fasta.mseq_json.biom`` | OTUs and taxonomic assignments for SSU rRNA (json formatted BIOM) |
-+---------------------------------------+-------------------------------------------------------------------+
-| ``*.merged_SSU.fasta.mseq.tsv``       | Tab-separated formatted taxon counts for SSU rRNA sequences       |
-+---------------------------------------+-------------------------------------------------------------------+
-| ``*.merged_SSU.fasta.mseq.txt``       | Text-based taxon counts for SSU rRNA sequences                    |
-+---------------------------------------+-------------------------------------------------------------------+
-| ``krona.html``                        | Interactive krona charts for SSU rRNA taxonomic inventory         |
-+---------------------------------------+-------------------------------------------------------------------+
+
+.. list-table::
+   :widths: 25 75
+   :header-rows: 1
+
+   * - Data product
+     - Description
+   * - ``LSU``
+     - Folder with data products based on the large ribosomal subunit 
+   * - ``*.merged_LSU.fasta.mseq.gz``
+     - LSU rRNA sequences used for taxonomic indentification 
+   * - ``*.merged_LSU.fasta.mseq_hdf5.biom``
+     - OTUs and taxonomic assignments for LSU rRNA (hdf5 formatted BIOM)
+   * - ``*.merged_LSU.fasta.mseq_json.biom``
+     - OTUs and taxonomic assignments for LSU rRNA (json formatted BIOM)
+   * - ``*.merged_LSU.fasta.mseq.tsv``
+     - Tab-separated formatted taxon counts for LSU rRNA sequences
+   * - ``*.merged_LSU.fasta.mseq.txt``
+     - Text-based taxon counts for LSU rRNA sequences
+   * - ``krona.html``
+     - Interactive krona charts for LSU rRNA taxonomic inventory 
+   * - ``SSU``
+     - Folder with data products based on the small ribosomal subunit
+   * - ``*.merged_SSU.fasta.mseq.gz``
+     - SSU rRNA sequences used for taxonomic indentification
+   * - ``*.merged_SSU.fasta.mseq_hdf5.biom``
+     - OTUs and taxonomic assignments for SSU rRNA (hdf5 formatted BIOM)
+   * - ``*.merged_SSU.fasta.mseq_json.biom`` 
+     - OTUs and taxonomic assignments for SSU rRNA (json formatted BIOM)
+   * - ``*.merged_SSU.fasta.mseq.tsv``
+     - Tab-separated formatted taxon counts for SSU rRNA sequences
+   * - ``*.merged_SSU.fasta.mseq.txt``  
+     - Text-based taxon counts for SSU rRNA sequences
+   * - ``krona.html``  
+     -  Interactive krona charts for SSU rRNA taxonomic inventory
+
 
 Likewise, the data products of the functional annotation step can be found in the ``functional-annotation`` subfolder
 including:
@@ -189,7 +198,7 @@ including:
      - Pfam annotation summary
    * - ``*.merged.emapper.summary.eggnog``
      - eggNOG annotation summary
-   * - **``stats``**
+   * - ``stats``
      - Folder containing files with statistics on each annotation approach
    * - ``go.stats``
      - Gene Ontology (GO) annotation summary statistics 
