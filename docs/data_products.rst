@@ -190,9 +190,10 @@ that correspond to coding genes as returned by `FragGeneScan <https://pubmed.ncb
 
 - ``*.merged_CDS.faa`` **file**
 
-.. code-block:: bash
-
 Aminoacid coding sequences that correspond to the coding genes in the ``*.merged_CDS.ffn`` file.
+
+
+.. code-block:: bash
 
     >SRR1620013.54-C038EACXX:5:1101:02684:02629-1-merged-101-1_3_101_-
     DKIDRIIELCIALEADFVELATCQFYGWAQLNR
