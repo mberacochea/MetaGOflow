@@ -95,7 +95,7 @@ as well as, some resources-to-be-used related ones.
 |``disable_trim_poly_g``          | Enables the detection of polyG in read tails and trims them                                                |
 +---------------------------------+------------------------------------------------------------------------------------------------------------+
 |``overlap_len_require``          | The minimum length to detect overlapped region of PE reads. This will affect overlap analysis based        |
-|                                 | merge, adhttps://apptainer.orgapter trimming and correction. 30 by default. (int [=30])                                         |
+|                                 | merge, adhttps://apptainer.orgapter trimming and correction. 30 by default. (int [=30])                    |
 +---------------------------------+------------------------------------------------------------------------------------------------------------+
 |``cut_right``                    | Moves a sliding window from front to tail, if meet one window with mean quality < threshold, drops the     |
 |                                 | bases in the window and the right part, and then stop.                                                     |
@@ -147,7 +147,7 @@ certain files that were produced (in the first run) are required, based on the s
 |**Parameter**                      |**Description**                                                                                             |
 +-----------------------------------+------------------------------------------------------------------------------------------------------------+
 |``processed_reads``                | Filtered sequences files. Mandatory for running any step after the ``qc_and_merge_step`` one;              |
-|                                   | merged pre-processed reads; file suffix: ``.merged.fasta``                                                 |                                                             |
+|                                   | merged pre-processed reads; file suffix: ``.merged.fasta``                                                 |
 +-----------------------------------+------------------------------------------------------------------------------------------------------------+
 | ``input_for_motus``               | Filtered sequences files with cleaned headers. Mandatory for running the ``taxonomy_inventory`` step;      |
 |                                   | file suffix: ``.merged.unfiltered.fasta``                                                                  |
@@ -158,7 +158,7 @@ certain files that were produced (in the first run) are required, based on the s
 | ``count_faa_from_previous_run``   | Number of the sequences included in the ``*merged_CDS.faa`` file. Mandatory for the                        |
 |                                   | ``reads_functional_annotation`` step;    You may get this by running: ``grep -c ">" <*..merged_CDS.faa>``  |
 +-----------------------------------+------------------------------------------------------------------------------------------------------------+
-|``predicted_faa_from_previous_run``| Mandatory for the functional annotation step; file suffix: ``.merged_CDS.faa``                             |                                  |
+|``predicted_faa_from_previous_run``| Mandatory for the functional annotation step; file suffix: ``.merged_CDS.faa``                             |
 +-----------------------------------+------------------------------------------------------------------------------------------------------------+
 | ``processed_read_files``          | Forward and reverse files with unmergerd filteres sequences. Mandatory for running the assembly step;      |
 |                                   | file suffix: ``clean.fastq.trimmed.fasta``                                                                 |
@@ -206,7 +206,7 @@ An example of the ``config.yml`` file to perform all the steps.
    min-contig-len: 500
 
    cgc_chunk_size: 200
-   protein_chunk_size_IPS: 1000000 # 20000000
+   protein_chunk_size_IPS: 1000000
    protein_chunk_size_eggnog: 4000000
    protein_chunk_size_hmm: 4000000
 
