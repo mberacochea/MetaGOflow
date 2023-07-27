@@ -66,6 +66,9 @@ as the accession id, as ``-n`` has the same value with ``-e``.
 
 In case an HPC is not used, then the SLURM commands or any similar ones are not required.
 
+.. attention:: ``metaGOflow`` builds several intermediate files that are, by default, removed once completed. 
+   However, it may require more than 1 TB of storage during its performance and based on the sample's size. 
+
 
 Output / data products
 ----------------------

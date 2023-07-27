@@ -65,4 +65,5 @@ that you shall find under the ``Installation`` folder.
     cd Installation
     bash get_singularity_images.sh
 
-
+.. attention:: Besides the database storage, ``metaGOflow`` requires a significant storage space during its performance. 
+  The final data products are a few megabytes, however maybe more than 1 TB might be needed during its run. 
