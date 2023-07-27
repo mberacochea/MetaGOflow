@@ -2,7 +2,7 @@
 .. _faq:
 
 
-Frequently asked questions
+Frequently asked questions (FAQs)
 ----------------------------
 
 
@@ -39,6 +39,6 @@ What can I do with the ``metaGOflow`` data products?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-What visualization tools for ``metaGOflow``'s data products are available? 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. What visualization tools for ``metaGOflow``'s data products are available? 
+.. ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

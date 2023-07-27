@@ -5,9 +5,9 @@ Welcome to metaGOflow's documentation!
 `Common Workflow Language (CWL) <https://commonwl.org>`_
 based pipeline
 for the analysis of shotgun metagenomic data at the sample level.
-It is built to address the needs of the 
-`EMO B0N community <https://www.embrc.eu/services/emo-bon>`_
-but it can be used for any type of shotgun data.
+It was initially built to address the needs of the 
+`EMO BON community <https://www.embrc.eu/services/emo-bon>`_
+but it can be used for any type of shotgun sequencing data.
 ``metaGOflow`` is based on the tools and subworkflow implemented in the 
 framework of `MGnify <https://github.com/EBI-Metagenomics/pipeline-v5>`_.
 
@@ -16,7 +16,7 @@ as its main output that includes the taxonomic inventory and/or the functional p
 based on the user's settings. 
 
 Check out the :doc:`usage` section for further information, including
-how to :ref:`installation` the project.
+:ref:`installation` instructions for the project.
 
 .. image:: images/pipeline.png
    :width: 500
@@ -25,6 +25,12 @@ how to :ref:`installation` the project.
 .. note::
 
    This project is under active development.
+   The source code is available on `GitHub <github.com/emo-bon/MetaGOflow>`_.
+
+
+Citation: currently under revision in *GigaScience*.
+
+
 
 Contents
 --------

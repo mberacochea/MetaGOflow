@@ -270,17 +270,24 @@ For example,
     Reads with KO match	75
 
 
-
-
-
-
-
 Assembly step 
 -------------
 
 - ``final.contigs.fa`` **file**
 
 A .fasta file where each entry is a contig as returned from `MEGAHIT <https://doi.org/10.1093/bioinformatics/btv033>`_.
+
+
+Output example
+--------------
+
+You may find the data products of complete runs of ``metaGOflow`` as example outputs,
+in our `Zenodo repo <https://zenodo.org/record/8046421>`_.
+
+Further, on this `GitHub pages <https://data.emobon.embrc.eu/MetaGOflow/>`_  you may find
+visual components accompanying the metaGOflow publication. 
+We performed all steps of metaGOflow for an EMO BON marine sediment (ERS14961254) and a water column (ERS14961281) sample. 
+A quality control report, the taxonomic inventories as well as some of the functional annotations returned in each case are displayed there.
 
 
 
