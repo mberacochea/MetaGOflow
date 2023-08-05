@@ -28,8 +28,6 @@ On top of those, disk requirements need to be considered and depending on the an
 Indicatively, you may have a look at the metaGOflow publication for computing resources used in various cases.
 
 
-
-
 Installation
 ------------
 

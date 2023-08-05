@@ -53,13 +53,13 @@ The steps to be performed are selected by setting ``True`` or ``False`` the foll
 +---------------------------------+----------------------------------------------------------------------------------------------------------+
 |**Parameter**                    |**Description**                                                                                           |
 +---------------------------------+----------------------------------------------------------------------------------------------------------+
-|``qc_and_merge_step``            | Performs a quality control of the raw reads, filters and merges them                                     |
+|``qc_and_merge_step``            |  Performs a quality control of the raw reads, filters and merges them                                    |
 +---------------------------------+----------------------------------------------------------------------------------------------------------+
 |``taxonomic_inventory``          |  Using the filtered and merged sequences, it returns a taxonomic inventory                               |
 +---------------------------------+----------------------------------------------------------------------------------------------------------+
 |``cgc_step``                     |  Exports coding sequences                                                                                |
 +---------------------------------+----------------------------------------------------------------------------------------------------------+
-|``reads_functional_annotation``  |  Performs functionall annotation on the coding genes found using a list of resources: InterPro, KEGG     |
+|``reads_functional_annotation``  |  Performs functional annotation on the coding genes found using a list of resources: InterPro, KEGG     |
 +---------------------------------+----------------------------------------------------------------------------------------------------------+
 |``assemble``                     |  Assembles the filtered and merged sequences to contigs                                                  |
 +---------------------------------+----------------------------------------------------------------------------------------------------------+
@@ -247,8 +247,4 @@ An example of the ``config.yml`` file to perform all the steps.
       path:  workflows/pseudo_files/pseudo_1_clean.fastq.trimmed.fasta
    - class: File
       path:  workflows/pseudo_files/pseudo_2_clean.fastq.trimmed.fasta
-
-
-
-
 

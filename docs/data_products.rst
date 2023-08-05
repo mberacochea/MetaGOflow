@@ -171,9 +171,6 @@ For example, the ``tmRNA.RF00023.fasta.gz`` includes reads that are related to t
 transfer-messenger RNA (`RF00023 <https://rfam.org/family/RF00023>`_).
 
 
-
-
-
 Gene prediction step 
 --------------------
 
@@ -199,10 +196,8 @@ Aminoacid coding sequences that correspond to the coding genes in the ``*.merged
     DKIDRIIELCIALEADFVELATCQFYGWAQLNR
 
 
-
 Functional annotation step 
 --------------------------
-
 
 
 - ``*.merged_CDS.I5.tsv.gz`` **file**
@@ -221,7 +216,6 @@ while in the last column ("``pathways_annotations``") annotations linked to the 
     SRR1620013.24594-C038EACXX:5:1101:20780:152561-1-merged-101-9_1_108_-	e9cde5b71a9a05b6f5140c51a445a8f4	36	Pfam	PF00742	Homoserine dehydrogenase	3	36	3.3E-10	T	28-04-2023IPR001342	Homoserine dehydrogenase, catalytic	GO:0006520	MetaCyc: PWY-2941|MetaCyc: PWY-2942|MetaCyc: PWY-5097|MetaCyc: PWY-6160|MetaCyc: PWY-6559|MetaCyc: PWY-6562|MetaCyc: PWY-7153|MetaCyc: PWY-7977
 
 
-
 - ``*.merged.hmm.tsv.gz`` **file**
 
 Similarly to the ``*.merged_CDS.I5.tsv.gz`` file, this is the main output file of the HMMER annotation. 
@@ -232,8 +226,6 @@ along with their scores.
 .. code-block:: bash
     query_name	query_accession	tlen	target_name	target_accession	qlen	full_sequence_e-value	full_sequence_score	full_sequence_bias	#	of	c-evalue	i-evalue	domain_score	domain_bias	hmm_coord_from	hmm_coord_to	ali_coord_from	ali_coord_to	env_coord_from	env_coord_to	acc	description_of_target
     SRR1620013.78392-C038EACXX:5:1103:10865:63862-1-merged-101-2_2_100_-	-	33	K00426	-	447	1.2e-09	36.2	0.1	1	1	1.6e-13	1.2e-09	36.1	0.1	136	168	1	33133	0.97	-
-
-
 
 
 - The ``*.merged.summary.*`` **files**
@@ -288,15 +280,4 @@ Further, on this `GitHub pages <https://data.emobon.embrc.eu/MetaGOflow/>`_  you
 visual components accompanying the metaGOflow publication. 
 We performed all steps of metaGOflow for an EMO BON marine sediment (ERS14961254) and a water column (ERS14961281) sample. 
 A quality control report, the taxonomic inventories as well as some of the functional annotations returned in each case are displayed there.
-
-
-
-
-
-
-
-
-
-
-
 

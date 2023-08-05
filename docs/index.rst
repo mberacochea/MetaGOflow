@@ -27,9 +27,7 @@ Check out the :doc:`usage` section for further information, including
    This project is under active development.
    The source code is available on `GitHub <github.com/emo-bon/MetaGOflow>`_.
 
-
 Citation: currently under revision in *GigaScience*.
-
 
 
 Contents
